@@ -1,0 +1,14 @@
+.mi-imagen {
+    height: 80px;         /* Ajusta el tamaño aquí */
+    width: auto;          /* Para mantener la proporción */
+    border-radius: 50px;  /* Borde redondeado */
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3); /* Sombra suave */
+}
+
+main.container {
+    background-image: url("/static/imagenes/fondos.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 80vh;
+}
