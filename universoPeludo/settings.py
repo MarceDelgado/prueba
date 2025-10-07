@@ -68,7 +68,7 @@ MIDDLEWARE = [
 ]
 
 
-ROOT_URLCONF = 'miproyecto.urls'
+ROOT_URLCONF = 'universoPeludo.urls'
 
 
 TEMPLATES = [
@@ -88,7 +88,7 @@ TEMPLATES = [
 ]
 
 
-WSGI_APPLICATION = 'miproyecto.wsgi.application'
+WSGI_APPLICATION = 'universoPeludo.wsgi.application'
 
 
 
