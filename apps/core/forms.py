@@ -2,6 +2,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from apps.core.models import Mascotas
 
 class RegistroUsuarioForm(UserCreationForm):
     email = forms.EmailField(required=True, label="Correo electrónico")
@@ -16,3 +17,9 @@ class RegistroUsuarioForm(UserCreationForm):
             'password1': 'Contraseña',
             'password2': 'Confirmar contraseña',
         }
+
+#formulario para las mascotas
+class MascotasForm(forms.ModelForm):
+    class Meta:
+        model=Mascotas
+        fields=["raza","sexo","tamanio","fecha_nac","observaciones"]

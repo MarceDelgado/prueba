@@ -1,9 +1,11 @@
-
+from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from apps.core.models import Mascotas
-from .forms import RegistroUsuarioForm
+from .forms import RegistroUsuarioForm, MascotasForm
 from django.contrib.auth import authenticate, login, logout as auth_logout #importamos la funcion "authenticate"
+
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView #importamos las clases bases para el abm
 
 def home(request):
     return render(request, 'home.html', {})
@@ -76,3 +78,27 @@ def registro(request):
         form = RegistroUsuarioForm()
     
     return render(request, "registro.html", {"form": form})
+
+
+#abm cbv
+class ListarMascotas(ListView):
+    model=Mascotas
+    template_name='mascotas/listaMascotas.html'
+
+class CrearMascota(CreateView):
+    model=Mascotas
+    form_class=MascotasForm
+    template_name='mascotas/crear.html'
+    success_url=reverse_lazy('listar_mascotas')
+    
+
+class ModificarMascota(UpdateView):
+    model=Mascotas
+    form_class=MascotasForm
+    template_name='mascotas/modificar.html'
+    success_url=reverse_lazy('listar_mascotas')
+
+class EliminarMascota(DeleteView):
+    model=Mascotas
+    template_name='mascotas/eliminar.html'
+    success_url=reverse_lazy('listar_mascotas')

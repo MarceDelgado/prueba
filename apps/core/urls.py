@@ -1,14 +1,21 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from . import views
+from .views import (home, buscar_animales,contacto, login_view, logout_view, registro, dashboard,
+                    ListarMascotas, CrearMascota, ModificarMascota, EliminarMascota)
 
 urlpatterns = [
-	path('', views.home, name='home'),
-	path('buscar/', views.buscar_animales, name='buscar_animales'),
-    path('contacto/', views.contacto, name='contacto'),
-    path('login/', views.login_view, name='login'),
-    path('logout/', views.logout_view, name ='logout'),   # <-- Agregado logout
-    path('registro/', views.registro, name='registro'),
-	path('dashboard/', views.dashboard, name='dashboard'),
+	path('', home, name='home'),
+	path('buscar/', buscar_animales, name='buscar_animales'),
+    path('contacto/', contacto, name='contacto'),
+    path('login/', login_view, name='login'),
+    path('logout/',logout_view, name ='logout'),   # <-- Agregado logout
+    path('registro/', registro, name='registro'),
+	path('dashboard/', dashboard, name='dashboard'),
+    #url del abm mascotas
+    path('lista/', ListarMascotas.as_view(), name='listar_mascotas'),
+    path('crear/', CrearMascota.as_view(), name='crear_mascotas'),
+    path('modificar/<int:pk>/', ModificarMascota.as_view(), name='modificar_mascotas'),
+    path('eliminar/<int:pk>/', EliminarMascota.as_view(), name='eliminar_mascotas'),
+
     
 ]

@@ -82,13 +82,16 @@
             </div>
         </div>
     </nav>
-
+    
     <!-- Contenido principal -->
-    <main class="container mt-4">
-        {% block content %}
-        <!-- Aquí va el contenido de cada plantilla hija -->
-        {% endblock %}
-    </main>
+    <div class="layout">
+        {% include 'sidebar.html' %}
+        <main class="container mt-4">
+            {% block content %}
+            <!-- Aquí va el contenido de cada plantilla hija -->
+            {% endblock %}
+        </main>
+    </div>
 
     <!-- Mensajes flash -->
     {% if messages %}

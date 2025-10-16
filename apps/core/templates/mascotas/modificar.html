@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="form-container">
+        <h1>Modificar Mascota</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{form.as_p}}
+            <button type="submit"class="btn btn-primary">Confirmar cambios</button>
+            <a href="{% url 'listar_mascotas' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+{% endblock %}

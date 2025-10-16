@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="table-responsive">
+    <h1>Lista de Mascotas</h1>
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-primary">
+        <tr>
+          <th>Especie</th>
+          <th>Raza</th>
+          <th>Sexo</th>
+          <th>Tamaño</th>
+          <th>Fecha de nacimiento</th>
+          <th>Observaciones</th>
+          <th>Opciones</th>
+        </tr>
+      </thead>
+    
+      <tbody>
+        {% for mascota in mascotas_list %}
+          <tr>
+            <td>{{mascota.raza.especie}}</td>
+            <td>{{mascota.raza}}</td>
+            <td>{{mascota.sexo}}</td>
+            <td>{{mascota.tamanio}}</td>
+            <td>{{mascota.fecha_nac}}</td>
+            <td>{{mascota.observaciones}}</td>
+          
+            <td>
+              <a href="{% url 'eliminar_mascotas' mascota.pk %}"class="btn btn-sm btn-warning">Eliminar mascota</a>
+              <a href="{% url 'modificar_mascotas' mascota.pk %}"class="btn btn-sm btn-danger ms-2">Modificar mascotas</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+ 
+{% endblock %}

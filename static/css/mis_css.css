@@ -12,3 +12,115 @@ main.container {
     background-repeat: no-repeat;
     min-height: 80vh;
 }
+/*Formato para abm*/
+.table-responsive {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+table th, table td {
+    font-size: 1rem;
+    color: #000;
+}
+/*formularios*/
+.form-container {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    max-width: 600px;
+    margin: 50px auto;
+}
+
+.form-container h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-container button {
+    margin-right: 10px;
+}
+
+
+/*SIDEBAR*/
+.layout{
+    display: flex;
+    position: relative;
+}
+.main-content{
+    margin-left: 240px; /* deja espacio para el sidebar */
+    padding: 30px;
+    width: 100%;
+}/* SIDEBAR */
+.sidebar {
+    width: 230px;
+    background-color: #1e2a38; /* un tono más oscuro para más contraste */
+    color: #fff;
+    padding: 30px 25px;
+    position: fixed;
+    top: 120px; /* lo deja un poco más abajo del navbar */
+    left: 20px;
+    height: calc(100vh - 130px);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    opacity: 0.98;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* Título del menú */
+.sidebar h2 {
+    font-size: 22px;          /* 🔹 letras más grandes */
+    font-weight: bold;
+    margin-bottom: 30px;
+    text-align: left;
+    color: #ffffff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Lista del menú */
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.sidebar-menu li {
+    margin-bottom: 15px;
+}
+
+/* Botones del menú */
+.btn-sidebar {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background-color: #34495e;
+    color: #f8f9fa;
+    text-decoration: none;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 18px;          /* 🔹 letras mucho más grandes */
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.btn-sidebar:hover {
+    background-color: #1abc9c;
+    color: #ffffff;
+    transform: translateX(6px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+/* Íconos dentro del botón */
+.btn-sidebar i {
+    margin-right: 12px;
+    font-size: 20px;
+}
