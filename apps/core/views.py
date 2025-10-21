@@ -1,5 +1,5 @@
 from django.urls import reverse_lazy
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from apps.core.models import Especie, Mascotas, Raza
 from .forms import EspecieForm, RazaForm, RegistroUsuarioForm, MascotasForm
@@ -127,14 +127,23 @@ def eliminar_mascota(request):
 
 #abm raza(fbv)
 #crear->cami
+
 #eliminar->marce
+def eliminar_raza(request, raza_id):
+    #Obtiene la raza por su id, si no existe se genera error
+    raza = get_object_or_404(Raza, id=raza_id)
+    #Elimina el objeto si lo encuentra 
+    raza.delete()
+    #Redirige a la lista de razas
+    return redirect('lista_razas')
+
+
 #modificar-> jessi
-<<<<<<< HEAD
 
 def modificar_raza(request, raza_id):
     # Obtiene la instancia de la raza que se va a modificar
     raza = get_object_or_404(Raza, id=raza_id) # type: ignore
-
+    
     if request.method == 'POST':
         form = RazaForm(request.POST, instance=raza)
         if form.is_valid():
@@ -158,20 +167,6 @@ class CrearEspecieView(CreateView):
     success_url = reverse_lazy('listar_especies')  # Redirige a la lista de especies después de crear
     
 #eliminar
-=======
-#listar->yo
-def listar_razas(request):
-    pass
-
-
-
-
-#abm especie(cbv)
-#crear->jessi
-#eliminar->yo
-
-
->>>>>>> 01e13ff (Mis cambios locales en views.py)
 #modificar->cami
 #listar->marce
 
