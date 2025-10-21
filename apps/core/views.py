@@ -1,8 +1,8 @@
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from apps.core.models import Mascotas
-from .forms import RegistroUsuarioForm, MascotasForm
+from apps.core.models import Especie, Mascotas, Raza
+from .forms import EspecieForm, RazaForm, RegistroUsuarioForm, MascotasForm
 from django.contrib.auth import authenticate, login, logout as auth_logout #importamos la funcion "authenticate"
 
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView #importamos las clases bases para el abm
@@ -89,7 +89,7 @@ class ModificarMascota(UpdateView):
     template_name='mascotas/modificar.html'
     success_url=reverse_lazy('listar_mascotas')
 
-"""class CrearMascota(CreateView):
+class CrearMascota(CreateView):
     model=Mascotas
     form_class=MascotasForm
     template_name='mascotas/crear.html'
@@ -98,7 +98,7 @@ class ModificarMascota(UpdateView):
 class EliminarMascota(DeleteView):
     model=Mascotas
     template_name='mascotas/eliminar.html'
-    success_url=reverse_lazy('listar_mascotas')"""
+    success_url=reverse_lazy('listar_mascotas')
 
 #abm fbv
 def crear_mascota(request):
@@ -127,16 +127,36 @@ def eliminar_mascota(request):
 
 #abm raza(fbv)
 #crear->cami
-
-
-
 #eliminar->marce
 #modificar-> jessi
-#listar->yo
+
+def modificar_raza(request, raza_id):
+    # Obtiene la instancia de la raza que se va a modificar
+    raza = get_object_or_404(Raza, id=raza_id) # type: ignore
+
+    if request.method == 'POST':
+        form = RazaForm(request.POST, instance=raza)
+        if form.is_valid():
+            form.save()  # Guarda los cambios
+            return redirect('listar_razas')  # Redirige a la lista de razas después de la modificación
+    else:
+        form = RazaForm(instance=raza)  # Prellenamos el formulario con la instancia existente
+
+    return render(request, 'modificar_raza.html', {'form': form})
+
+
+#listar
 
 #abm especie(cbv)
 #crear->jessi
-#eliminar->yo
+
+class CrearEspecieView(CreateView):
+    model = Especie
+    form_class = EspecieForm
+    template_name = 'crear_especie.html'
+    success_url = reverse_lazy('listar_especies')  # Redirige a la lista de especies después de crear
+    
+#eliminar
 #modificar->cami
 #listar->marce
 
