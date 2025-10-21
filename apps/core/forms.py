@@ -23,3 +23,15 @@ class MascotasForm(forms.ModelForm):
     class Meta:
         model=Mascotas
         fields=["raza","sexo","tamanio","fecha_nac","observaciones"]
+
+#formulario Especie
+class EspecieForm(forms.ModelForm):
+    class Meta:
+        model= Mascotas
+        fields=["nombre"]
+
+#formulario Raza
+class RazaForm(forms.ModelForm):
+    class Meta:
+        model= Mascotas
+        fields=["especie", "nombre"]
