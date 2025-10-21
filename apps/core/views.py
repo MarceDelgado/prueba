@@ -89,7 +89,7 @@ class ModificarMascota(UpdateView):
     template_name='mascotas/modificar.html'
     success_url=reverse_lazy('listar_mascotas')
 
-class CrearMascota(CreateView):
+"""class CrearMascota(CreateView):
     model=Mascotas
     form_class=MascotasForm
     template_name='mascotas/crear.html'
@@ -98,7 +98,7 @@ class CrearMascota(CreateView):
 class EliminarMascota(DeleteView):
     model=Mascotas
     template_name='mascotas/eliminar.html'
-    success_url=reverse_lazy('listar_mascotas')
+    success_url=reverse_lazy('listar_mascotas')"""
 
 #abm fbv
 def crear_mascota(request):
@@ -132,11 +132,11 @@ def eliminar_mascota(request):
 
 #eliminar->marce
 #modificar-> jessi
-#listar
+#listar->yo
 
 #abm especie(cbv)
 #crear->jessi
-#eliminar
+#eliminar->yo
 #modificar->cami
 #listar->marce
 
