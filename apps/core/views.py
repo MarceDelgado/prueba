@@ -129,6 +129,7 @@ def eliminar_mascota(request):
 #crear->cami
 #eliminar->marce
 #modificar-> jessi
+<<<<<<< HEAD
 
 def modificar_raza(request, raza_id):
     # Obtiene la instancia de la raza que se va a modificar
@@ -157,7 +158,25 @@ class CrearEspecieView(CreateView):
     success_url = reverse_lazy('listar_especies')  # Redirige a la lista de especies después de crear
     
 #eliminar
+=======
+#listar->yo
+def listar_razas(request):
+    pass
+
+
+
+
+#abm especie(cbv)
+#crear->jessi
+#eliminar->yo
+
+
+>>>>>>> 01e13ff (Mis cambios locales en views.py)
 #modificar->cami
 #listar->marce
 
 #abm personas(fbv)
+#crear->marce
+#modificar->yo
+#eliminar->cami
+#listar->jessi
