@@ -52,8 +52,6 @@ def login_view(request):
    #contexto = {}  # Esto está en un bloque que no se ejecutará
    return render(request, 'login.html')
 
-
-
 def dashboard(request):
    lista_mascotas = Mascotas.objects.all()
    contexto = {
@@ -79,18 +77,11 @@ def registro(request):
     
     return render(request, "registro.html", {"form": form})
 
-
+#abm mascotas
 #abm cbv
 class ListarMascotas(ListView):
     model=Mascotas
     template_name='mascotas/listaMascotas.html'
-
-class CrearMascota(CreateView):
-    model=Mascotas
-    form_class=MascotasForm
-    template_name='mascotas/crear.html'
-    success_url=reverse_lazy('listar_mascotas')
-    
 
 class ModificarMascota(UpdateView):
     model=Mascotas
@@ -98,7 +89,52 @@ class ModificarMascota(UpdateView):
     template_name='mascotas/modificar.html'
     success_url=reverse_lazy('listar_mascotas')
 
+class CrearMascota(CreateView):
+    model=Mascotas
+    form_class=MascotasForm
+    template_name='mascotas/crear.html'
+    success_url=reverse_lazy('listar_mascotas')
+    
 class EliminarMascota(DeleteView):
     model=Mascotas
     template_name='mascotas/eliminar.html'
     success_url=reverse_lazy('listar_mascotas')
+
+#abm fbv
+def crear_mascota(request):
+    if request.method=='POST':
+        raza=request.POST.get('raza')
+        sexo=request.POST.get('sexo')
+        tamanio=request.POST.get('tamanio')
+        observaciones=request.POST.get('observaciones')
+        fecha_nac=request.POST.get('fecha_nac')
+
+        nueva_mascota=Mascotas(
+            raza=raza,
+            sexo=sexo,
+            tamanio=tamanio,
+            observaciones=observaciones,
+            fecha_nac=fecha_nac
+        )
+
+        nueva_mascota.save()
+        return redirect('listar_mascotas')
+    
+    return render(request, 'crear.html')
+
+def eliminar_mascota(request):
+    pass
+
+#abm raza(fbv)
+#crear->cami
+#eliminar->marce
+#modificar-> jessi
+#listar
+
+#abm especie(cbv)
+#crear->jessi
+#eliminar
+#modificar->cami
+#listar->marce
+
+#abm personas(fbv)
