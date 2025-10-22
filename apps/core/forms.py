@@ -21,7 +21,7 @@ class RegistroUsuarioForm(UserCreationForm):
 class PersonasForm(forms.ModelForm):
     class Meta:
         model = Persona
-        fields = ['nombre', 'apellido', 'edad', 'email', 'telefono']       
+        fields = ['nombre', 'apellido', 'email', 'telefono']       
 
 #formulario para las mascotas
 class MascotasForm(forms.ModelForm):
