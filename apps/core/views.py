@@ -222,7 +222,7 @@ def crear_persona(request):
         else:
             #si es un GET, se muestra el formulario vacio
             form = PersonaForm()
-        return render(request, 'crear_persona.html', {'form': form})
+        return render(request, 'crear_persona.html')
     
 
 #modificar->yo
