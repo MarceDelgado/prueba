@@ -17,6 +17,11 @@ class RegistroUsuarioForm(UserCreationForm):
             'password1': 'Contraseña',
             'password2': 'Confirmar contraseña',
         }
+#Formulario Personas
+class PersonasForm(forms.ModelForm):
+    class Meta:
+        model = Persona
+        fields = ['nombre', 'apellido', 'edad', 'email', 'telefono']       
 
 #formulario para las mascotas
 class MascotasForm(forms.ModelForm):
@@ -36,8 +41,4 @@ class RazaForm(forms.ModelForm):
         model= Mascotas
         fields=["especie", "nombre"]
 
-#formulario Persona
-class PersonaForm(forms.ModelForm):
-    class Meta:
-        model = Persona
-        fields = ['apellido', 'nombre', 'dni', 'fecha_nacimiento', 'domicilio', 'email', 'telefono']
+#HOLA ESTOY PROBNDO UE FUNCIONE EL GIT 
