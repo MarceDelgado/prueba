@@ -230,7 +230,7 @@ def crear_persona(request):
 def eliminar_persona(request, persona_id):
     persona = get_object_or_404(Persona, id=persona_id)
     persona.delete()
-  
+   
     return redirect('eliminarPersona')
 
 #listar->jessi

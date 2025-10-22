@@ -30,6 +30,7 @@ class Domicilio(models.Model):
 class Persona(models.Model):
     apellido = models.CharField(max_length=80)
     nombre = models.CharField(max_length=80)
+    edad = models.IntegerField()
     dni = models.CharField("Documento", max_length=20, blank=True, null=True, unique=True)
     fecha_nacimiento = models.DateField()
     domicilio = models.ForeignKey(Domicilio, on_delete=models.SET_NULL, null=True, blank=True, related_name="personas")
