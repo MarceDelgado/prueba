@@ -210,7 +210,20 @@ class ListarEspeciesView(ListView):
 
 #abm personas(fbv)
 #crear->marce
-
+def crear_persona(request):
+    if request.method == 'POST':
+        #Si el formulario es valido se envia
+        form = PersonaForm(request.POST)
+        if form.is_valid():
+            #se guarda el formulario
+            form.save()
+            #redirigimos a la lista de personas
+            return redirect('listar_personas')
+        else:
+            #si es un GET, se muestra el formulario vacio
+            form = PersonaForm()
+        return render(request, 'crear_persona.html', {'form': form})
+    
 
 #modificar->yo
 #eliminar->cami
