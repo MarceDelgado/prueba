@@ -114,11 +114,11 @@ def listar_razas(request):
 def crear_raza(request):
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
-        especie = request.POST.get('especie')
+        especie_id = request.POST.get('especie')
 
         especie = None
-        if especie:  # si el usuario seleccionó alguna especie
-            especie = get_object_or_404(Especie, id=especie)
+        if especie_id:  # si el usuario seleccionó alguna especie
+            especie = get_object_or_404(Especie, id=especie_id)
 
         nuevaRaza = Raza (
             nombre = nombre,
@@ -180,7 +180,7 @@ class EliminarEspecie(DeleteView):
     success_url=reverse_lazy('listar_especies')
 
 #modificar->cami
-class ModificarEspecieView(CreateView):
+class ModificarEspecieView(UpdateView):
     model = Especie
     form_class = EspecieForm
     template_name = 'especie/modificarEspecie.html'
