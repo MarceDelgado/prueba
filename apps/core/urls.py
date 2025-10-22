@@ -14,8 +14,7 @@ urlpatterns = [
 	path('dashboard/', dashboard, name='dashboard'),
     #url del abm mascotas
     path('lista/', ListarMascotas.as_view(), name='listar_mascotas'),
-    path('crear/', CrearMascota.as_view(), name='crear_mascotas'),
-	path('personas/crear/', CrearPersonaView.as_view(), name='crear_persona'),
+    path('crear/', CrearMascota.as_view(), name='crear_mascotas'),	
     path('modificar/<int:pk>/', ModificarMascota.as_view(), name='modificar_mascotas'),
     path('eliminar/<int:pk>/', EliminarMascota.as_view(), name='eliminar_mascotas'),
     path('eliminar_raza/<int:raza_id>/', auth_views.eliminar_raza, name='eliminar_raza'),
