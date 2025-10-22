@@ -47,6 +47,7 @@ class Persona(models.Model):
 
 class Especie(models.Model):
     nombre = models.CharField(max_length=80)
+    descripcion = models.TextField()
 
     def __str__(self):
         return f"{self.nombre}"
