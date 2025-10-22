@@ -200,9 +200,18 @@ class ModificarEspecieView(CreateView):
     success_url = reverse_lazy('listar_especies')
 
 #listar->marce
+class ListarEspeciesView(ListView):
+    model = Especie
+    #Nombre del archivo html
+    template_name = 'listar_especies.html'
+    #Nombre con el que se accede a las especies
+    context_object_name = 'especies'
+    
 
 #abm personas(fbv)
 #crear->marce
+
+
 #modificar->yo
 #eliminar->cami
 def eliminar_persona(request, persona_id):

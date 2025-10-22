@@ -2,6 +2,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from .views import (home, buscar_animales,contacto, login_view, logout_view, registro, dashboard, eliminar_raza, crear_raza, eliminar_persona,
                     ListarMascotas, CrearMascota, ModificarMascota, EliminarMascota, ModificarEspecieView)
+from apps.core.views import ListarEspeciesView
 
 urlpatterns = [
 	path('', home, name='home'),
@@ -19,5 +20,6 @@ urlpatterns = [
     path('eliminar_raza/<int:raza_id>/', auth_views.eliminar_raza, name='eliminar_raza'),
     path('razas/', crear_raza, name = 'crear_raza'),
     path('persona/eliminar/<int:persona_id>/', eliminar_persona, name='eliminar_persona'),
+	path('especies/', ListarEspeciesView.as_view(), name='listar_especies'),
     path('especie/modificar/<int:pk>/', ModificarEspecieView.as_view(), name='modificar_especie'),
 ]
