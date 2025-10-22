@@ -5,6 +5,12 @@
             <li><a href="{% url 'dashboard' %}" class="btn-sidebar"><i class="bi bi-house"></i>Inicio</a></li>
             <li><a href="{% url 'listar_mascotas' %}"class="btn-sidebar"><i class="bi bi-list-ul"></i>Lista de Mascotas</a></li>
             <li><a href="{% url 'crear_mascotas' %}"class="btn-sidebar"><i class="bi bi-plus-circle"></i>Agregar Mascota</a></li>
+            <li><a href="{% url 'listar_raza' %}" class="btn-sidebar"><i class="bi bi-list-ul">Lista Raza</a></li>
+            <li><a href="{% url 'crear_raza' %}" class="btn-sidebar"><i class="bi bi-plus-circle">Agregar Raza</a></li>
+            <li><a href="{% url 'listar_especie' %}" class="btn-sidebar"><i class="bi bi-list-ul">Lista Especie</a></li>
+            <li><a href="{% url 'crear_especie' %}" class="btn-sidebar"><i class="bi bi-plus-circle">Agregar Especie</a></li>
+            <li><a href="{% url 'listar_persona' %}" class="btn-sidebar"><i class="bi bi-list-ul">Lista Adoptantes</a></li>
+            <li><a href="{% url 'crear_persona' %}" class="btn-sidebar"><i class="bi bi-plus-circle">Agregar Adoptante</a></li>
         </ul> 
     {% else %}
         <p>Se debe <a href="{% url 'login' %}">INICIAR SESIÓN</a> para ver las opciones</p>

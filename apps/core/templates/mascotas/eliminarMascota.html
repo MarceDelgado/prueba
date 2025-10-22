@@ -5,7 +5,7 @@
         <form method="post">
             {% csrf_token %}
             <h2>¿ESTÁS SEGURO DE QUERER ELIMINAR A ESTA MASCOTA? </h2>
-            <h2>{{mascotas.raza}}</h2>
+            <h2>{{mascota.raza}}</h2>
             <button type="submit"class="btn btn-primary">Eliminar mascota</button>
             <a href="{% url 'listar_mascotas' %}"class="btn btn-secondary"> Cancelar </a>
         </form>

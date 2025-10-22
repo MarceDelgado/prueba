@@ -2,7 +2,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from apps.core.models import Mascotas, Persona
+from apps.core.models import Mascotas, Persona,Raza,Especie
 
 class RegistroUsuarioForm(UserCreationForm):
     email = forms.EmailField(required=True, label="Correo electrónico")
@@ -32,13 +32,11 @@ class MascotasForm(forms.ModelForm):
 #formulario Especie
 class EspecieForm(forms.ModelForm):
     class Meta:
-        model= Mascotas
+        model= Especie
         fields=["nombre"]
 
 #formulario Raza
 class RazaForm(forms.ModelForm):
     class Meta:
-        model= Mascotas
+        model= Raza
         fields=["especie", "nombre"]
-
-#HOLA ESTOY PROBNDO UE FUNCIONE EL GIT 

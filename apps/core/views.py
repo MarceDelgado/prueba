@@ -1,8 +1,8 @@
 from django.urls import reverse_lazy
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib import messages
-from apps.core.models import Especie, Mascotas, Raza, Persona
-from .forms import EspecieForm, RazaForm, RegistroUsuarioForm, MascotasForm, PersonaForm
+from apps.core.models import Especie, Mascotas, Raza,Persona
+from .forms import EspecieForm, RazaForm, RegistroUsuarioForm, MascotasForm, PersonasForm
 from django.contrib.auth import authenticate, login, logout as auth_logout #importamos la funcion "authenticate"
 
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView #importamos las clases bases para el abm
@@ -77,8 +77,7 @@ def registro(request):
     
     return render(request, "registro.html", {"form": form})
 
-#abm mascotas
-#abm cbv
+#ABM MASCOTAS(cbv,fbv) sabri
 class ListarMascotas(ListView):
     model=Mascotas
     template_name='mascotas/listaMascotas.html'
@@ -86,46 +85,31 @@ class ListarMascotas(ListView):
 class ModificarMascota(UpdateView):
     model=Mascotas
     form_class=MascotasForm
-    template_name='mascotas/modificar.html'
+    template_name='mascotas/modificarMascota.html'
     success_url=reverse_lazy('listar_mascotas')
 
-class CrearMascota(CreateView):
-    model=Mascotas
-    form_class=MascotasForm
-    template_name='mascotas/crear.html'
-    success_url=reverse_lazy('listar_mascotas')
-    
-class EliminarMascota(DeleteView):
-    model=Mascotas
-    template_name='mascotas/eliminar.html'
-    success_url=reverse_lazy('listar_mascotas')
-
-#abm fbv
 def crear_mascota(request):
     if request.method=='POST':
-        raza=request.POST.get('raza')
-        sexo=request.POST.get('sexo')
-        tamanio=request.POST.get('tamanio')
-        observaciones=request.POST.get('observaciones')
-        fecha_nac=request.POST.get('fecha_nac')
+        form=MascotasForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('listar_mascotas')
+    else:
+        form=MascotasForm()
+    return render(request, 'mascotas/crearMascota.html', {'form':form})
 
-        nueva_mascota=Mascotas(
-            raza=raza,
-            sexo=sexo,
-            tamanio=tamanio,
-            observaciones=observaciones,
-            fecha_nac=fecha_nac
-        )
-
-        nueva_mascota.save()
+def eliminar_mascota(request, id):
+    mascota=get_object_or_404(Mascotas, pk=id)
+    if request.method=='POST':
+        mascota.delete()
         return redirect('listar_mascotas')
-    
-    return render(request, 'crear.html')
+    return render(request,'mascotas/eliminarMascota.html', {'mascota':mascota})
 
-def eliminar_mascota(request):
+#ABM RAZA(fbv)
+#listar
+def listar_razas(request):
     pass
 
-#abm raza(fbv)
 #crear->cami
 def crear_raza(request):
     if request.method == 'POST':
@@ -145,7 +129,7 @@ def crear_raza(request):
         return redirect('listar_razas')
     
     especies = Especie.objects.all()
-    return render(request, 'crearRaza.html', {'especies': especies})
+    return render(request, 'raza/crearRaza.html', {'especies': especies})
 
 #eliminar->marce
 def eliminar_raza(request, raza_id):
@@ -162,9 +146,9 @@ def eliminar_raza(request, raza_id):
         except Exception as e:
             messages.error(request, f"Error al eliminar la raza: {e}")
          #Redirige a la lista de razas
-        return redirect('lista_razas')
+        return redirect('listar_razas')
     #Si el metodo no es POST, muestra el formulario de confirmacion
-    return render(request, 'eliminar_raza.html', {'raza': raza})
+    return render(request, 'raza/eliminarRaza.html', {'raza': raza})
 
 #modificar-> jessi
 def modificar_raza(request, raza_id):
@@ -179,41 +163,44 @@ def modificar_raza(request, raza_id):
     else:
         form = RazaForm(instance=raza)  # Prellenamos el formulario con la instancia existente
 
-    return render(request, 'modificar_raza.html', {'form': form})
+    return render(request, 'raza/modificarRaza.html', {'form': form})
 
-#listar
 
-#abm especie(cbv)
+#ABM ESPECIE(cbv)
 #crear->jessi
 class CrearEspecieView(CreateView):
     model = Especie
     form_class = EspecieForm
-    template_name = 'crearEspecie.html'
+    template_name = 'especie/crearEspecie.html'
     success_url = reverse_lazy('listar_especies')  # Redirige a la lista de especies después de crear
-    
-#eliminar
+#eliminar->sabri
+class EliminarEspecie(DeleteView):
+    model=Especie
+    template_name='especie/eliminarEspecie.html'
+    success_url=reverse_lazy('listar_especies')
+
 #modificar->cami
 class ModificarEspecieView(CreateView):
     model = Especie
     form_class = EspecieForm
-    template_name = 'modificarEspecie.html'
+    template_name = 'especie/modificarEspecie.html'
     success_url = reverse_lazy('listar_especies')
 
 #listar->marce
 class ListarEspeciesView(ListView):
     model = Especie
     #Nombre del archivo html
-    template_name = 'listar_especies.html'
+    template_name = 'especie/listarEspecies.html'
     #Nombre con el que se accede a las especies
     context_object_name = 'especies'
     
 
-#abm personas(fbv)
+#ABM PERSONA(fbv)
 #crear->marce
 def crear_persona(request):
     if request.method == 'POST':
         #Si el formulario es valido se envia
-        form = PersonaForm(request.POST)
+        form = PersonasForm(request.POST)
         if form.is_valid():
             #se guarda el formulario
             form.save()
@@ -221,11 +208,22 @@ def crear_persona(request):
             return redirect('listar_personas')
     else:
             #si es un GET, se muestra el formulario vacio
-            form = PersonaForm()
-    return render(request, 'crear_persona.html', {'form': form})
+            form = PersonasForm()
+    return render(request, 'personas/crearPersonas.html', {'form': form})
     
 
-#modificar->yo
+#modificar->sabri
+def modificar_persona(request, id):
+    persona=get_object_or_404(Persona,pk=id)
+    if request.method=='POST':
+        form=PersonasForm(request.POST, instance=persona)
+        if form.is_valid():
+            persona.save()
+            return redirect('listar_personas')
+    else:
+        form=PersonasForm(instance=persona)
+    return render(request,'personas/modificarPersona.html',{'form':form})
+
 #eliminar->cami
 def eliminar_persona(request, persona_id):
     persona = get_object_or_404(Persona, id=persona_id)
@@ -234,3 +232,5 @@ def eliminar_persona(request, persona_id):
     return redirect('eliminarPersona')
 
 #listar->jessi
+def listar_personas(request):
+    pass

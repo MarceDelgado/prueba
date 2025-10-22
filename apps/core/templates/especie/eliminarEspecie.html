@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="form-container">
+        <h1>Eliminar Especie</h1>
+        <form method="post">
+            {% csrf_token %}
+            <h2>¿ESTÁS SEGURO DE QUERER ELIMINAR A ESTA ESPECIE? </h2>
+            <h2>{{object.nombre}}</h2>
+            <button type="submit" class="btn btn-primary">Eliminar Especie</button>
+            <a href="{% url 'listar_especies' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+    
+{% endblock %}
