@@ -1,0 +1,28 @@
+
+{% extends 'base.html'%}
+
+{% block content %}
+<div class="container">
+	<h2> Confirmar eliminacion de la raza</h2>
+
+    {% if messages %}
+	<div class="alert-container">
+		{%for messages in messages %}
+		<div class="alert alert - {{messages.tags}}">
+			{{ messages }}
+		</div>
+		{% endfor %}
+	</div>
+{% endif %}
+
+<p> ¿Estas seguro de que desea eliminar la raza <strong> {{ raza.nombre}}</strong>?</p>
+
+<!--Formulario de confirmacion de eliminacion-->
+<form method="post">
+	{% csrf_token %}
+	<button type="submit" class="btn btn-danger">Eliminar</button>
+	<a href="{% url 'lista_razas' %}" class="btn btn-secondary">Cancelar</a>
+
+</form>
+<div>
+{%endblock %}

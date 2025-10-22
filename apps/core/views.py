@@ -151,8 +151,16 @@ def crear_raza(request):
 def eliminar_raza(request, raza_id):
     #Obtiene la raza por su id, si no existe se genera error
     raza = get_object_or_404(Raza, id=raza_id)
-    #Elimina el objeto si lo encuentra 
-    raza.delete()
+    
+    #Si el formulario se envia, se confirma la eliminacion
+    if request.method == 'POST':
+        try:
+            #Elimina el objeto si lo encuentra 
+            raza.delete()
+   
+        #Mensaje de exito
+        messages.success(request, "La raza ha sido eliminada exitosamente.")
+    
     #Redirige a la lista de razas
     return redirect('lista_razas')
 
