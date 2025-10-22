@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Crear nueva raza</h1>
+
+<form method="POST">
+  {% csrf_token %}
+  
+  <label for="nombre">Nombre de la raza:</label>
+  <input type="text" name="nombre" id="nombre" required>
+
+  <label for="especie">Especie:</label>
+  <select name="especie" id="especie">
+    <option value="">-- Seleccionar especie --</option>
+    {% for especie in especies %}
+      <option value="{{ especie.id }}">{{ especie.nombre }}</option>
+    {% endfor %}
+  </select>
+
+  <button type="submit">Guardar</button>
+</form>
+{% endblock %}

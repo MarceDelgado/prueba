@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Listado de Personas</h1>
+
+{% if personas %}
+<table border="1" cellpadding="5">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Apellido</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for persona in personas %}
+    <tr>
+      <td>{{ persona.nombre }}</td>
+      <td>{{ persona.apellido }}</td>
+      <td>
+        <!-- Formulario POST para eliminar -->
+        <form method="POST" action="{% url 'eliminar_persona' persona.id %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" onclick="return confirm('¿Seguro que querés eliminar a {{ persona.nombre }}?');">
+            Eliminar
+          </button>
+        </form>
+        <!-- Podés agregar un enlace para editar -->
+        <a href="{% url 'modificar_persona' persona.id %}">Editar</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No hay personas registradas.</p>
+{% endif %}
+
+<!-- Botón para agregar nueva persona -->
+<a href="{% url 'crear_persona' %}">Agregar nueva persona</a>
+
+{% endblock %}
