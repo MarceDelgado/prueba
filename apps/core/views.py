@@ -156,13 +156,15 @@ def eliminar_raza(request, raza_id):
     if request.method == 'POST':
         try:
             #Elimina el objeto si lo encuentra 
-            raza.delete()
-   
-        #Mensaje de exito
-        messages.success(request, "La raza ha sido eliminada exitosamente.")
-    
-    #Redirige a la lista de razas
-    return redirect('lista_razas')
+            raza.delete()   
+            #Mensaje de exito
+            messages.success(request, "La raza ha sido eliminada exitosamente.")
+        except Exception as e:
+            messages.error(request, f"Error al eliminar la raza: {e}")
+         #Redirige a la lista de razas
+        return redirect('lista_razas')
+    #Si el metodo no es POST, muestra el formulario de confirmacion
+    return render(request, 'eliminar_raza.html', {'raza': raza})
 
 #modificar-> jessi
 def modificar_raza(request, raza_id):
