@@ -219,10 +219,10 @@ def crear_persona(request):
             form.save()
             #redirigimos a la lista de personas
             return redirect('listar_personas')
-        else:
+    else:
             #si es un GET, se muestra el formulario vacio
             form = PersonaForm()
-        return render(request, 'crear_persona.html')
+    return render(request, 'crear_persona.html', {'form': form})
     
 
 #modificar->yo
