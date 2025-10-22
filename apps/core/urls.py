@@ -17,6 +17,6 @@ urlpatterns = [
     path('crear/', CrearMascota.as_view(), name='crear_mascotas'),
     path('modificar/<int:pk>/', ModificarMascota.as_view(), name='modificar_mascotas'),
     path('eliminar/<int:pk>/', EliminarMascota.as_view(), name='eliminar_mascotas'),
-
+    path('eliminar_raza/<int:raza_id>/', auth_views.eliminar_raza, name='eliminar_raza'),
     
 ]
