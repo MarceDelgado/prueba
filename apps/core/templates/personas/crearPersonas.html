@@ -1,0 +1,14 @@
+<!-- templates/crear_persona.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container">
+    <h2>Crear Persona</h2>
+
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}  <!-- Muestra el formulario con campos de forma vertical -->
+      <button type="submit" class="btn btn-primary">Guardar Persona</button>
+    </form>
+  </div>
+{% endblock %}
