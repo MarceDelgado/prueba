@@ -230,7 +230,7 @@ def eliminar_persona(request, persona_id):
     persona = get_object_or_404(Persona, id=persona_id)
 
     if request.method == 'POST':
-    persona.delete()
+       persona.delete()
    
     return render(request, 'personas/eliminarPersona.html', {'persona': persona})
 
