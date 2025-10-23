@@ -228,10 +228,13 @@ def modificar_persona(request, id):
 #eliminar->cami
 def eliminar_persona(request, persona_id):
     persona = get_object_or_404(Persona, id=persona_id)
+
+    if request.method == 'POST':
     persona.delete()
    
-    return redirect('eliminarPersona')
+    return render(request, 'personas/eliminarPersona.html', {'persona': persona})
 
 #listar->jessi
 def listar_personas(request):
-    pass
+    persona = Persona.objects.all()
+    return render(request, 'personas/listarPersonas.html', {'personas': persona})
