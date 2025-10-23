@@ -106,9 +106,10 @@ def eliminar_mascota(request, id):
     return render(request,'mascotas/eliminarMascota.html', {'mascota':mascota})
 
 #ABM RAZA(fbv)
-#listar
+#listar-> sabri
 def listar_razas(request):
-    pass
+    razas=Raza.objects.all()
+    return render(request, 'raza/listarRaza.html',{'razas':razas})
 
 #crear->cami
 def crear_raza(request):
@@ -190,7 +191,7 @@ class ModificarEspecieView(UpdateView):
 class ListarEspeciesView(ListView):
     model = Especie
     #Nombre del archivo html
-    template_name = 'especie/listarEspecies.html'
+    template_name = 'especie/listarEspecie.html'
     #Nombre con el que se accede a las especies
     context_object_name = 'especies'
     

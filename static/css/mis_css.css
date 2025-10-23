@@ -48,19 +48,21 @@ table th, table td {
 .layout{
     display: flex;
     position: relative;
+    gap: 20px; 
+    margin-top: 20px;
 }
-.main-content{
-    margin-left: 240px; /* deja espacio para el sidebar */
-    padding: 30px;
-    width: 100%;
+.main-content {
+    flex: 1; /* ocupa el resto del espacio */
+    padding: 30px 20px;
+    min-height: 80vh;
 }/* SIDEBAR */
 .sidebar {
     width: 230px;
     background-color: #1e2a38; /* un tono más oscuro para más contraste */
     color: #fff;
     padding: 30px 25px;
-    position: fixed;
-    top: 120px; /* lo deja un poco más abajo del navbar */
+    position: relative;
+    top: 70px; /* lo deja un poco más abajo del navbar */
     left: 20px;
     height: calc(100vh - 130px);
     border-radius: 12px;
@@ -69,7 +71,11 @@ table th, table td {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    overflow-y: auto;   /* activa scroll vertical */
+    scrollbar-width: thin;
+    
 }
+
 
 /* Título del menú */
 .sidebar h2 {
@@ -123,4 +129,5 @@ table th, table td {
 .btn-sidebar i {
     margin-right: 12px;
     font-size: 20px;
+    vertical-align: middle;
 }

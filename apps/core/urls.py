@@ -23,7 +23,7 @@ urlpatterns = [
     path('eliminar_raza/<int:raza_id>/',eliminar_raza, name='eliminar_raza'),
     path('crear_raza/', crear_raza, name = 'crear_raza'),
     path('listar_razas/', listar_razas, name='listar_razas'),
-    path('modificar_raza/<int:id>',modificar_raza,name='modificar_raza'),
+    path('modificar_raza/<int:raza_id>',modificar_raza,name='modificar_raza'),
     #url del abm especie
     path('listar_especies/', ListarEspeciesView.as_view(), name='listar_especies'),
     path('eliminar_especie/<int:pk>/',EliminarEspecie.as_view(), name='eliminar_especie'),

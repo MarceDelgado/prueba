@@ -86,10 +86,12 @@
     <!-- Contenido principal -->
     <div class="layout">
         {% include 'sidebar.html' %}
-        <main class="container mt-4">
-            {% block content %}
-            <!-- Aquí va el contenido de cada plantilla hija -->
-            {% endblock %}
+        <main class="main-content">
+            <div class="container mt-4">
+                {% block content %}
+                <!-- Aquí va el contenido de cada plantilla hija -->
+                {% endblock %}
+            </div>
         </main>
     </div>
 
