@@ -237,4 +237,4 @@ def eliminar_persona(request, persona_id):
 #listar->jessi
 def listar_personas(request):
     persona = Persona.objects.all()
-    return render(request, 'personas/listarPersonas.html', {'personas': persona})
+    return render(request, 'personas/listaPersonas.html', {'personas': persona})
