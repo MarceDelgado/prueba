@@ -1,22 +1,25 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Crear nueva raza</h1>
+  <div class="form-container">
+    <h1>Crear nueva raza</h1>
 
-<form method="POST">
-  {% csrf_token %}
-  
-  <label for="nombre">Nombre de la raza:</label>
-  <input type="text" name="nombre" id="nombre" required>
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
 
-  <label for="especie">Especie:</label>
-  <select name="especie" id="especie">
-    <option value="">-- Seleccionar especie --</option>
-    {% for especie in especies %}
-      <option value="{{ especie.id }}">{{ especie.nombre }}</option>
-    {% endfor %}
-  </select>
+      <label for="nombre">Nombre de la raza:</label> 
+      <input type="text" name="nombre" id="nombre" required><br><br>
+      
+      <label for="especie">Especie:</label> 
+      <select name="especie" id="especie"> 
+        <option value="">-- Seleccionar especie --</option>   
+        {% for especie in especies %} 
+        <option value="{{ especie.id }}">{{ especie.nombre }}</option> 
+        {% endfor %} </select> <br><br>
 
-  <button type="submit">Guardar</button>
-</form>
+      <button type="submit" class="btn btn-primary">Guardar</button>
+      <a href="{% url 'listar_razas' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+  </div>
 {% endblock %}
