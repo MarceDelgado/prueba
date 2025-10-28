@@ -1,18 +1,37 @@
-<div class="sidebar">
-    <h1>MENÚ</h1>
-    {% if user.is_authenticated %}
-        <ul class="sidebar-menu">
-            <li><a href="{% url 'dashboard' %}" class="btn-sidebar"><i class="bi bi-house"></i>Inicio</a></li>
-            <li><a href="{% url 'listar_mascotas' %}"class="btn-sidebar"><i class="bi bi-list-ul"></i>Lista de Mascotas</a></li>
-            <li><a href="{% url 'crear_mascotas' %}"class="btn-sidebar"><i class="bi bi-plus-circle"></i>Agregar Mascota</a></li>
-            <li><a href="{% url 'listar_razas' %}" class="btn-sidebar"><i class="bi bi-list-ul"></i>Lista Raza</a></li>
-            <li><a href="{% url 'crear_raza' %}" class="btn-sidebar"><i class="bi bi-plus-circle"></i>Agregar Raza</a></li>
-            <li><a href="{% url 'listar_especies' %}" class="btn-sidebar"><i class="bi bi-list-ul"></i>Lista Especie</a></li>
-            <li><a href="{% url 'crear_especie' %}" class="btn-sidebar"><i class="bi bi-plus-circle"></i>Agregar Especie</a></li>
-            <li><a href="{% url 'listar_personas' %}" class="btn-sidebar"><i class="bi bi-list-ul"></i>Lista Adoptantes</a></li>
-            <li><a href="{% url 'crear_persona' %}" class="btn-sidebar"><i class="bi bi-plus-circle"></i>Agregar Adoptante</a></li>
-        </ul> 
-    {% else %}
-        <p>Se debe <a href="{% url 'login' %}">INICIAR SESIÓN</a> para ver las opciones</p>
-    {% endif %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mascotas disponibles - Universo Peludo{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4 text-center">Mascotas Disponibles</h2>
+
+    <!-- Acordeón de Mascotas -->
+    <div class="accordion" id="accordionMascotas">
+        {% for mascota in mascotas %}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading{{ mascota.id }}">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ mascota.id }}" aria-expanded="false" aria-controls="collapse{{ mascota.id }}">
+                        {{ mascota.raza }} - {{ mascota.sexo }}
+                    </button>
+                </h2>
+                <div id="collapse{{ mascota.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ mascota.id }}" data-bs-parent="#accordionMascotas">
+                    <div class="accordion-body">
+                        <strong>Especie:</strong> {{ mascota.raza.especie }}<br>
+                        <strong>Fecha de nacimiento:</strong> {{ mascota.fecha_nac }}<br>
+                        <strong>Observaciones:</strong> {{ mascota.observaciones }}<br>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="accordion-item">
+                <div class="accordion-body text-center text-muted">
+                    No hay mascotas disponibles.
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
 </div>
+{% endblock %}
