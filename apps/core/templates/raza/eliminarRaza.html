@@ -1,29 +1,14 @@
-
-{% extends 'base.html'%}
-<h1>ESTO ES UNA PRUEBA</h1>
-
+% extends 'base.html' %}
 {% block content %}
-<div class="container">
-	<h2> Confirmar eliminacion de la raza</h2>
-
-    {% if messages %}
-	<div class="alert-container">
-		{%for messages in messages %}
-		<div class="alert alert - {{messages.tags}}">
-			{{ messages }}
-		</div>
-		{% endfor %}
-	</div>
-{% endif %}
-
-<p> ¿Estas seguro de que desea eliminar la raza <strong> {{ raza.nombre}}</strong>?</p>
-
-<!--Formulario de confirmacion de eliminacion-->
-<form method="post">
-	{% csrf_token %}
-	<button type="submit" class="btn btn-danger">Eliminar</button>
-	<a href="{% url 'listar_razas' %}" class="btn btn-secondary">Cancelar</a>
-
-</form>
-<div>
-{%endblock %}
+    <div class="form-container">
+        <h1>Eliminar Raza</h1>
+        <form method="post">
+            {% csrf_token %}
+            <h2>¿ESTÁS SEGURO DE QUERER ELIMINAR A ESTA Raza? </h2>
+            <h2>{{object.nombre}}</h2>
+            <button type="submit" class="btn btn-primary">Eliminar Raza</button>
+            <a href="{% url 'listar_razas' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+    
+{% endblock %}
