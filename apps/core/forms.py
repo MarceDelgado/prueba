@@ -1,8 +1,10 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+
 from apps.core.models import Mascotas, Persona,Raza,Especie
 from .models import UserProfile
+from apps.core.models import Mascotas, Persona,Raza,Especie, Domicilio
 
 class RegistroUsuarioForm(UserCreationForm):
     email = forms.EmailField(required=True, label="Correo electrónico")
@@ -21,7 +23,7 @@ class RegistroUsuarioForm(UserCreationForm):
 class PersonasForm(forms.ModelForm):
     class Meta:
         model = Persona
-        fields = ['nombre', 'apellido', 'email','telefono']       
+        fields = ['nombre', 'apellido', 'email','telefono', 'dni', 'fecha_nacimiento']       
 
 #formulario para las mascotas
 class MascotasForm(forms.ModelForm):
@@ -46,3 +48,10 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['bio', 'avatar']
+
+#formulario para domicilio
+class DomicilioForm(forms.ModelForm):
+    class Meta:
+        model= Domicilio
+        fields=['calle', 'numero', 'localidad','codigo_postal']
+

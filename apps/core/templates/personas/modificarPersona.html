@@ -4,7 +4,10 @@
         <h1>Modificar Adoptante</h1>
         <form method="post">
             {% csrf_token %}
+            <h3>Datos de Adoptante</h3>
             {{form.as_p}}
+            <h3>Datos de Domicilio</h3>
+            {{domicilio_form.as_p}}
             <button type="submit" class="btn btn-primary">Confirmar Cambios</button>
             <a href="{% url 'listar_personas' %}" class="btn btn-secondary">Cancelar</a>
         </form>

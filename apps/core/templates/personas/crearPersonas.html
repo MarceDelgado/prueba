@@ -7,7 +7,10 @@
 
     <form method="POST">
       {% csrf_token %}
+      <h3>Datos de Persona</h3>
       {{ form.as_p }}  <!-- Muestra el formulario con campos de forma vertical -->
+      <h3>Datos de Domicilio</h3>
+      {{domicilio_form.as_p}}
       <button type="submit" class="btn btn-primary">Guardar Persona</button><br>
     </form>
   </div>

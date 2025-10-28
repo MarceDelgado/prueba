@@ -28,8 +28,8 @@
             <td>{{persona.telefono}}</td>
                  
             <td>
-              <a href="{% url 'eliminar_mascotas' mascota.pk %}"class="btn btn-sm btn-warning">Eliminar mascota</a>
-              <a href="{% url 'modificar_mascotas' mascota.pk %}"class="btn btn-sm btn-danger ms-2">Modificar mascotas</a>
+              <a href="{% url 'eliminar_persona' persona.id %}"class="btn btn-sm btn-warning">Eliminar persona</a>
+              <a href="{% url 'modificar_persona' persona.id %}"class="btn btn-sm btn-danger ms-2">Modificar persona</a>
             </td>
           </tr>
         {% endfor %}

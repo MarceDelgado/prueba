@@ -2,7 +2,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib import messages
 from apps.core.models import Especie, Mascotas, Raza,Persona
-from .forms import EspecieForm, RazaForm, RegistroUsuarioForm, MascotasForm, PersonasForm, UserProfileForm
+from .forms import EspecieForm, RazaForm, RegistroUsuarioForm, MascotasForm, PersonasForm, DomicilioForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout as auth_logout #importamos la funcion "authenticate"
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView #importamos las clases bases para el abm
 from .models import UserProfile
@@ -198,28 +198,40 @@ def crear_persona(request):
     if request.method == 'POST':
         #Si el formulario es valido se envia
         form = PersonasForm(request.POST)
-        if form.is_valid():
+        domicilio_form=DomicilioForm(request.POST)
+        if form.is_valid() and domicilio_form.is_valid():
+            #guardamos el domicilio y asignamos el domicilio a la persona
+            domicilio=domicilio_form.save()
+            persona=form.save(commit=False)# lo creamos pero no guarda aun
+            persona.domicilio=domicilio
             #se guarda el formulario
-            form.save()
+            persona.save()
+            
             #redirigimos a la lista de personas
             return redirect('listar_personas')
     else:
             #si es un GET, se muestra el formulario vacio
             form = PersonasForm()
-    return render(request, 'personas/crearPersonas.html', {'form': form})
+            domicilio_form=DomicilioForm()
+    return render(request, 'personas/crearPersonas.html', {'form': form, 'domicilio_form':domicilio_form})
     
 
 #modificar->sabri
 def modificar_persona(request, id):
     persona=get_object_or_404(Persona,pk=id)
+    domicilio=persona.domicilio
     if request.method=='POST':
         form=PersonasForm(request.POST, instance=persona)
-        if form.is_valid():
-            persona.save()
+        domicilio_form=DomicilioForm(request.POST, instance=domicilio)
+        if form.is_valid() and domicilio_form.is_valid():
+            #guardamos el domicilio y asignamos el domicilio a la persona
+            domicilio_form.save()
+            form.save()
             return redirect('listar_personas')
     else:
         form=PersonasForm(instance=persona)
-    return render(request,'personas/modificarPersona.html',{'form':form})
+        domicilio_form=DomicilioForm(instance=domicilio)
+    return render(request,'personas/modificarPersona.html',{'form':form, 'domicilio_form': domicilio_form})
 
 #eliminar->cami
 def eliminar_persona(request, persona_id):
@@ -228,7 +240,7 @@ def eliminar_persona(request, persona_id):
     if request.method == 'POST':
        persona.delete()
    
-    return render(request, 'personas/eliminarPersona.html', {'persona': persona})
+    return render(request, 'personas/eliminarPersonas.html', {'persona': persona})
 
 #listar->jessi
 def listar_personas(request):
