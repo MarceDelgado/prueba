@@ -139,15 +139,12 @@ def eliminar_raza(request, raza_id):
     
     #Si el formulario se envia, se confirma la eliminacion
     if request.method == 'POST':
-        try:
-            #Elimina el objeto si lo encuentra 
+        #Elimina el objeto si lo encuentra 
             raza.delete()   
             #Mensaje de exito
             messages.success(request, "La raza ha sido eliminada exitosamente.")
-        except Exception as e:
-            messages.error(request, f"Error al eliminar la raza: {e}")
-         #Redirige a la lista de razas
-        return redirect('listar_razas')
+                #Redirige a la lista de razas
+            return redirect('listar_razas')
     #Si el metodo no es POST, muestra el formulario de confirmacion
     return render(request, 'raza/eliminarRaza.html', {'raza': raza})
 

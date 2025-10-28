@@ -1,11 +1,11 @@
-% extends 'base.html' %}
+{% extends 'base.html' %}
 {% block content %}
     <div class="form-container">
         <h1>Eliminar Raza</h1>
         <form method="post">
             {% csrf_token %}
             <h2>¿ESTÁS SEGURO DE QUERER ELIMINAR A ESTA Raza? </h2>
-            <h2>{{object.nombre}}</h2>
+            <h2>{{raza.nombre}}</h2>
             <button type="submit" class="btn btn-primary">Eliminar Raza</button>
             <a href="{% url 'listar_razas' %}" class="btn btn-secondary">Cancelar</a>
         </form>
