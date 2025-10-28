@@ -161,6 +161,18 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 #DIRECTORIO DONDE COLLECTSTATIC REUNE TODOS LOS ARCHIVOS
 STATIC_ROOT = BASE_DIR / 'static_root'
 
+<<<<<<< Updated upstream
 #ARCHIVOS MULTIMEDIA (SUBIDAD POR USUARIO)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+=======
+# CONFIGURACION DE ENVIO DE CORREOS ELECTRONICOS
+
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' PARA ENVIAR CORREOS REALES
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'tucorreo@gmail.com'
+EMAIL_HOST_PASSWORD = 'tu_contraseña_de_aplicación'
+>>>>>>> Stashed changes

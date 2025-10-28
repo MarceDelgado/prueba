@@ -1,0 +1,20 @@
+<form method='post' class='form-recuperar'>
+  {% csrf_token %}
+  
+  <label for='email'>Correo electrónico</label>
+  <input
+    type='email'
+    name='email'
+    id='email'
+    placeholder='tu_correo@ejemplo.com'
+    required
+  >
+  
+  <button type='submit'>Recuperar contraseña</button>
+  
+  {% if mensaje %}
+  <div class='mensajes'>
+    {{ mensaje }}
+  </div>
+  {% endif %}
+</form>

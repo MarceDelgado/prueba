@@ -34,4 +34,8 @@ urlpatterns = [
     path('modificar_persona/<int:id>/',modificar_persona, name='modificar_persona'),
     path('crear_persona/', crear_persona, name='crear_persona'),
     path('eliminar_persona/<int:persona_id>/', eliminar_persona, name='eliminar_persona'),
+    #correo
+    path('solicitar-recuperacion/', views.solicitar_recuperacion, name='solicitar_recuperacion'),
+    path('cambiar-password/<str:token>/', views.cambiar_password, name='cambiar_password'),
+
 ]

@@ -1,5 +1,10 @@
 from django.db import models
+<<<<<<< Updated upstream
 from django.contrib.auth.models import User #REVISAR!!!!!!!!
+=======
+from django.contrib.auth.models import User
+
+>>>>>>> Stashed changes
 
 class Provincia(models.Model):
     descripcion = models.CharField(max_length=100, unique=True)
@@ -77,9 +82,26 @@ class Mascotas(models.Model):
 
     def __str__(self):
         return f"{self.raza.especie}, {self.sexo}, {self.tamanio}, {self.fecha_nac}, {self.observaciones}"
+<<<<<<< Updated upstream
 
 #INSERCION DE IMAGENES   
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True, null=True)
     avatar = models.ImageField(upload_to = 'avatars/', default='avatars/default.png')
+=======
+    
+    #correo
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE
+    )
+    primer_ingreso = models.BooleanField(
+        default=True
+    )
+
+    def __str__(self):
+        return self.user.username
+>>>>>>> Stashed changes
