@@ -16,21 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib.auth.views import LoginView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
     # Tu app principal
     path('', include('apps.core.urls')),
-
-    # Vista de login personalizada con plantilla en core/login.html
-   # path(
-       # 'accounts/login/',
-       # LoginView.as_view(template_name='login.html'),
-     #   name='login'
-  #  ),
-
-    # Incluye las demás vistas de autenticación (logout, password reset, etc.)
-   # path('accounts/', include('django.contrib.auth.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

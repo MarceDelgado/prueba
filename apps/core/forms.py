@@ -1,8 +1,8 @@
-
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from apps.core.models import Mascotas, Persona,Raza,Especie
+from .models import UserProfile
 
 class RegistroUsuarioForm(UserCreationForm):
     email = forms.EmailField(required=True, label="Correo electrónico")
@@ -40,3 +40,9 @@ class RazaForm(forms.ModelForm):
     class Meta:
         model= Raza
         fields=["especie", "nombre"]
+
+#formulario Perfil del Usuario
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['bio', 'avatar']

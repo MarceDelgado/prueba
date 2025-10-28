@@ -2,10 +2,10 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib import messages
 from apps.core.models import Especie, Mascotas, Raza,Persona
-from .forms import EspecieForm, RazaForm, RegistroUsuarioForm, MascotasForm, PersonasForm
+from .forms import EspecieForm, RazaForm, RegistroUsuarioForm, MascotasForm, PersonasForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout as auth_logout #importamos la funcion "authenticate"
-
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView #importamos las clases bases para el abm
+from .models import UserProfile
 
 def home(request):
     return render(request, 'home.html', {})
@@ -23,7 +23,6 @@ def contacto(request):
         # Guardar datos o enviar mail...
         return render(request, 'contacto_exito.html')
     return render(request, 'contacto.html')
-
 
 def login_view(request):   
    #FUNCION DE VISTA DEL LOGEO PARA INICIAR SESION
@@ -235,3 +234,24 @@ def eliminar_persona(request, persona_id):
 def listar_personas(request):
     persona = Persona.objects.all()
     return render(request, 'personas/listaPersonas.html', {'personas': persona})
+
+#EDICION
+#@login_required >>>>> REVISAR!!!
+def edit_profile(request):
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('view_profile')
+        else:
+            form = UserProfileForm(instance=profile)
+
+        return render(request, 'edit_profile.html', {'form': form})
+
+#VISUALIZACION
+#@login_required
+def view_profile(request):
+    profile = UserProfile.objects.get(user=request.user)
+    return render(request, 'view_profile.html', {'profile':profile})
