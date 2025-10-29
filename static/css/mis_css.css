@@ -191,7 +191,6 @@ table th, table td {
     transform: translateX(6px);
   }
   
-  /* Opcional: animación de entrada */
   .sidebar .collapse.sidebar-submenu {
     transition: all 0.3s ease-in-out;
   }

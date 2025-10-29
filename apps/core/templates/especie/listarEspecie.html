@@ -6,7 +6,6 @@
       <thead class="table-primary">
         <tr>
           <th>Nombre de especie</th>
-          <th>Descripción</th>
           <th>Opciones</th>
         </tr>
       </thead>
@@ -14,7 +13,6 @@
         {% for especie in especies %}
           <tr>
             <td>{{especie.nombre}}</td>
-            <td>{{especie.descripcion}}</td>
             <td>
               <a href="{% url 'eliminar_especie' especie.pk %}"class="btn btn-sm btn-warning">Eliminar especie</a>
               <a href="{% url 'modificar_especie' especie.pk %}"class="btn btn-sm btn-danger ms-2">Modificar especie</a>
