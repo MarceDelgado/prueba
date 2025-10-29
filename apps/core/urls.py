@@ -3,7 +3,7 @@ from django.contrib.auth import views as auth_views
 from .views import (home, buscar_animales,contacto, login_view, logout_view, registro, dashboard,
                     ListarMascotas, crear_mascota, ModificarMascota, eliminar_mascota,
                     ModificarEspecieView, EliminarEspecie,ListarEspeciesView,CrearEspecieView,
-                    crear_raza,listar_razas,eliminar_raza,modificar_raza,
+                    crear_raza,listar_razas,eliminar_raza,modificar_raza, recuperar_contraseña, cambiar_password,
                     listar_personas,crear_persona, eliminar_persona, modificar_persona)
 
 urlpatterns = [
@@ -35,7 +35,6 @@ urlpatterns = [
     path('crear_persona/', crear_persona, name='crear_persona'),
     path('eliminar_persona/<int:persona_id>/', eliminar_persona, name='eliminar_persona'),
     #correo
-    path('solicitar-recuperacion/', views.solicitar_recuperacion, name='solicitar_recuperacion'),
-    path('cambiar-password/<str:token>/', views.cambiar_password, name='cambiar_password'),
-
+    path('solicitar-recuperacion/', recuperar_contraseña, name='solicitar_recuperacion'),
+    path('cambiar-password/<str:token>/', cambiar_password, name='cambiar_password'),
 ]

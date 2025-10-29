@@ -7,10 +7,11 @@ from django.contrib.auth import authenticate, login, logout as auth_logout #impo
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView #importamos las clases bases para el abm
 from .models import UserProfile
 
-#corrreo
+#correo
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
 from .emails import enviar_correo_html
+
 
 from django.contrib.auth.hashers import make_password
 from .models import UserProfile
@@ -18,7 +19,7 @@ from .models import UserProfile
 import random, string
 from django.contrib.auth.models import User
 
-from .utils import enviar_correo  # Tu función para enviar correos
+#from .utils import enviar_correo_html  # Tu función para enviar correos
 
 def home(request):
     return render(request, 'home.html', {})
@@ -251,20 +252,15 @@ def eliminar_persona(request, persona_id):
     persona = get_object_or_404(Persona, id=persona_id)
 
     if request.method == 'POST':
-<<<<<<< Updated upstream
        persona.delete()
-=======
-     persona.delete()
->>>>>>> Stashed changes
    
     return render(request, 'personas/eliminarPersonas.html', {'persona': persona})
 
 #listar->jessi
 def listar_personas(request):
     persona = Persona.objects.all()
-<<<<<<< Updated upstream
     return render(request, 'personas/listaPersonas.html', {'personas': persona})
-
+    
 #EDICION
 #@login_required >>>>> REVISAR!!!
 def edit_profile(request):
@@ -285,8 +281,6 @@ def edit_profile(request):
 def view_profile(request):
     profile = UserProfile.objects.get(user=request.user)
     return render(request, 'view_profile.html', {'profile':profile})
-=======
-    return render(request, 'personas/listarPersonas.html', {'personas': persona})
 
 # correo electronico
 
@@ -348,4 +342,3 @@ def cambiar_password(request, token):
         return render(request, 'cambiar_password.html')
     except UserProfile.DoesNotExist:
         return render(request, 'token_invalido.html')
->>>>>>> Stashed changes
