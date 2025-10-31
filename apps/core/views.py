@@ -10,14 +10,13 @@ from .models import UserProfile
 #correo
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
-from .emails import enviar_correo_html
+from .emails import enviar_correo #enviar_correo_html
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 
 from django.contrib.auth.hashers import make_password
-from .models import UserProfile
-
 import random, string
-from django.contrib.auth.models import User
 
 #from .utils import enviar_correo_html  # Tu función para enviar correos
 
@@ -311,13 +310,14 @@ def recuperar_contraseña(request):
                 "usuario": usuario.username,
                 "nueva_pass": nueva_pass,
             }
-            
+            contentenido_html=render_to_string("emails/recuperar.html",contexto)#funcion que lee una plantilla y la rellena con el contexto
+            contentenido_texto=strip_tags(contentenido_html)#funcion para eliminar etiquetas html del texto
             # Enviar correo
             enviar_correo(
                 asunto="Recuperación de contraseña",
-                destinatario=email,
-                contexto=contexto,
-                plantilla_html="emails/recuperar.html"
+                destinatarios=[email],
+                texto=contentenido_texto,
+                html=contentenido_html
             )
             
             mensaje = "Se ha enviado una nueva contraseña a tu correo."
@@ -329,6 +329,7 @@ def recuperar_contraseña(request):
 
 
 # Vista para cambiar contraseña
+"""
 def cambiar_password(request, token):
     try:
         profile = UserProfile.objects.get(recovery_token=token)
@@ -342,3 +343,25 @@ def cambiar_password(request, token):
         return render(request, 'cambiar_password.html')
     except UserProfile.DoesNotExist:
         return render(request, 'token_invalido.html')
+    """
+def cambiar_password(request, id):
+    perfil = UserProfile.objects.get(id=id)
+    if not perfil.primer_ingreso:
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        nueva_contraseña = request.POST.get('password')
+        confirmar_contraseña = request.POST.get('password2')
+
+        if nueva_contraseña == confirmar_contraseña:
+            perfil.user.set_password(nueva_contraseña)#la funcion encripta la contraseña
+            perfil.user.save()
+            perfil.primer_ingreso = False
+            perfil.save()
+            return render(request, 'password_cambiada.html')
+        else:
+            mensaje = "Las contraseñas no coinciden."
+            return render(request, 'cambiar_password.html', {'mensaje': mensaje})
+
+    return render(request, 'cambiar_password.html')
+

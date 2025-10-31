@@ -3,6 +3,8 @@ from django.core.mail import EmailMultiAlternatives
 from django.utils.html import strip_tags
 from django.template.loader import render_to_string
 
+from django.conf import settings#?
+
 def enviar_correo_html(subject, template_name, context, to_emails, from_email=None, attachments=None):
     """
     Envía un correo HTML renderizando una plantilla.
@@ -36,3 +38,17 @@ def enviar_correo_html(subject, template_name, context, to_emails, from_email=No
                 # si te pasan un path
                 msg.attach_file(a)
     msg.send()
+       
+       #?
+def enviar_correo(asunto, destinatarios, texto, html=None):
+    email=EmailMultiAlternatives(
+        subject=asunto,
+        body=texto,
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=destinatarios
+    )
+    if html:
+        email.attach_alternative(html,'text/html')
+    email.send()
+    return True
+
