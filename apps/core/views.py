@@ -79,7 +79,17 @@ def registro(request):
     if request.method == "POST":
         form = RegistroUsuarioForm(request.POST)
         if form.is_valid():
-            form.save()
+            user=form.save()
+            fecha_nac=form.cleaned_data['fecha_nacimiento']
+            #esto es para asociar el usuario a una persona
+            Persona.objects.create(
+                nombre=user.first_name,
+                apellido=user.last_name,
+                email=user.email,
+                user=user,
+                fecha_nacimiento=fecha_nac,
+                puede_adoptar=False
+            )
             messages.success(request, "¡Tu cuenta ha sido creada con éxito!")
             return redirect("login")
         else:
@@ -209,26 +219,32 @@ class ListarEspeciesView(ListView):
 #crear->marce
 def crear_persona(request):
     if request.method == 'POST':
-        #Si el formulario es valido se envia
         form = PersonasForm(request.POST)
-        domicilio_form=DomicilioForm(request.POST)
+        domicilio_form = DomicilioForm(request.POST)
+
         if form.is_valid() and domicilio_form.is_valid():
-            #guardamos el domicilio y asignamos el domicilio a la persona
-            domicilio=domicilio_form.save()
-            persona=form.save(commit=False)# lo creamos pero no guarda aun
-            persona.domicilio=domicilio
-            #se guarda el formulario
+            # Guardamos el domicilio primero
+            domicilio = domicilio_form.save()
+
+            # Creamos la persona sin guardar todavía
+            persona = form.save(commit=False)
+            persona.domicilio = domicilio
+            user_id=request.POST.get("user")
+            if user_id:
+                persona.user=User.objects.get(id=user_id)
             persona.save()
-            
-            #redirigimos a la lista de personas
+
+            # Redirigimos a la lista de personas
             return redirect('listar_personas')
     else:
-            #si es un GET, se muestra el formulario vacio
-            form = PersonasForm()
-            domicilio_form=DomicilioForm()
-    return render(request, 'personas/crearPersonas.html', {'form': form, 'domicilio_form':domicilio_form})
+        form = PersonasForm()
+        domicilio_form = DomicilioForm()
+    return render(
+        request,
+        'personas/crearPersonas.html',
+        {'form': form, 'domicilio_form': domicilio_form}
+    )
     
-
 #modificar->sabri
 def modificar_persona(request, id):
     persona=get_object_or_404(Persona,pk=id)
@@ -246,14 +262,33 @@ def modificar_persona(request, id):
         domicilio_form=DomicilioForm(instance=domicilio)
     return render(request,'personas/modificarPersona.html',{'form':form, 'domicilio_form': domicilio_form})
 
-#eliminar->cami
+#baja que no puede adoptar ni registrarse->cami
 def eliminar_persona(request, persona_id):
     persona = get_object_or_404(Persona, id=persona_id)
 
     if request.method == 'POST':
-       persona.delete()
-   
-    return render(request, 'personas/eliminarPersonas.html', {'persona': persona})
+       if persona.user is None:
+            messages.error(request, "Esta persona no tiene un usuario")
+            return redirect('listar_personas')
+       persona.user.is_active=False #desactiva el usuario asociado
+       persona.puede_adoptar=False#no puede adoptar
+       persona.user.save()
+       return redirect('listar_personas')
+    
+    return render(request, 'personas/bajaPersonas.html', {'persona': persona})
+
+#alta puede adoptar y registrarse 
+def habilitar_persona(request,persona_id):
+    persona=get_object_or_404(Persona,id=persona_id)
+    if request.method=='POST':
+        if persona.user is None:
+            messages.error(request, "Esta persona no tiene un usuario")
+            return redirect('listar_personas')
+        persona.user.is_active=True
+        persona.puede_adoptar=True#puede adoptar
+        persona.user.save()
+        return redirect('listar_personas')
+    return render(request,'personas/altaPersonas.html',{'persona':persona})
 
 #listar->jessi
 def listar_personas(request):

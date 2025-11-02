@@ -5,13 +5,16 @@
     <table id="tablaUP" class="table table-striped table-hover align-middle">
       <thead class="table-primary">
         <tr>
-          <th>Apellido del adoptante</th>
-          <th>Nombre del adoptante</th>
+          <th>Id</th><!---->
+          <th>Rol</th><!---->
+          <th>Username</th><!---->
+          <th>Apellido y Nombre</th>
           <th>DNI</th>
-          <th>Fecha de nacimiento</th>
           <th>Domicilio</th>
           <th>Email</th>
           <th>Contacto</th>
+          <th>Estado</th>
+          <th>Habilitado</th>
           <th>Opciones</th>
         </tr>
       </thead>
@@ -19,17 +22,49 @@
       <tbody>
         {% for persona in personas %}
           <tr>
-            <td>{{persona.apellido}}</td>
-            <td>{{persona.nombre}}</td>
+            <td>{{persona.id}}</td><!---->
+            <td>
+              {% if persona.user.is_superuser %}
+                Administrador
+              {% elif persona.user.is_staff %}
+                Staff
+              {% else %}
+                Usuario
+              {% endif %}
+            </td><!---->
+            <td>
+              {% if persona.user %}
+                {{persona.user.username}}
+              {% else %}
+                Sin usuario
+              {% endif %}
+            </td><!---->
+            <td>{{persona.apellido}} {{persona.nombre}}</td>
             <td>{{persona.dni}}</td>
-            <td>{{persona.fecha_nac}}</td>
             <td>{{persona.domicilio}}</td>
             <td>{{persona.email}}</td>
             <td>{{persona.telefono}}</td>
-                 
             <td>
-              <a href="{% url 'eliminar_persona' persona.id %}"class="btn btn-sm btn-warning">Eliminar persona</a>
-              <a href="{% url 'modificar_persona' persona.id %}"class="btn btn-sm btn-danger ms-2">Modificar persona</a>
+              {% if persona.user.is_active %}
+                Activo
+              {% else %}
+                Inactivo
+              {% endif %}
+            </td>
+            <td>
+              {% if persona.puede_adoptar %}
+                <p>Habilitado</p>
+              {% else %}
+                <p>No Habilitado</p>
+              {% endif %}
+            </td>
+            <td>
+              {% if persona.user.is_active %}
+                <a href="{% url 'eliminar_persona' persona.id %}"class="btn btn-sm btn-warning">Deshabilitar</a>
+              {% else %}
+                <a href="{% url 'habilitar_persona' persona.id %}" class="btn btn-sm btn-success">Habilitar</a>
+              {% endif %}
+              <a href="{% url 'modificar_persona' persona.id %}"class="btn btn-sm btn-danger ms-2">Modificar</a>
             </td>
           </tr>
         {% endfor %}

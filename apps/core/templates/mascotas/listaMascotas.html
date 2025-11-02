@@ -12,6 +12,7 @@
           <th>Fecha de nacimiento</th>
           <th>Observaciones</th>
           <th>Opciones</th>
+          <th>Opcienes Usuario</th>
         </tr>
       </thead>
     
@@ -28,6 +29,15 @@
             <td>
               <a href="{% url 'eliminar_mascotas' mascota.pk %}"class="btn btn-sm btn-warning">Eliminar mascota</a>
               <a href="{% url 'modificar_mascotas' mascota.pk %}"class="btn btn-sm btn-danger ms-2">Modificar mascotas</a>
+            </td>
+            <td>
+              {% if user.is_authenticated %}
+                {% if user.persona.puede_adoptar %}
+                  <a href="#" class="btn btn-sucess">Adoptar</a>
+                {% else %}
+                  <button class="btn btn-secondary" disabled>No habilitado para adoptar</button>
+                {% endif %}
+              {% endif %}
             </td>
           </tr>
         {% endfor %}

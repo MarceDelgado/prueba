@@ -1,14 +1,16 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-
-from apps.core.models import Mascotas, Persona,Raza,Especie
 from .models import UserProfile
 from apps.core.models import Mascotas, Persona,Raza,Especie, Domicilio
 
 class RegistroUsuarioForm(UserCreationForm):
     email = forms.EmailField(required=True, label="Correo electrónico")
-
+    fecha_nacimiento = forms.DateField(
+            required=True,
+            label="Fecha de nacimiento",
+            widget=forms.DateInput(attrs={'type': 'date'})
+        )
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email', 'username', 'password1', 'password2']
@@ -21,9 +23,14 @@ class RegistroUsuarioForm(UserCreationForm):
         }
 #Formulario Personas
 class PersonasForm(forms.ModelForm):
+    user=forms.ModelChoiceField(
+        queryset=User.objects.filter(persona__isnull=True),
+        required=False,
+        label="Usuario asociado"
+    )
     class Meta:
         model = Persona
-        fields = ['nombre', 'apellido', 'email','telefono', 'dni', 'fecha_nacimiento']       
+        fields = ['nombre', 'apellido', 'email','telefono', 'dni', 'fecha_nacimiento', 'puede_adoptar', 'user']     
 
 #formulario para las mascotas
 class MascotasForm(forms.ModelForm):

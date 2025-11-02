@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="form-container">
+        <h1>Dar de alta a Adoptante</h1>
+        <form method="post">
+            {% csrf_token %}
+            <h2>¿ESTÁS SEGURO DE QUERER DAR DE ALTA A ESTA PERSONA? </h2>
+            <h2>"{{persona.nombre}}  {{ persona.apellido }}"</h2>
+            <h3>~Si le da de alta, esta persona estará habilitada para adoptar~</h3>
+            <button type="submit"class="btn btn-primary">Dar de alta</button>
+            <a href="{% url 'listar_personas' %}"class="btn btn-secondary"> Cancelar </a>
+        </form>
+    </div>
+{% endblock %}

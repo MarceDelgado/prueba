@@ -36,6 +36,9 @@ class Persona(models.Model):
     domicilio = models.ForeignKey(Domicilio, on_delete=models.SET_NULL, null=True, blank=True, related_name="personas")
     email = models.EmailField(unique=True)
     telefono = models.CharField(max_length=20, blank=True, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)  # <-- nuevo campo para asociar usuario
+    puede_adoptar = models.BooleanField(default=False)
+    
     created_at = models.DateTimeField(auto_now_add=True)  
     updated_at = models.DateTimeField(auto_now=True)      
 
