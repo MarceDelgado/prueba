@@ -5,7 +5,6 @@ from .views import (home, buscar_animales,contacto, login_view, logout_view, reg
                     ModificarEspecieView, EliminarEspecie,ListarEspeciesView,CrearEspecieView,
                     crear_raza,listar_razas,eliminar_raza,modificar_raza, recuperar_contraseña, cambiar_password,
                     listar_personas,crear_persona, eliminar_persona, modificar_persona,habilitar_persona,cambiar_contraseña_voluntariamente)
-
 urlpatterns = [
 	path('', home, name='home'),
 	path('buscar/', buscar_animales, name='buscar_animales'),

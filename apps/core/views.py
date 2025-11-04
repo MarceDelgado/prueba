@@ -10,7 +10,7 @@ from .models import UserProfile
 #correo
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
-from .emails import enviar_correo_html
+from .emails import enviar_correo
 
 
 from django.contrib.auth.hashers import make_password
@@ -382,7 +382,7 @@ def cambiar_password(request, token):
         return render(request, 'cambiar_password.html')
     except UserProfile.DoesNotExist:
         return render(request, 'token_invalido.html')
-    """
+
 def cambiar_password(request, id):
     perfil = UserProfile.objects.get(id=id)
     if not perfil.primer_ingreso:
@@ -416,4 +416,4 @@ def cambiar_contraseña_voluntariamente(request):
             return redirect('login')
         else:
             messages.error(request,"Lo lamento, la contraseña no coinciden")
-    return render(request, 'contraseña/cambiarContraseña.html')"""
+    return render(request, 'contraseña/cambiarContraseña.html')
