@@ -4,7 +4,7 @@ from .views import (home, buscar_animales,contacto, login_view, logout_view, reg
                     ListarMascotas, crear_mascota, ModificarMascota, eliminar_mascota,
                     ModificarEspecieView, EliminarEspecie,ListarEspeciesView,CrearEspecieView,
                     crear_raza,listar_razas,eliminar_raza,modificar_raza, recuperar_contraseña, cambiar_password,
-                    listar_personas,crear_persona, eliminar_persona, modificar_persona,habilitar_persona)
+                    listar_personas,crear_persona, eliminar_persona, modificar_persona,habilitar_persona,cambiar_contraseña_voluntariamente)
 
 urlpatterns = [
 	path('', home, name='home'),
@@ -37,5 +37,6 @@ urlpatterns = [
     path('habilitar_persona/<int:persona_id>/', habilitar_persona, name='habilitar_persona'),
     #correo
     path('solicitar-recuperacion/', recuperar_contraseña, name='solicitar_recuperacion'),
-    path('cambiar-password/<str:token>/', cambiar_password, name='cambiar_password'),
+    path('cambiar-password/<int:id>/', cambiar_password, name='cambiar_password'),
+    path('cambiar_contraseña', cambiar_contraseña_voluntariamente, name='cambiar_contraseña_voluntariamente')
 ]

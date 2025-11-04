@@ -52,15 +52,16 @@ def login_view(request):
        #print(user)  # Imprimimos lo siguiente para saber si está funcionando bien
 
        if user is not None:
-          login(request, user)
-          return redirect('dashboard')
+            login(request, user)
+            if user.userprofile.primer_ingreso:
+                return redirect('cambiar_password', id=user.userprofile.id)
+            return redirect('dashboard')
        else:
-        mensaje = 'usuario y/o contraseña incorrecta'
-        contexto = {
-            'mensaje': mensaje,
-         }
-        return render(request, 'login.html', contexto)
-
+            mensaje = 'usuario y/o contraseña incorrecta'
+            contexto = {
+                'mensaje': mensaje,
+            }
+            return render(request, 'login.html', contexto)
    #contexto = {}  # Esto está en un bloque que no se ejecutará
    return render(request, 'login.html')
 
@@ -271,8 +272,9 @@ def eliminar_persona(request, persona_id):
             messages.error(request, "Esta persona no tiene un usuario")
             return redirect('listar_personas')
        persona.user.is_active=False #desactiva el usuario asociado
-       persona.puede_adoptar=False#no puede adoptar
        persona.user.save()
+       persona.puede_adoptar=False#no puede adoptar
+       persona.save()
        return redirect('listar_personas')
     
     return render(request, 'personas/bajaPersonas.html', {'persona': persona})
@@ -285,8 +287,9 @@ def habilitar_persona(request,persona_id):
             messages.error(request, "Esta persona no tiene un usuario")
             return redirect('listar_personas')
         persona.user.is_active=True
-        persona.puede_adoptar=True#puede adoptar
         persona.user.save()
+        persona.puede_adoptar=True#puede adoptar
+        persona.save()
         return redirect('listar_personas')
     return render(request,'personas/altaPersonas.html',{'persona':persona})
 
@@ -345,7 +348,7 @@ def recuperar_contraseña(request):
                 "usuario": usuario.username,
                 "nueva_pass": nueva_pass,
             }
-            contentenido_html=render_to_string("emails/recuperar.html",contexto)#funcion que lee una plantilla y la rellena con el contexto
+            contentenido_html=render_to_string("correo.html",contexto)#funcion que lee una plantilla y la rellena con el contexto
             contentenido_texto=strip_tags(contentenido_html)#funcion para eliminar etiquetas html del texto
             # Enviar correo
             enviar_correo(
@@ -360,7 +363,7 @@ def recuperar_contraseña(request):
         except User.DoesNotExist:
             mensaje = "No existe un usuario con ese correo."
     
-    return render(request, "recuperar_contraseña.html", {"mensaje": mensaje})
+    return render(request, "contraseña/recu_contraseña.html", {"mensaje": mensaje})
 
 
 # Vista para cambiar contraseña
@@ -393,10 +396,23 @@ def cambiar_password(request, id):
             perfil.user.save()
             perfil.primer_ingreso = False
             perfil.save()
-            return render(request, 'password_cambiada.html')
+            messages.success(request,"Tu contraseña se cambió con exito, volve a iniciar sesión")
+            return redirect('login')
         else:
             mensaje = "Las contraseñas no coinciden."
-            return render(request, 'cambiar_password.html', {'mensaje': mensaje})
+            return render(request, 'contraseña/cambiarContraseña.html', {'mensaje': mensaje})
 
-    return render(request, 'cambiar_password.html')
+    return render(request, 'contraseña/cambiarContraseña.html')
 
+def cambiar_contraseña_voluntariamente(request):
+    if request.method=='POST':
+        nueva_contraseña=request.POST.get('password')
+        confirmar=request.POST.get('password2')
+        if nueva_contraseña==confirmar:
+            request.user.set_password(nueva_contraseña)
+            request.user.save()
+            messages.success(request,"Tu contraseña se cambió con exito, volve a iniciar sesión")
+            return redirect('login')
+        else:
+            messages.error(request,"Lo lamento, la contraseña no coinciden")
+    return render(request, 'contraseña/cambiarContraseña.html')
