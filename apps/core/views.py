@@ -10,13 +10,14 @@ from .models import UserProfile
 #correo
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
-from .emails import enviar_correo #enviar_correo_html
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
+from .emails import enviar_correo_html
 
 
 from django.contrib.auth.hashers import make_password
+from .models import UserProfile
+
 import random, string
+from django.contrib.auth.models import User
 
 #from .utils import enviar_correo_html  # Tu función para enviar correos
 
@@ -113,7 +114,7 @@ class ModificarMascota(UpdateView):
 
 def crear_mascota(request):
     if request.method=='POST':
-        form=MascotasForm(request.POST)
+        form=MascotasForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('listar_mascotas')
@@ -350,12 +351,13 @@ def recuperar_contraseña(request):
             }
             contentenido_html=render_to_string("correo.html",contexto)#funcion que lee una plantilla y la rellena con el contexto
             contentenido_texto=strip_tags(contentenido_html)#funcion para eliminar etiquetas html del texto
+            
             # Enviar correo
             enviar_correo(
                 asunto="Recuperación de contraseña",
-                destinatarios=[email],
-                texto=contentenido_texto,
-                html=contentenido_html
+                destinatario=email,
+                contexto=contexto,
+                plantilla_html="emails/recuperar.html"
             )
             
             mensaje = "Se ha enviado una nueva contraseña a tu correo."
@@ -367,7 +369,6 @@ def recuperar_contraseña(request):
 
 
 # Vista para cambiar contraseña
-"""
 def cambiar_password(request, token):
     try:
         profile = UserProfile.objects.get(recovery_token=token)
@@ -415,4 +416,4 @@ def cambiar_contraseña_voluntariamente(request):
             return redirect('login')
         else:
             messages.error(request,"Lo lamento, la contraseña no coinciden")
-    return render(request, 'contraseña/cambiarContraseña.html')
+    return render(request, 'contraseña/cambiarContraseña.html')"""

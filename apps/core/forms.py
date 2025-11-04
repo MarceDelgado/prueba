@@ -36,7 +36,7 @@ class PersonasForm(forms.ModelForm):
 class MascotasForm(forms.ModelForm):
     class Meta:
         model=Mascotas
-        fields=["raza","sexo","tamanio","fecha_nac","observaciones"]
+        fields=["raza","sexo","tamanio","fecha_nac","observaciones", "fotos"]
 
 #formulario Especie
 class EspecieForm(forms.ModelForm):

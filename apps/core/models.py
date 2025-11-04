@@ -78,6 +78,7 @@ class Mascotas(models.Model):
     fecha_nac = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)  
     updated_at = models.DateTimeField(auto_now=True)
+    fotos = models.ImageField(upload_to='mascotas/', blank=True, null=True) #nuevo campo para agregar imagenes
     
 
     def __str__(self):
