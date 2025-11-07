@@ -4,20 +4,23 @@ from django.contrib import messages
 from apps.core.models import Especie, Mascotas, Raza,Persona
 from .forms import EspecieForm, RazaForm, RegistroUsuarioForm, MascotasForm, PersonasForm, DomicilioForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout as auth_logout #importamos la funcion "authenticate"
-from django.views.generic import CreateView, UpdateView, DeleteView, ListView #importamos las clases bases para el abm
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView,View #importamos las clases bases para el abm
 from .models import UserProfile
 
 #correo
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
 from .emails import enviar_correo
-
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 from django.contrib.auth.hashers import make_password
-from .models import UserProfile
-
 import random, string
-from django.contrib.auth.models import User
+
+
+#decoradores
+from django.contrib.auth.decorators import login_required#-> para fbv
+from django.utils.decorators import method_decorator#-> para cbv
 
 #from .utils import enviar_correo_html  # Tu función para enviar correos
 
@@ -37,6 +40,7 @@ def contacto(request):
         # Guardar datos o enviar mail...
         return render(request, 'contacto_exito.html')
     return render(request, 'contacto.html')
+
 
 def login_view(request):   
    #FUNCION DE VISTA DEL LOGEO PARA INICIAR SESION
@@ -73,6 +77,7 @@ def dashboard(request):
    }
    return render(request, 'dashboard.html', contexto)
 
+
 def logout_view(request):
    auth_logout(request)
    return redirect('home')
@@ -102,16 +107,20 @@ def registro(request):
     return render(request, "registro.html", {"form": form})
 
 #ABM MASCOTAS(cbv,fbv) sabri
-class ListarMascotas(ListView):
+@method_decorator(login_required(login_url='/login/'), name='dispatch')
+class Restringir_acceso(View):#para el decorador login_required de las clases
+    pass
+class ListarMascotas(ListView,Restringir_acceso):
     model=Mascotas
     template_name='mascotas/listaMascotas.html'
 
-class ModificarMascota(UpdateView):
+class ModificarMascota(UpdateView,Restringir_acceso):
     model=Mascotas
     form_class=MascotasForm
     template_name='mascotas/modificarMascota.html'
     success_url=reverse_lazy('listar_mascotas')
 
+@login_required(login_url='/login/')
 def crear_mascota(request):
     if request.method=='POST':
         form=MascotasForm(request.POST, request.FILES)
@@ -122,6 +131,7 @@ def crear_mascota(request):
         form=MascotasForm()
     return render(request, 'mascotas/crearMascota.html', {'form':form})
 
+@login_required(login_url='/login/')
 def eliminar_mascota(request, id):
     mascota=get_object_or_404(Mascotas, pk=id)
     if request.method=='POST':
@@ -131,11 +141,13 @@ def eliminar_mascota(request, id):
 
 #ABM RAZA(fbv)
 #listar-> sabri
+@login_required(login_url='/login/')
 def listar_razas(request):
     razas=Raza.objects.all()
     return render(request, 'raza/listarRaza.html',{'razas':razas})
 
 #crear->cami
+@login_required(login_url='/login/')
 def crear_raza(request):
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
@@ -157,6 +169,7 @@ def crear_raza(request):
     return render(request, 'raza/crearRaza.html', {'especies': especies})
 
 #eliminar->marce
+@login_required(login_url='/login/')
 def eliminar_raza(request, raza_id):
     #Obtiene la raza por su id, si no existe se genera error
     raza = get_object_or_404(Raza, id=raza_id)
@@ -173,6 +186,7 @@ def eliminar_raza(request, raza_id):
     return render(request, 'raza/eliminarRaza.html', {'raza': raza})
 
 #modificar-> jessi
+@login_required(login_url='/login/')
 def modificar_raza(request, raza_id):
     # Obtiene la instancia de la raza que se va a modificar
     raza = get_object_or_404(Raza, id=raza_id) # type: ignore
@@ -190,26 +204,26 @@ def modificar_raza(request, raza_id):
 
 #ABM ESPECIE(cbv)
 #crear->jessi
-class CrearEspecieView(CreateView):
+class CrearEspecieView(CreateView,Restringir_acceso):
     model = Especie
     form_class = EspecieForm
     template_name = 'especie/crearEspecie.html'
     success_url = reverse_lazy('listar_especies')  # Redirige a la lista de especies después de crear
 #eliminar->sabri
-class EliminarEspecie(DeleteView):
+class EliminarEspecie(DeleteView, Restringir_acceso):
     model=Especie
     template_name='especie/eliminarEspecie.html'
     success_url=reverse_lazy('listar_especies')
 
 #modificar->cami
-class ModificarEspecieView(UpdateView):
+class ModificarEspecieView(UpdateView,Restringir_acceso):
     model = Especie
     form_class = EspecieForm
     template_name = 'especie/modificarEspecie.html'
     success_url = reverse_lazy('listar_especies')
 
 #listar->marce
-class ListarEspeciesView(ListView):
+class ListarEspeciesView(ListView,Restringir_acceso):
     model = Especie
     #Nombre del archivo html
     template_name = 'especie/listarEspecie.html'
@@ -219,6 +233,7 @@ class ListarEspeciesView(ListView):
 
 #ABM PERSONA(fbv)
 #crear->marce
+@login_required(login_url='/login/')
 def crear_persona(request):
     if request.method == 'POST':
         form = PersonasForm(request.POST)
@@ -248,6 +263,7 @@ def crear_persona(request):
     )
     
 #modificar->sabri
+@login_required(login_url='/login/')
 def modificar_persona(request, id):
     persona=get_object_or_404(Persona,pk=id)
     domicilio=persona.domicilio
@@ -265,6 +281,7 @@ def modificar_persona(request, id):
     return render(request,'personas/modificarPersona.html',{'form':form, 'domicilio_form': domicilio_form})
 
 #baja que no puede adoptar ni registrarse->cami
+@login_required(login_url='/login/')
 def eliminar_persona(request, persona_id):
     persona = get_object_or_404(Persona, id=persona_id)
 
@@ -281,6 +298,7 @@ def eliminar_persona(request, persona_id):
     return render(request, 'personas/bajaPersonas.html', {'persona': persona})
 
 #alta puede adoptar y registrarse 
+@login_required(login_url='/login/')
 def habilitar_persona(request,persona_id):
     persona=get_object_or_404(Persona,id=persona_id)
     if request.method=='POST':
@@ -295,12 +313,14 @@ def habilitar_persona(request,persona_id):
     return render(request,'personas/altaPersonas.html',{'persona':persona})
 
 #listar->jessi
+@login_required(login_url='/login/')
 def listar_personas(request):
     persona = Persona.objects.all()
     return render(request, 'personas/listaPersonas.html', {'personas': persona})
     
 #EDICION
 #@login_required >>>>> REVISAR!!!
+@login_required(login_url='/login/')
 def edit_profile(request):
     profile, created = UserProfile.objects.get_or_create(user=request.user)
 
@@ -316,6 +336,7 @@ def edit_profile(request):
 
 #VISUALIZACION
 #@login_required
+@login_required(login_url='/login/')
 def view_profile(request):
     profile = UserProfile.objects.get(user=request.user)
     return render(request, 'view_profile.html', {'profile':profile})
@@ -355,9 +376,9 @@ def recuperar_contraseña(request):
             # Enviar correo
             enviar_correo(
                 asunto="Recuperación de contraseña",
-                destinatario=email,
-                contexto=contexto,
-                plantilla_html="emails/recuperar.html"
+                destinatarios=[email],
+                texto=contentenido_texto,
+                html=contentenido_html
             )
             
             mensaje = "Se ha enviado una nueva contraseña a tu correo."
@@ -369,20 +390,7 @@ def recuperar_contraseña(request):
 
 
 # Vista para cambiar contraseña
-def cambiar_password(request, token):
-    try:
-        profile = UserProfile.objects.get(recovery_token=token)
-        if request.method == 'POST':
-            nueva_password = request.POST.get('password')
-            profile.user.password = make_password(nueva_password)
-            profile.user.save()
-            profile.recovery_token = ''  # Limpiar token
-            profile.save()
-            return render(request, 'password_cambiada.html')
-        return render(request, 'cambiar_password.html')
-    except UserProfile.DoesNotExist:
-        return render(request, 'token_invalido.html')
-
+@login_required(login_url='/login/')
 def cambiar_password(request, id):
     perfil = UserProfile.objects.get(id=id)
     if not perfil.primer_ingreso:
@@ -405,6 +413,7 @@ def cambiar_password(request, id):
 
     return render(request, 'contraseña/cambiarContraseña.html')
 
+@login_required(login_url='/login/')
 def cambiar_contraseña_voluntariamente(request):
     if request.method=='POST':
         nueva_contraseña=request.POST.get('password')
@@ -417,3 +426,77 @@ def cambiar_contraseña_voluntariamente(request):
         else:
             messages.error(request,"Lo lamento, la contraseña no coinciden")
     return render(request, 'contraseña/cambiarContraseña.html')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+def cambiar_password(request, token):
+    try:
+        profile = UserProfile.objects.get(recovery_token=token)
+        if request.method == 'POST':
+            nueva_password = request.POST.get('password')
+            profile.user.password = make_password(nueva_password)
+            profile.user.save()
+            profile.recovery_token = ''  # Limpiar token
+            profile.save()
+            return render(request, 'password_cambiada.html')
+        return render(request, 'cambiar_password.html')
+    except UserProfile.DoesNotExist:
+        return render(request, 'token_invalido.html')
+    """

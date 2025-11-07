@@ -86,7 +86,9 @@
     
     <!-- Contenido principal -->
     <div class="layout">
-        {% include 'sidebar.html' %}
+        {% if user.is_authenticated and not user.userprofile.primer_ingreso %}
+            {% include 'sidebar.html' %}
+        {% endif %}
         <main class="main-content">
             <div class="container mt-4">
                 {% block content %}

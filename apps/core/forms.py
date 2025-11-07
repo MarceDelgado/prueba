@@ -37,6 +37,14 @@ class MascotasForm(forms.ModelForm):
     class Meta:
         model=Mascotas
         fields=["raza","sexo","tamanio","fecha_nac","observaciones", "fotos"]
+        widgets = {
+            'raza' : forms.Select(attrs={'class': 'form-select'}),#asi con los demas
+            'sexo' : forms.Select(attrs={'class': 'form-select'}),
+            'tamanio': forms.TextInput(attrs={'class':'form-control'}),
+            'fecha_nac': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'observaciones': forms.Textarea(attrs={'class':'form-control','rows': 4}),
+            'fotos': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }
 
 #formulario Especie
 class EspecieForm(forms.ModelForm):
