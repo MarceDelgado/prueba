@@ -1,15 +1,19 @@
+{% extends 'base.html' %}
 {% load static %}
-
+{% block content %}
 <div class="container py-5">
-    <h2 class="mb-4 text-center">Mascotas Disponibles</h2>
-
+    <div class="text-center my-4 p-3 bg-light shadow-sm rounded">
+        <h2 class="fw-bold text-primary fs-2 mb-2">bienvenido  {{user.username}}, ingresaste como administrador</h2>
+        <p class="text-muted fs-5 mb-0">Mascotas Disponibles</p>
+    </div>
+    
     <!-- Acordeón de Mascotas -->
     <div class="accordion" id="accordionMascotas">
-        {% for mascota in mascotas %}
+        {% for mascota in mascotas_list %}
             <div class="accordion-item">
                 <h2 class="accordion-header" id="heading{{ mascota.id }}">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ mascota.id }}" aria-expanded="false" aria-controls="collapse{{ mascota.id }}">
-                        {{ mascota.raza }} - {{ mascota.sexo }}
+                        {{ forloop.counter }}. {{ mascota.raza }} - {{ mascota.sexo }}
                     </button>
                 </h2>
                 <div id="collapse{{ mascota.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ mascota.id }}" data-bs-parent="#accordionMascotas">
@@ -17,6 +21,11 @@
                         <strong>Especie:</strong> {{ mascota.raza.especie }}<br>
                         <strong>Fecha de nacimiento:</strong> {{ mascota.fecha_nac }}<br>
                         <strong>Observaciones:</strong> {{ mascota.observaciones }}<br>
+                        <td>
+                            {% if mascota.fotos %}
+                            <img src="{{ mascota.fotos.url }}" width="250">
+                            {% endif %}
+                          </td>
                     </div>
                 </div>
             </div>
@@ -30,3 +39,4 @@
     </div>
 
 </div>
+{% endblock %}

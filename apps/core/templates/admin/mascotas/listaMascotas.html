@@ -13,7 +13,6 @@
         <th>Observaciones</th>
         <th>Foto</th>
         <th>Opciones</th>
-        <th>Opciones Usuario</th>
       </tr>
     </thead>
     <tbody>
@@ -27,16 +26,7 @@
         <td>{{ mascota.observaciones }}</td>
         <td>
           {% if mascota.fotos %}
-          <img src="{{ mascota.fotos.url }}" width="50">
-          {% endif %}
-        </td>
-        <td>
-          {% if user.is_authenticated %}
-            {% if user.persona.puede_adoptar %}
-              <a href="#" class="btn btn-sucess">Adoptar</a>
-            {% else %}
-              <button class="btn btn-secondary" disabled>No habilitado para adoptar</button>
-            {% endif %}
+          <img src="{{ mascota.fotos.url }}" width="200">
           {% endif %}
         </td>
         <td>
@@ -46,7 +36,7 @@
       </tr>
       {% empty %}
       <tr>
-        <td colspan="8">No hay mascotas cargadas.</td>
+        <td colspan="8" >No hay mascotas cargadas.</td>
       </tr>
       {% endfor %}
     </tbody>

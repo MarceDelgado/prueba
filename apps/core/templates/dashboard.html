@@ -6,42 +6,11 @@
 
 {% block content %}
 
-<div class="container py-5">
-    <div>
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Mascotas Disponibles</h2>
-            <a href="{% url 'cambiar_contraseña_voluntariamente'%}"class="btn btn-warning mb-3">Cambiar contraseña</a>
-    </div>
-    {% include 'menuUsuario.html' %}<!--colocar solo para el usuario-->
-    <div class="table-responsive">
-        <table class="table table-striped table-hover align-middle">
-            <thead class="table-primary">
-                <tr>
-                    <th scope="col">Especie</th>
-                    <th scope="col">Raza</th>
-                    <th scope="col">Sexo</th>
-                    <th scope="col">Fecha de nacimiento</th>
-                    <th scope="col">Observaciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for mascota in mascotas %}
-                    <tr>
-                        <td>{{ mascota.raza.especie }}</td>
-                        <td>{{ mascota.raza }}</td>
-                        <td>{{ mascota.sexo }}</td>
-                        <td>{{ mascota.fecha_nac }}</td>
-                        <td>{{ mascota.observaciones }}</td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="5" class="text-center text-muted">
-                            No hay mascotas disponibles.
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
+    {% if user.is_authenticated and not user.userprofile.primer_ingreso %}
+        {% if user.is_superuser or user.is_staff %}
+            {% include 'admin/menuAdmin.html' %}
+        {% else %}
+            {% include 'user/listaMascotas.html' %}
+        {% endif %}
+    {% endif %}
 {% endblock %}

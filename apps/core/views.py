@@ -71,11 +71,11 @@ def login_view(request):
    return render(request, 'login.html')
 
 def dashboard(request):
-   lista_mascotas = Mascotas.objects.all()
-   contexto = {
-       'mascotas' : lista_mascotas
-   }
-   return render(request, 'dashboard.html', contexto)
+    if request.user.is_staff or request.user.is_superuser:
+        mascotas = Mascotas.objects.all()
+        return render(request, 'admin/menuAdmin.html', {'mascotas_list': mascotas})
+    else:
+        return redirect('listar_mascotas_usuario')
 
 
 def logout_view(request):
@@ -110,14 +110,17 @@ def registro(request):
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class Restringir_acceso(View):#para el decorador login_required de las clases
     pass
-class ListarMascotas(ListView,Restringir_acceso):
+class ListarMascotas(Restringir_acceso,ListView):
     model=Mascotas
-    template_name='mascotas/listaMascotas.html'
-
+    template_name='admin/mascotas/listaMascotas.html'
+class ListarMascotasUsuario(ListView):
+    model = Mascotas
+    template_name = 'user/listaMascotas.html'
+    context_object_name = 'mascotas_list'
 class ModificarMascota(UpdateView,Restringir_acceso):
     model=Mascotas
     form_class=MascotasForm
-    template_name='mascotas/modificarMascota.html'
+    template_name='admin/mascotas/modificarMascota.html'
     success_url=reverse_lazy('listar_mascotas')
 
 @login_required(login_url='/login/')
@@ -129,7 +132,7 @@ def crear_mascota(request):
             return redirect('listar_mascotas')
     else:
         form=MascotasForm()
-    return render(request, 'mascotas/crearMascota.html', {'form':form})
+    return render(request, 'admin/mascotas/crearMascota.html', {'form':form})
 
 @login_required(login_url='/login/')
 def eliminar_mascota(request, id):
@@ -137,14 +140,14 @@ def eliminar_mascota(request, id):
     if request.method=='POST':
         mascota.delete()
         return redirect('listar_mascotas')
-    return render(request,'mascotas/eliminarMascota.html', {'mascota':mascota})
+    return render(request,'admin/mascotas/eliminarMascota.html', {'mascota':mascota})
 
 #ABM RAZA(fbv)
 #listar-> sabri
 @login_required(login_url='/login/')
 def listar_razas(request):
     razas=Raza.objects.all()
-    return render(request, 'raza/listarRaza.html',{'razas':razas})
+    return render(request, 'admin/raza/listarRaza.html',{'razas':razas})
 
 #crear->cami
 @login_required(login_url='/login/')
@@ -166,7 +169,7 @@ def crear_raza(request):
         return redirect('listar_razas')
     
     especies = Especie.objects.all()
-    return render(request, 'raza/crearRaza.html', {'especies': especies})
+    return render(request, 'admin/raza/crearRaza.html', {'especies': especies})
 
 #eliminar->marce
 @login_required(login_url='/login/')
@@ -183,7 +186,7 @@ def eliminar_raza(request, raza_id):
                 #Redirige a la lista de razas
             return redirect('listar_razas')
     #Si el metodo no es POST, muestra el formulario de confirmacion
-    return render(request, 'raza/eliminarRaza.html', {'raza': raza})
+    return render(request, 'admin/raza/eliminarRaza.html', {'raza': raza})
 
 #modificar-> jessi
 @login_required(login_url='/login/')
@@ -199,7 +202,7 @@ def modificar_raza(request, raza_id):
     else:
         form = RazaForm(instance=raza)  # Prellenamos el formulario con la instancia existente
 
-    return render(request, 'raza/modificarRaza.html', {'form': form})
+    return render(request, 'admin/raza/modificarRaza.html', {'form': form})
 
 
 #ABM ESPECIE(cbv)
@@ -207,26 +210,26 @@ def modificar_raza(request, raza_id):
 class CrearEspecieView(CreateView,Restringir_acceso):
     model = Especie
     form_class = EspecieForm
-    template_name = 'especie/crearEspecie.html'
+    template_name = 'admin/especie/crearEspecie.html'
     success_url = reverse_lazy('listar_especies')  # Redirige a la lista de especies después de crear
 #eliminar->sabri
 class EliminarEspecie(DeleteView, Restringir_acceso):
     model=Especie
-    template_name='especie/eliminarEspecie.html'
+    template_name='admin/especie/eliminarEspecie.html'
     success_url=reverse_lazy('listar_especies')
 
 #modificar->cami
 class ModificarEspecieView(UpdateView,Restringir_acceso):
     model = Especie
     form_class = EspecieForm
-    template_name = 'especie/modificarEspecie.html'
+    template_name = 'admin/especie/modificarEspecie.html'
     success_url = reverse_lazy('listar_especies')
 
 #listar->marce
 class ListarEspeciesView(ListView,Restringir_acceso):
     model = Especie
     #Nombre del archivo html
-    template_name = 'especie/listarEspecie.html'
+    template_name = 'admin/especie/listarEspecie.html'
     #Nombre con el que se accede a las especies
     context_object_name = 'especies'
     
@@ -258,7 +261,7 @@ def crear_persona(request):
         domicilio_form = DomicilioForm()
     return render(
         request,
-        'personas/crearPersonas.html',
+        'admin/personas/crearPersonas.html',
         {'form': form, 'domicilio_form': domicilio_form}
     )
     
@@ -278,7 +281,7 @@ def modificar_persona(request, id):
     else:
         form=PersonasForm(instance=persona)
         domicilio_form=DomicilioForm(instance=domicilio)
-    return render(request,'personas/modificarPersona.html',{'form':form, 'domicilio_form': domicilio_form})
+    return render(request,'admin/personas/modificarPersona.html',{'form':form, 'domicilio_form': domicilio_form})
 
 #baja que no puede adoptar ni registrarse->cami
 @login_required(login_url='/login/')
@@ -295,7 +298,7 @@ def eliminar_persona(request, persona_id):
        persona.save()
        return redirect('listar_personas')
     
-    return render(request, 'personas/bajaPersonas.html', {'persona': persona})
+    return render(request, 'admin/personas/bajaPersonas.html', {'persona': persona})
 
 #alta puede adoptar y registrarse 
 @login_required(login_url='/login/')
@@ -310,13 +313,13 @@ def habilitar_persona(request,persona_id):
         persona.puede_adoptar=True#puede adoptar
         persona.save()
         return redirect('listar_personas')
-    return render(request,'personas/altaPersonas.html',{'persona':persona})
+    return render(request,'admin/personas/altaPersonas.html',{'persona':persona})
 
 #listar->jessi
 @login_required(login_url='/login/')
 def listar_personas(request):
     persona = Persona.objects.all()
-    return render(request, 'personas/listaPersonas.html', {'personas': persona})
+    return render(request, 'admin/personas/listaPersonas.html', {'personas': persona})
     
 #EDICION
 #@login_required >>>>> REVISAR!!!
@@ -332,7 +335,7 @@ def edit_profile(request):
         else:
             form = UserProfileForm(instance=profile)
 
-        return render(request, 'edit_profile.html', {'form': form})
+        return render(request, 'admin/edit_profile.html', {'form': form})
 
 #VISUALIZACION
 #@login_required

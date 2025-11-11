@@ -89,7 +89,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True, null=True)
     avatar = models.ImageField(upload_to = 'avatars/', default='avatars/default.png')
-    primer_ingreso = models.BooleanField(default=True)
+    primer_ingreso = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username
@@ -99,7 +99,7 @@ class UserProfile(models.Model):
 @receiver(post_save, sender=User)
 def crear_perfil_usuario(sender, instance, created, **kwargs):
     if created:
-        UserProfile.objects.create(user=instance)
+        UserProfile.objects.create(user=instance, primer_ingreso=False)
 
 @receiver(post_save, sender=User)
 def guardar_perfil_usuario(sender, instance, **kwargs):
