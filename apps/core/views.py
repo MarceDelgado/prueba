@@ -319,6 +319,11 @@ def habilitar_persona(request,persona_id):
 @login_required(login_url='/login/')
 def listar_personas(request):
     persona = Persona.objects.all()
+    
+    for p in persona:
+        print("persona=" +p.nombre)    
+        
+
     return render(request, 'admin/personas/listaPersonas.html', {'personas': persona})
     
 #EDICION
