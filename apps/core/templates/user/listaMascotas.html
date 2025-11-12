@@ -1,56 +1,134 @@
 {% extends 'base.html' %}
+{% load static %}
+
 {% block content %}
 <div class="table-responsive">
+  <!-- BIENVENIDA -->
   <div class="text-center my-4 p-3 bg-light shadow-sm rounded">
-    <h2 class="fw-bold text-primary fs-2 mb-2">bienvenido  {{user.username}} a universo peludo</h2>
+    <h2 class="fw-bold text-primary fs-2 mb-2">
+      Bienvenido {{ user.username }} a Universo Peludo
+    </h2>
     <p class="text-muted fs-5 mb-0">Mascotas Disponibles</p>
   </div>
 
-  <table id="tablaUP" class="table table-striped table-hover align-middle">
-    <thead class="table-primary">
-      <tr>
-        <th>Especie</th>
-        <th>Raza</th>
-        <th>Sexo</th>
-        <th>Tamaño</th>
-        <th>Fecha de nacimiento</th>
-        <th>Observaciones</th>
-        <th>Foto</th>
-        <th>Adoptar</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for mascota in mascotas_list %}
-        <tr>
-          <td>{{ mascota.raza.especie }}</td>
-          <td>{{ mascota.raza }}</td>
-          <td>{{ mascota.sexo }}</td>
-          <td>{{ mascota.tamanio }}</td>
-          <td>{{ mascota.fecha_nac }}</td>
-          <td>{{ mascota.observaciones }}</td>
-          <td>
-            {% if mascota.fotos %}
-              <img src="{{ mascota.fotos.url }}" width="200" alt="Foto de {{ mascota.raza }}">
-            {% else %}
-              Esta mascota no tiene foto aún
-            {% endif %}
-          </td>
-          <td>
-            {% if user.is_authenticated %}
-              {% if user.persona.puede_adoptar %}
-                <a href="#" class="btn btn-success">Adoptar</a>
+  <!-- PANEL DE FILTROS -->
+  <div class="container py-5">
+    <h2 class="fw-bold text-center text-dark mb-4">🐾 Filtrar Mascotas</h2>
+
+    <form method="get" class="filter-panel p-4 rounded-4 shadow-sm mb-5">
+      <div class="row g-3 align-items-end">
+
+        <!-- Especie -->
+        <div class="col-md-4">
+          <label for="especie" class="form-label text-light">Especie</label>
+          <select name="especie" id="especie" class="form-select" onchange="this.form.submit()">
+            <option value="">-- Todas --</option>
+            {% for e in especies %}
+              <option value="{{ e.id }}" {% if selected_especie|stringformat:"s" == e.id|stringformat:"s" %}selected{% endif %}>
+                {{ e.descripcion }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Raza -->
+        <div class="col-md-4">
+          <label for="raza" class="form-label text-light">Raza</label>
+          <select name="raza" id="raza" class="form-select" onchange="this.form.submit()">
+            <option value="">-- Todas --</option>
+            {% for r in razas %}
+              <option value="{{ r.id }}" {% if selected_raza|stringformat:"s" == r.id|stringformat:"s" %}selected{% endif %}>
+                {{ r.descripcion }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Localidad -->
+        <div class="col-md-4">
+          <label for="localidad" class="form-label text-light">Localidad</label>
+          <select name="localidad" id="localidad" class="form-select" onchange="this.form.submit()">
+            <option value="">-- Todas --</option>
+            {% for l in localidades %}
+              <option value="{{ l.id }}" {% if selected_localidad|stringformat:"s" == l.id|stringformat:"s" %}selected{% endif %}>
+                {{ l.descripcion }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </form>
+
+    <!-- LISTADO DE MASCOTAS (CARDS) -->
+    <div class="row g-4 mt-4">
+      {% if mascotas_list %}
+        {% for m in mascotas_list %}
+          <div class="col-md-4 col-lg-3">
+            <div class="card mascota-card border-0 shadow-lg rounded-4 h-100">
+              {% if m.foto %}
+                <img src="{{ m.foto.url }}" class="card-img-top rounded-top-4" alt="{{ m.nombre }}">
               {% else %}
-                <button class="btn btn-secondary" disabled>No habilitado para adoptar</button>
+                <img src="{% static 'imagenes/sin_foto.jpg' %}" class="card-img-top rounded-top-4" alt="Sin foto">
               {% endif %}
-            {% endif %}
-          </td>
-        </tr>
-      {% empty %}
-        <tr>
-          <td colspan="9" class="text-center text-muted">No hay mascotas cargadas.</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+              <div class="card-body text-center">
+                <h5 class="fw-bold text-dark mb-1">{{ m.nombre }}</h5>
+                <p class="text-muted mb-1"><strong>Especie:</strong> {{ m.raza.especie.descripcion }}</p>
+                <p class="text-muted mb-1"><strong>Raza:</strong> {{ m.raza.descripcion }}</p>
+                <p class="text-muted mb-2"><strong>Localidad:</strong> {{ m.localidad.descripcion }}</p>
+
+                {% if user.is_authenticated %}
+                  {% if user.persona.puede_adoptar %}
+                    <a href="#" class="btn btn-success mt-2">Adoptar</a>
+                  {% else %}
+                    <button class="btn btn-secondary mt-2" disabled>No habilitado</button>
+                  {% endif %}
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-light text-center mt-5">No se encontraron mascotas con esos filtros 🐕</p>
+      {% endif %}
+    </div>
+  </div>
 </div>
+
+<style>
+/* PANEL DE FILTROS */
+.filter-panel {
+  background-color: #2f00ff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(6px);
+}
+
+/* SELECTS */
+.form-select {
+  background-color: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-weight: 500;
+}
+
+/* TARJETAS DE MASCOTAS */
+.mascota-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.mascota-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 8px 25px rgba(26, 188, 156, 0.8);
+}
+
+.mascota-card img {
+  height: 220px;
+  object-fit: cover;
+  border-bottom: 3px solid #1abc9c;
+}
+</style>
+
 {% endblock %}

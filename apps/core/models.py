@@ -59,7 +59,7 @@ class Especie(models.Model):
         return f"{self.nombre}"
 
 class Raza(models.Model):
-    especie = models.ForeignKey(Especie, on_delete=models.SET_NULL, null=True, blank=True, related_name="especie")
+    especie = models.ForeignKey(Especie, on_delete=models.SET_NULL, null=True, blank=True, related_name="razas")
     nombre = models.CharField(max_length=80)
 
     def __str__(self):
@@ -71,7 +71,7 @@ SEXO_CHOICES = (
 )
 
 class Mascotas(models.Model):
-    raza = models.ForeignKey(Raza, on_delete=models.SET_NULL, null=True, blank=True, related_name="raza")
+    raza = models.ForeignKey(Raza, on_delete=models.SET_NULL, null=True, blank=True, related_name="mascotas")
     sexo = models.CharField(max_length= 6, choices = SEXO_CHOICES)
     tamanio = models.CharField(max_length=80)
     observaciones = models.CharField(max_length=200)
@@ -82,7 +82,11 @@ class Mascotas(models.Model):
     
 
     def __str__(self):
-        return f"{self.raza.especie}, {self.sexo}, {self.tamanio}, {self.fecha_nac}, {self.observaciones}"
+       
+        especie_nombre = self.raza.especie.nombre if self.raza and self.raza.especie else "Sin especie"
+        raza_nombre = self.raza.nombre if self.raza else "Sin raza"
+        return f"{especie_nombre}, {raza_nombre}, {self.sexo}, {self.tamanio}, {self.fecha_nac}, {self.observaciones}"
+
 
 #INSERCION DE IMAGENES  // CORREO (extendimos este modelo agregando el campo "primer ingreso")
 class UserProfile(models.Model):
@@ -104,3 +108,12 @@ def crear_perfil_usuario(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def guardar_perfil_usuario(sender, instance, **kwargs):
     instance.userprofile.save()
+
+class Adopcion(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    mascota = models.ForeignKey(Mascotas, on_delete=models.CASCADE)
+    fecha_adopcion = models.DateField(auto_now_add=True)
+    observaciones = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.usuario.username} adoptó a {self.mascota}"

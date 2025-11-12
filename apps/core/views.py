@@ -1,13 +1,13 @@
 from django.urls import reverse_lazy
-from django.shortcuts import render, redirect,get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from apps.core.models import Especie, Mascotas, Raza,Persona
+from apps.core.models import Especie, Mascotas, Raza, Persona, Adopcion
 from .forms import EspecieForm, RazaForm, RegistroUsuarioForm, MascotasForm, PersonasForm, DomicilioForm, UserProfileForm
-from django.contrib.auth import authenticate, login, logout as auth_logout #importamos la funcion "authenticate"
-from django.views.generic import CreateView, UpdateView, DeleteView, ListView,View #importamos las clases bases para el abm
-from .models import UserProfile
+from django.contrib.auth import authenticate, login, logout as auth_logout  # importamos la funcion "authenticate"
+from django.views.generic import CreateView, UpdateView, DeleteView, ListView, View  # importamos las clases bases para el abm
+from .models import Localidad, UserProfile
 
-#correo
+# correo
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
 from .emails import enviar_correo
@@ -17,13 +17,14 @@ from django.utils.html import strip_tags
 from django.contrib.auth.hashers import make_password
 import random, string
 
+# decoradores
+from django.contrib.auth.decorators import login_required  # -> para fbv
+from django.utils.decorators import method_decorator  # -> para cbv
 
-#decoradores
-from django.contrib.auth.decorators import login_required#-> para fbv
-from django.utils.decorators import method_decorator#-> para cbv
 
-#from .utils import enviar_correo_html  # Tu función para enviar correos
-
+# =======================
+# PÁGINAS PÚBLICAS
+# =======================
 def home(request):
     return render(request, 'home.html', {})
 
@@ -42,8 +43,11 @@ def contacto(request):
     return render(request, 'contacto.html')
 
 
-def login_view(request):   
-   #FUNCION DE VISTA DEL LOGEO PARA INICIAR SESION
+# =======================
+# LOGIN / REGISTRO / PERFIL
+# =======================
+def login_view(request):
+   # FUNCION DE VISTA DEL LOGEO PARA INICIAR SESION
    user = None  # Inicializamos la variable user fuera del bloque condicional
 
    if request.method == 'POST':
@@ -54,7 +58,6 @@ def login_view(request):
        print(password)
 
        user = authenticate(request, username=username, password=password)
-       #print(user)  # Imprimimos lo siguiente para saber si está funcionando bien
 
        if user is not None:
             login(request, user)
@@ -63,32 +66,28 @@ def login_view(request):
             return redirect('dashboard')
        else:
             mensaje = 'usuario y/o contraseña incorrecta'
-            contexto = {
-                'mensaje': mensaje,
-            }
+            contexto = {'mensaje': mensaje}
             return render(request, 'login.html', contexto)
-   #contexto = {}  # Esto está en un bloque que no se ejecutará
+
    return render(request, 'login.html')
 
+
 def dashboard(request):
-    if request.user.is_staff or request.user.is_superuser:
-        mascotas = Mascotas.objects.all()
-        return render(request, 'admin/menuAdmin.html', {'mascotas_list': mascotas})
-    else:
-        return redirect('listar_mascotas_usuario')
+    return render(request, 'dashboard.html')
 
 
 def logout_view(request):
    auth_logout(request)
    return redirect('home')
 
+
 def registro(request):
     if request.method == "POST":
         form = RegistroUsuarioForm(request.POST)
         if form.is_valid():
-            user=form.save()
-            fecha_nac=form.cleaned_data['fecha_nacimiento']
-            #esto es para asociar el usuario a una persona
+            user = form.save()
+            fecha_nac = form.cleaned_data['fecha_nacimiento']
+            # esto es para asociar el usuario a una persona
             Persona.objects.create(
                 nombre=user.first_name,
                 apellido=user.last_name,
@@ -106,50 +105,64 @@ def registro(request):
     
     return render(request, "registro.html", {"form": form})
 
-#ABM MASCOTAS(cbv,fbv) sabri
+
+# =======================
+# ABM MASCOTAS (cbv, fbv) sabri
+# =======================
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
-class Restringir_acceso(View):#para el decorador login_required de las clases
+class Restringir_acceso(View):  # para el decorador login_required de las clases
     pass
-class ListarMascotas(Restringir_acceso,ListView):
-    model=Mascotas
-    template_name='admin/mascotas/listaMascotas.html'
+
+
+class ListarMascotas(Restringir_acceso, ListView):
+    model = Mascotas
+    template_name = 'admin/mascotas/listaMascotas.html'
+
+
 class ListarMascotasUsuario(ListView):
     model = Mascotas
     template_name = 'user/listaMascotas.html'
     context_object_name = 'mascotas_list'
-class ModificarMascota(UpdateView,Restringir_acceso):
-    model=Mascotas
-    form_class=MascotasForm
-    template_name='admin/mascotas/modificarMascota.html'
-    success_url=reverse_lazy('listar_mascotas')
+
+
+class ModificarMascota(UpdateView, Restringir_acceso):
+    model = Mascotas
+    form_class = MascotasForm
+    template_name = 'admin/mascotas/modificarMascota.html'
+    success_url = reverse_lazy('listar_mascotas')
+
 
 @login_required(login_url='/login/')
 def crear_mascota(request):
-    if request.method=='POST':
-        form=MascotasForm(request.POST, request.FILES)
+    if request.method == 'POST':
+        form = MascotasForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('listar_mascotas')
     else:
-        form=MascotasForm()
-    return render(request, 'admin/mascotas/crearMascota.html', {'form':form})
+        form = MascotasForm()
+    return render(request, 'admin/mascotas/crearMascota.html', {'form': form})
+
 
 @login_required(login_url='/login/')
 def eliminar_mascota(request, id):
-    mascota=get_object_or_404(Mascotas, pk=id)
-    if request.method=='POST':
+    mascota = get_object_or_404(Mascotas, pk=id)
+    if request.method == 'POST':
         mascota.delete()
         return redirect('listar_mascotas')
-    return render(request,'admin/mascotas/eliminarMascota.html', {'mascota':mascota})
+    return render(request, 'admin/mascotas/eliminarMascota.html', {'mascota': mascota})
 
-#ABM RAZA(fbv)
-#listar-> sabri
+
+# =======================
+# ABM RAZA (fbv)
+# =======================
+# listar -> sabri
 @login_required(login_url='/login/')
 def listar_razas(request):
-    razas=Raza.objects.all()
-    return render(request, 'admin/raza/listarRaza.html',{'razas':razas})
+    razas = Raza.objects.all()
+    return render(request, 'admin/raza/listarRaza.html', {'razas': razas})
 
-#crear->cami
+# crear -> cami
 @login_required(login_url='/login/')
 def crear_raza(request):
     if request.method == 'POST':
@@ -157,85 +170,74 @@ def crear_raza(request):
         especie_id = request.POST.get('especie')
 
         especie = None
-        if especie_id:  # si el usuario seleccionó alguna especie
+        if especie_id:
             especie = get_object_or_404(Especie, id=especie_id)
 
-        nuevaRaza = Raza (
-            nombre = nombre,
-            especie = especie
-        )
-        
+        nuevaRaza = Raza(nombre=nombre, especie=especie)
         nuevaRaza.save()
         return redirect('listar_razas')
     
     especies = Especie.objects.all()
     return render(request, 'admin/raza/crearRaza.html', {'especies': especies})
 
-#eliminar->marce
+# eliminar -> marce
 @login_required(login_url='/login/')
 def eliminar_raza(request, raza_id):
-    #Obtiene la raza por su id, si no existe se genera error
     raza = get_object_or_404(Raza, id=raza_id)
-    
-    #Si el formulario se envia, se confirma la eliminacion
     if request.method == 'POST':
-        #Elimina el objeto si lo encuentra 
-            raza.delete()   
-            #Mensaje de exito
-            messages.success(request, "La raza ha sido eliminada exitosamente.")
-                #Redirige a la lista de razas
-            return redirect('listar_razas')
-    #Si el metodo no es POST, muestra el formulario de confirmacion
+        raza.delete()
+        messages.success(request, "La raza ha sido eliminada exitosamente.")
+        return redirect('listar_razas')
     return render(request, 'admin/raza/eliminarRaza.html', {'raza': raza})
 
-#modificar-> jessi
+# modificar -> jessi
 @login_required(login_url='/login/')
 def modificar_raza(request, raza_id):
-    # Obtiene la instancia de la raza que se va a modificar
-    raza = get_object_or_404(Raza, id=raza_id) # type: ignore
-    
+    raza = get_object_or_404(Raza, id=raza_id)
     if request.method == 'POST':
         form = RazaForm(request.POST, instance=raza)
         if form.is_valid():
-            form.save()  # Guarda los cambios
-            return redirect('listar_razas')  # Redirige a la lista de razas después de la modificación
+            form.save()
+            return redirect('listar_razas')
     else:
-        form = RazaForm(instance=raza)  # Prellenamos el formulario con la instancia existente
-
+        form = RazaForm(instance=raza)
     return render(request, 'admin/raza/modificarRaza.html', {'form': form})
 
 
-#ABM ESPECIE(cbv)
-#crear->jessi
-class CrearEspecieView(CreateView,Restringir_acceso):
+# =======================
+# ABM ESPECIE (cbv)
+# =======================
+# crear -> jessi
+class CrearEspecieView(CreateView, Restringir_acceso):
     model = Especie
     form_class = EspecieForm
     template_name = 'admin/especie/crearEspecie.html'
-    success_url = reverse_lazy('listar_especies')  # Redirige a la lista de especies después de crear
-#eliminar->sabri
-class EliminarEspecie(DeleteView, Restringir_acceso):
-    model=Especie
-    template_name='admin/especie/eliminarEspecie.html'
-    success_url=reverse_lazy('listar_especies')
+    success_url = reverse_lazy('listar_especies')
 
-#modificar->cami
-class ModificarEspecieView(UpdateView,Restringir_acceso):
+# eliminar -> sabri
+class EliminarEspecie(DeleteView, Restringir_acceso):
+    model = Especie
+    template_name = 'admin/especie/eliminarEspecie.html'
+    success_url = reverse_lazy('listar_especies')
+
+# modificar -> cami
+class ModificarEspecieView(UpdateView, Restringir_acceso):
     model = Especie
     form_class = EspecieForm
     template_name = 'admin/especie/modificarEspecie.html'
     success_url = reverse_lazy('listar_especies')
 
-#listar->marce
-class ListarEspeciesView(ListView,Restringir_acceso):
+# listar -> marce
+class ListarEspeciesView(ListView, Restringir_acceso):
     model = Especie
-    #Nombre del archivo html
     template_name = 'admin/especie/listarEspecie.html'
-    #Nombre con el que se accede a las especies
     context_object_name = 'especies'
-    
 
-#ABM PERSONA(fbv)
-#crear->marce
+
+# =======================
+# ABM PERSONA (fbv)
+# =======================
+# crear -> marce
 @login_required(login_url='/login/')
 def crear_persona(request):
     if request.method == 'POST':
@@ -243,47 +245,37 @@ def crear_persona(request):
         domicilio_form = DomicilioForm(request.POST)
 
         if form.is_valid() and domicilio_form.is_valid():
-            # Guardamos el domicilio primero
             domicilio = domicilio_form.save()
-
-            # Creamos la persona sin guardar todavía
             persona = form.save(commit=False)
             persona.domicilio = domicilio
-            user_id=request.POST.get("user")
+            user_id = request.POST.get("user")
             if user_id:
-                persona.user=User.objects.get(id=user_id)
+                persona.user = User.objects.get(id=user_id)
             persona.save()
-
-            # Redirigimos a la lista de personas
             return redirect('listar_personas')
     else:
         form = PersonasForm()
         domicilio_form = DomicilioForm()
-    return render(
-        request,
-        'admin/personas/crearPersonas.html',
-        {'form': form, 'domicilio_form': domicilio_form}
-    )
-    
-#modificar->sabri
+    return render(request, 'admin/personas/crearPersonas.html', {'form': form, 'domicilio_form': domicilio_form})
+
+# modificar -> sabri
 @login_required(login_url='/login/')
 def modificar_persona(request, id):
-    persona=get_object_or_404(Persona,pk=id)
-    domicilio=persona.domicilio
-    if request.method=='POST':
-        form=PersonasForm(request.POST, instance=persona)
-        domicilio_form=DomicilioForm(request.POST, instance=domicilio)
+    persona = get_object_or_404(Persona, pk=id)
+    domicilio = persona.domicilio
+    if request.method == 'POST':
+        form = PersonasForm(request.POST, instance=persona)
+        domicilio_form = DomicilioForm(request.POST, instance=domicilio)
         if form.is_valid() and domicilio_form.is_valid():
-            #guardamos el domicilio y asignamos el domicilio a la persona
             domicilio_form.save()
             form.save()
             return redirect('listar_personas')
     else:
-        form=PersonasForm(instance=persona)
-        domicilio_form=DomicilioForm(instance=domicilio)
-    return render(request,'admin/personas/modificarPersona.html',{'form':form, 'domicilio_form': domicilio_form})
+        form = PersonasForm(instance=persona)
+        domicilio_form = DomicilioForm(instance=domicilio)
+    return render(request, 'admin/personas/modificarPersona.html', {'form': form, 'domicilio_form': domicilio_form})
 
-#baja que no puede adoptar ni registrarse->cami
+# baja que no puede adoptar ni registrarse -> cami
 @login_required(login_url='/login/')
 def eliminar_persona(request, persona_id):
     persona = get_object_or_404(Persona, id=persona_id)
@@ -292,163 +284,230 @@ def eliminar_persona(request, persona_id):
        if persona.user is None:
             messages.error(request, "Esta persona no tiene un usuario")
             return redirect('listar_personas')
-       persona.user.is_active=False #desactiva el usuario asociado
+       persona.user.is_active = False
        persona.user.save()
-       persona.puede_adoptar=False#no puede adoptar
+       persona.puede_adoptar = False
        persona.save()
        return redirect('listar_personas')
     
     return render(request, 'admin/personas/bajaPersonas.html', {'persona': persona})
 
-#alta puede adoptar y registrarse 
+# alta puede adoptar y registrarse -> cami
 @login_required(login_url='/login/')
-def habilitar_persona(request,persona_id):
-    persona=get_object_or_404(Persona,id=persona_id)
-    if request.method=='POST':
+def habilitar_persona(request, persona_id):
+    persona = get_object_or_404(Persona, id=persona_id)
+    if request.method == 'POST':
         if persona.user is None:
             messages.error(request, "Esta persona no tiene un usuario")
             return redirect('listar_personas')
-        persona.user.is_active=True
+        persona.user.is_active = True
         persona.user.save()
-        persona.puede_adoptar=True#puede adoptar
+        persona.puede_adoptar = True
         persona.save()
         return redirect('listar_personas')
-    return render(request,'admin/personas/altaPersonas.html',{'persona':persona})
+    return render(request, 'admin/personas/altaPersonas.html', {'persona': persona})
 
-#listar->jessi
+# listar -> jessi
 @login_required(login_url='/login/')
 def listar_personas(request):
     persona = Persona.objects.all()
-    
     for p in persona:
-        print("persona=" +p.nombre)    
-        
-
+        print("persona=" + p.nombre)
     return render(request, 'admin/personas/listaPersonas.html', {'personas': persona})
-    
-#EDICION
-#@login_required >>>>> REVISAR!!!
+
+
+# =======================
+# PERFIL DE USUARIO
+# =======================
 @login_required(login_url='/login/')
 def edit_profile(request):
     profile, created = UserProfile.objects.get_or_create(user=request.user)
-
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
             return redirect('view_profile')
-        else:
-            form = UserProfileForm(instance=profile)
+    else:
+        form = UserProfileForm(instance=profile)
+    return render(request, 'admin/edit_profile.html', {'form': form})
 
-        return render(request, 'admin/edit_profile.html', {'form': form})
 
-#VISUALIZACION
-#@login_required
 @login_required(login_url='/login/')
 def view_profile(request):
     profile = UserProfile.objects.get(user=request.user)
-    return render(request, 'view_profile.html', {'profile':profile})
-
-# correo electronico
+    return render(request, 'view_profile.html', {'profile': profile})
 
 
-# Genera una contraseña temporal aleatoria
+# =======================
+# CORREO ELECTRÓNICO
+# =======================
 def generar_contraseña_temporal(longitud=8):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=longitud))
 
-# Vista para recuperar contraseña
+
 def recuperar_contraseña(request):
     mensaje = ""
     if request.method == "POST":
         email = request.POST.get("email")
         try:
             usuario = User.objects.get(email=email)
-            
-            # Generar nueva contraseña y actualizar el usuario
             nueva_pass = generar_contraseña_temporal()
             usuario.set_password(nueva_pass)
             usuario.save()
-            
-            # Marcar primer ingreso (si usás UserProfile)
             usuario.userprofile.primer_ingreso = True
             usuario.userprofile.save()
-            
-            # Preparar contexto para el correo
-            contexto = {
-                "usuario": usuario.username,
-                "nueva_pass": nueva_pass,
-            }
-            contentenido_html=render_to_string("correo.html",contexto)#funcion que lee una plantilla y la rellena con el contexto
-            contentenido_texto=strip_tags(contentenido_html)#funcion para eliminar etiquetas html del texto
-            
-            # Enviar correo
+            contexto = {"usuario": usuario.username, "nueva_pass": nueva_pass}
+            contenido_html = render_to_string("correo.html", contexto)
+            contenido_texto = strip_tags(contenido_html)
             enviar_correo(
                 asunto="Recuperación de contraseña",
                 destinatarios=[email],
-                texto=contentenido_texto,
-                html=contentenido_html
+                texto=contenido_texto,
+                html=contenido_html
             )
-            
             mensaje = "Se ha enviado una nueva contraseña a tu correo."
-        
         except User.DoesNotExist:
             mensaje = "No existe un usuario con ese correo."
-    
     return render(request, "contraseña/recu_contraseña.html", {"mensaje": mensaje})
 
 
-# Vista para cambiar contraseña
+# =======================
+# CAMBIO DE CONTRASEÑA
+# =======================
 @login_required(login_url='/login/')
 def cambiar_password(request, id):
     perfil = UserProfile.objects.get(id=id)
     if not perfil.primer_ingreso:
         return redirect('dashboard')
-
     if request.method == 'POST':
         nueva_contraseña = request.POST.get('password')
         confirmar_contraseña = request.POST.get('password2')
-
         if nueva_contraseña == confirmar_contraseña:
-            perfil.user.set_password(nueva_contraseña)#la funcion encripta la contraseña
+            perfil.user.set_password(nueva_contraseña)
             perfil.user.save()
             perfil.primer_ingreso = False
             perfil.save()
-            messages.success(request,"Tu contraseña se cambió con exito, volve a iniciar sesión")
+            messages.success(request, "Tu contraseña se cambió con éxito, volvé a iniciar sesión")
             return redirect('login')
         else:
             mensaje = "Las contraseñas no coinciden."
             return render(request, 'contraseña/cambiarContraseña.html', {'mensaje': mensaje})
-
     return render(request, 'contraseña/cambiarContraseña.html')
+
 
 @login_required(login_url='/login/')
 def cambiar_contraseña_voluntariamente(request):
-    if request.method=='POST':
-        nueva_contraseña=request.POST.get('password')
-        confirmar=request.POST.get('password2')
-        if nueva_contraseña==confirmar:
+    if request.method == 'POST':
+        nueva_contraseña = request.POST.get('password')
+        confirmar = request.POST.get('password2')
+        if nueva_contraseña == confirmar:
             request.user.set_password(nueva_contraseña)
             request.user.save()
-            messages.success(request,"Tu contraseña se cambió con exito, volve a iniciar sesión")
+            messages.success(request, "Tu contraseña se cambió con éxito, volvé a iniciar sesión")
             return redirect('login')
         else:
-            messages.error(request,"Lo lamento, la contraseña no coinciden")
+            messages.error(request, "Lo lamento, las contraseñas no coinciden")
     return render(request, 'contraseña/cambiarContraseña.html')
 
 
+# =======================
+# FILTRO DE MASCOTAS
+# =======================
+@login_required(login_url='/login/')
+def filtrar_mascotas(request):
+    # Listas completas
+    especies = Especie.objects.all()
+    razas = Raza.objects.all()
+    localidades = Localidad.objects.all()
+
+    # Parámetros GET para filtrado
+    selected_especie = request.GET.get('especie')
+    selected_raza = request.GET.get('raza')
+    selected_localidad = request.GET.get('localidad')
+
+    # Query inicial de mascotas
+    mascotas = Mascotas.objects.all()
+
+    # Filtrados condicionales
+    if selected_especie:
+        mascotas = mascotas.filter(raza__especie_id=int(selected_especie))
+        razas = razas.filter(especie_id=selected_especie)
+
+    if selected_raza:
+        mascotas = mascotas.filter(raza_id=int(selected_raza))
+
+    if selected_localidad:
+        mascotas = mascotas.filter(localidad_id=int(selected_localidad))
+
+    # Contexto
+    context = {
+        'especies': especies,
+        'razas': razas,
+        'localidades': localidades,
+        'mascotas': mascotas,
+        'selected_especie': int(selected_especie) if selected_especie else None,
+        'selected_raza': int(selected_raza) if selected_raza else None,
+        'selected_localidad': int(selected_localidad) if selected_localidad else None,
+    }
+
+    return render(request, 'user/filtrar_mascotas.html', context)
 
 
+# =======================
+# EXPLORAR ESPECIES Y RAZAS (sabri)
+# =======================
+@login_required(login_url='/login/')
+def explorar_especies(request):
+    def obtener_icono_para_especie(nombre):
+        iconos = {
+            "Perro": "fa-dog",
+            "Gato": "fa-cat",
+            "Ave": "fa-dove",
+            "Conejo": "fa-carrot",
+            "Pez": "fa-fish",
+            "Reptil": "fa-dragon",
+        }
+        return iconos.get(nombre, "fa-paw")
+
+    especies = Especie.objects.prefetch_related("razas").all()
+    contexto ={
+        "especies": [
+           {
+              "obj": especie,
+              "icono": obtener_icono_para_especie(especie.nombre),
+              "razas": especie.razas.all(),
+            }
+            for especie in especies
+        ]
+  }
+    return render(request, "user/explorar_especies.html", contexto)
+
+@login_required(login_url='/login/')
+def explorar_razas(request, especie_id):
+    # Obtenemos la especie o devolvemos 404 si no existe
+    especie = get_object_or_404(Especie, id=especie_id)
+    razas = Raza.objects.filter(especie=especie)
+    return render(request, 'user/explorar_razas.html', {
+        'especie': especie,
+        'razas': razas
+    })
 
 
+# =======================
+# MÓDULO ADOPCIONES (sabri)
+# =======================
+@login_required(login_url='/login/')
+def mis_adopciones(request):
+    # Filtramos las adopciones del usuario logueado
+    adopciones = Adopcion.objects.filter(usuario=request.user)
 
+    # Si no tiene adopciones, mostramos un mensaje informativo
+    if not adopciones.exists():
+        storage = messages.get_messages(request)
+        if not any(msg.message == "Todavía no realizaste ninguna adopción." for msg in storage):
+           messages.info(request, "Todavía no realizaste ninguna adopción.")
 
-
-
-
-
-
-
-
+    return render(request, 'user/mis_adopciones.html', {'adopciones': adopciones})
 
 
 

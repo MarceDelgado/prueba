@@ -1,16 +1,20 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Mascotas disponibles - Universo Peludo{% endblock %}
-
+{% block title %}Panel de control - Universo Peludo{% endblock %}
 
 {% block content %}
-
+<div class="container py-4">
     {% if user.is_authenticated and not user.userprofile.primer_ingreso %}
         {% if user.is_superuser or user.is_staff %}
             {% include 'admin/menuAdmin.html' %}
         {% else %}
-            {% include 'user/listaMascotas.html' %}
+            {% include 'user/menuUsuario.html' %}
         {% endif %}
+    {% else %}
+        <div class="alert alert-warning text-center mt-5">
+            <strong>Acceso denegado:</strong> Debes iniciar sesión.
+        </div>
     {% endif %}
+</div>
 {% endblock %}

@@ -1,0 +1,50 @@
+<div class="container py-5 text-center">
+    <h2 class="text-light mb-4">Bienvenido, Marche 🐾</h2>
+    <div class="bubble-menu">
+        <a href="{% url 'listar_mascotas_usuario' %}" class="bubble"><i class="fa-solid fa-dog"></i><span>Ver Mascotas</span></a>
+        <a href="{% url 'explorar_especies' %}" class="bubble"><i class="fa-solid fa-paw"></i><span>Especies</span></a>
+        <a href="{% url 'mis_adopciones' %}" class="bubble"><i class="fa-solid fa-heart"></i><span>Mis Adopciones</span></a>
+    </div>
+</div>
+
+<style>
+body {
+    background: linear-gradient(135deg, #007bff, #00c6ff);
+}
+.bubble-menu {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+}
+.bubble {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: #fff;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: 0.3s ease;
+}
+.bubble i {
+    font-size: 2rem;
+    color: #1abc9c;
+}
+.bubble span {
+    margin-top: 10px;
+    font-weight: 600;
+}
+.bubble:hover {
+    transform: translateY(-8px) scale(1.1);
+    background: #1abc9c;
+    color: #fff;
+}
+.bubble:hover i {
+    color: #fff;
+}
+</style>

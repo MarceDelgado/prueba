@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Explorar Especies y Razas{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-dark mb-2">🐾 Explorar Especies</h2>
+        <p class="text-dark">Descubrí las especies disponibles y sus razas</p>
+    </div>
+
+    {% for e in especies %}
+    <div class="mb-5 especie-section">
+        <!-- Encabezado de especie -->
+        <div class="text-center mb-4">
+            <i class="fa-solid {{ e.icono }} fa-3x text-primary mb-2"></i>
+            <h3 class="fw-bold text-dark">{{ e.obj}}</h3>
+            <div class="underline mx-auto my-3"></div>
+        </div>
+
+        <!-- Razas dentro de la especie -->
+        <div class="row g-4 justify-content-center">
+            {% for r in e.razas %}
+            <div class="col-md-4 col-lg-3">
+                <div class="card text-center shadow-sm border-0 rounded-4 raza-card h-100">
+                    <div class="card-body py-4">
+                        <i class="fa-solid fa-dna fa-2x text-success mb-3"></i>
+                        <h5 class="fw-bold mb-2 text-dark">{{ r.descripcion }}</h5>
+                        <p class="text-muted mb-3">Raza de {{ e.obj }}</p>
+                        <a href="{% url 'filtrar_mascotas' %}?raza={{ r.id }}" class="btn btn-outline-success btn-sm">
+                            Ver mascotas
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted text-center">No hay razas registradas para esta especie.</p>
+            {% endfor %}
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-muted text-center">No hay especies registradas.</p>
+    {% endfor %}
+</div>
+
+<style>
+.especie-section {
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.underline {
+    width: 80px;
+    height: 4px;
+    background-color: #1abc9c;
+    border-radius: 2px;
+}
+
+.raza-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    background-color: #f9f9f9;
+}
+.raza-card:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    background-color: #ecfdf5;
+}
+</style>
+{% endblock %}

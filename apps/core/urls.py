@@ -4,7 +4,8 @@ from .views import (home, buscar_animales,contacto, login_view, logout_view, reg
                     ListarMascotas,ListarMascotasUsuario, crear_mascota, ModificarMascota, eliminar_mascota,
                     ModificarEspecieView, EliminarEspecie,ListarEspeciesView,CrearEspecieView,
                     crear_raza,listar_razas,eliminar_raza,modificar_raza, recuperar_contraseña, cambiar_password,
-                    listar_personas,crear_persona, eliminar_persona, modificar_persona,habilitar_persona,cambiar_contraseña_voluntariamente)
+                    listar_personas,crear_persona, eliminar_persona, modificar_persona,habilitar_persona,
+                    cambiar_contraseña_voluntariamente, filtrar_mascotas, explorar_especies, explorar_razas, mis_adopciones)
 urlpatterns = [
 	path('', home, name='home'),
 	path('buscar/', buscar_animales, name='buscar_animales'),
@@ -38,5 +39,11 @@ urlpatterns = [
     #correo
     path('solicitar-recuperacion/', recuperar_contraseña, name='solicitar_recuperacion'),
     path('cambiar-password/<int:id>/', cambiar_password, name='cambiar_password'),
-    path('cambiar_contraseña', cambiar_contraseña_voluntariamente, name='cambiar_contraseña_voluntariamente')
+    path('cambiar_contraseña', cambiar_contraseña_voluntariamente, name='cambiar_contraseña_voluntariamente'),
+    #FILTRO MASCOTAS (nuevo)
+    path('filtrar_mascotas/', filtrar_mascotas, name='filtrar_mascotas'),
+    path('explorar_especies/', explorar_especies, name='explorar_especies'),
+    path('explorar_razas/<int:especie_id>/', explorar_razas, name='explorar_razas'),
+    path('mis_adopciones/', mis_adopciones, name='mis_adopciones'),
 ]
+ 

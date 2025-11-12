@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Explorar Razas{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-dark mb-2">
+            🐾 Razas de {{ e.nombre }}
+        </h2>
+        <p class="text-dark">Seleccioná una raza para ver las mascotas disponibles</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+        {% for r in razas %}
+        <div class="col-md-4 col-lg-3">
+            <div class="card text-center shadow-sm border-0 rounded-4 raza-card h-100">
+                <div class="card-body py-4">
+                    <i class="fa-solid fa-dna fa-3x text-success mb-3"></i>
+                    <h5 class="fw-bold mb-2 text-dark">{{ r.nombre }}</h5>
+                    <p class="text-dark mb-3">Raza de {{ e.nombre|lower }}</p>
+                    <a href="{% url 'filtrar_mascotas' %}?raza={{ r.id }}" class="btn btn-outline-success btn-sm">
+                        Ver mascotas
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted text-center">No hay razas registradas para esta especie.</p>
+        {% endfor %}
+    </div>
+
+    <div class="mt-4 text-center">
+        <a href="{% url 'explorar_especies' %}" class="btn btn-secondary">
+            <i class="fa-solid fa-arrow-left"></i> Volver
+        </a>
+    </div>
+</div>
+
+<style>
+.raza-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #f9f9f9;
+}
+.raza-card:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    background-color: #ecfdf5;
+}
+</style>
+{% endblock %}

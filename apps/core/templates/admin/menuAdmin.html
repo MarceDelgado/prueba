@@ -1,42 +1,52 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block content %}
-<div class="container py-5">
-    <div class="text-center my-4 p-3 bg-light shadow-sm rounded">
-        <h2 class="fw-bold text-primary fs-2 mb-2">bienvenido  {{user.username}}, ingresaste como administrador</h2>
-        <p class="text-muted fs-5 mb-0">Mascotas Disponibles</p>
-    </div>
-    
-    <!-- Acordeón de Mascotas -->
-    <div class="accordion" id="accordionMascotas">
-        {% for mascota in mascotas_list %}
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="heading{{ mascota.id }}">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ mascota.id }}" aria-expanded="false" aria-controls="collapse{{ mascota.id }}">
-                        {{ forloop.counter }}. {{ mascota.raza }} - {{ mascota.sexo }}
-                    </button>
-                </h2>
-                <div id="collapse{{ mascota.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ mascota.id }}" data-bs-parent="#accordionMascotas">
-                    <div class="accordion-body">
-                        <strong>Especie:</strong> {{ mascota.raza.especie }}<br>
-                        <strong>Fecha de nacimiento:</strong> {{ mascota.fecha_nac }}<br>
-                        <strong>Observaciones:</strong> {{ mascota.observaciones }}<br>
-                        <td>
-                            {% if mascota.fotos %}
-                            <img src="{{ mascota.fotos.url }}" width="250">
-                            {% endif %}
-                          </td>
-                    </div>
-                </div>
-            </div>
-        {% empty %}
-            <div class="accordion-item">
-                <div class="accordion-body text-center text-muted">
-                    No hay mascotas disponibles.
-                </div>
-            </div>
-        {% endfor %}
+<div class="admin-dashboard py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-dark mb-2">Bienvenido, {{ user.username }}</h2>
+        <p class="text-dark">Panel de Administración</p>
     </div>
 
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-4 col-lg-3">
+            <div class="card text-center shadow-sm border-0 rounded-4">
+                <div class="card-body py-4">
+                    <i class="fa-solid fa-paw fa-2x text-primary mb-3"></i>
+                    <h5 class="fw-bold mb-2">Mascotas</h5>
+                    <p class="text-muted mb-3">Gestioná todas las mascotas</p>
+                    <a href="{% url 'listar_mascotas' %}" class="btn btn-outline-primary btn-sm">Ir</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-3">
+            <div class="card text-center shadow-sm border-0 rounded-4">
+                <div class="card-body py-4">
+                    <i class="fa-solid fa-dna fa-2x text-success mb-3"></i>
+                    <h5 class="fw-bold mb-2">Razas</h5>
+                    <p class="text-muted mb-3">Controlá las razas disponibles</p>
+                    <a href="{% url 'listar_razas' %}" class="btn btn-outline-success btn-sm">Ir</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-3">
+            <div class="card text-center shadow-sm border-0 rounded-4">
+                <div class="card-body py-4">
+                    <i class="fa-solid fa-fish fa-2x text-info mb-3"></i>
+                    <h5 class="fw-bold mb-2">Especies</h5>
+                    <p class="text-muted mb-3">Administrá las especies</p>
+                    <a href="{% url 'listar_especies' %}" class="btn btn-outline-info btn-sm">Ir</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-3">
+            <div class="card text-center shadow-sm border-0 rounded-4">
+                <div class="card-body py-4">
+                    <i class="fa-solid fa-user fa-2x text-danger mb-3"></i>
+                    <h5 class="fw-bold mb-2">Personas</h5>
+                    <p class="text-muted mb-3">Gestioná los adoptantes</p>
+                    <a href="{% url 'listar_personas' %}" class="btn btn-outline-danger btn-sm">Ir</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-{% endblock %}
