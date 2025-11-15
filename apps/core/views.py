@@ -1,3 +1,4 @@
+#el menuAdmin(dashboard), te paso la vista para que verifiques solo la parte de administrador
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -123,6 +124,14 @@ class ListarMascotasUsuario(ListView):
     model = Mascotas
     template_name = 'user/listaMascotas.html'
     context_object_name = 'mascotas_list'
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        raza_id=self.request.GET.get("raza")
+        if raza_id:
+            qs = qs.filter(raza_id=raza_id)
+        return qs                                    
+        
 
 
 class ModificarMascota(UpdateView, Restringir_acceso):
@@ -307,6 +316,21 @@ def habilitar_persona(request, persona_id):
         return redirect('listar_personas')
     return render(request, 'admin/personas/altaPersonas.html', {'persona': persona})
 
+def baja_persona_confirmar(request, persona_id):
+    persona = get_object_or_404(Persona, id=persona_id)
+
+    if request.method == 'POST':
+        if persona.user:
+            persona.user.is_active = False
+            persona.user.save()
+        persona.puede_adoptar = False
+        persona.save()
+        messages.success(request, f"{persona.nombre} {persona.apellido} fue dado de baja.")
+        return redirect('listar_personas')
+
+    return render(request, 'admin/personas/bajaPersonas.html', {'persona': persona})
+
+
 # listar -> jessi
 @login_required(login_url='/login/')
 def listar_personas(request):
@@ -416,25 +440,27 @@ def cambiar_contraseña_voluntariamente(request):
 @login_required(login_url='/login/')
 def filtrar_mascotas(request):
     # Listas completas
-    especies = Especie.objects.all()
     razas = Raza.objects.all()
+    especies = Especie.objects.all()
     localidades = Localidad.objects.all()
 
     # Parámetros GET para filtrado
-    selected_especie = request.GET.get('especie')
+    
     selected_raza = request.GET.get('raza')
+    selected_especie = request.GET.get('especie')
     selected_localidad = request.GET.get('localidad')
 
     # Query inicial de mascotas
     mascotas = Mascotas.objects.all()
 
     # Filtrados condicionales
+    if selected_raza:
+        mascotas = mascotas.filter(raza_id=int(selected_raza))
+        
     if selected_especie:
         mascotas = mascotas.filter(raza__especie_id=int(selected_especie))
         razas = razas.filter(especie_id=selected_especie)
 
-    if selected_raza:
-        mascotas = mascotas.filter(raza_id=int(selected_raza))
 
     if selected_localidad:
         mascotas = mascotas.filter(localidad_id=int(selected_localidad))
@@ -450,7 +476,7 @@ def filtrar_mascotas(request):
         'selected_localidad': int(selected_localidad) if selected_localidad else None,
     }
 
-    return render(request, 'user/filtrar_mascotas.html', context)
+    return render(request, 'user/detalle_mascotas.html', context)
 
 
 # =======================
@@ -458,39 +484,50 @@ def filtrar_mascotas(request):
 # =======================
 @login_required(login_url='/login/')
 def explorar_especies(request):
-    def obtener_icono_para_especie(nombre):
-        iconos = {
-            "Perro": "fa-dog",
-            "Gato": "fa-cat",
-            "Ave": "fa-dove",
-            "Conejo": "fa-carrot",
-            "Pez": "fa-fish",
-            "Reptil": "fa-dragon",
-        }
-        return iconos.get(nombre, "fa-paw")
 
-    especies = Especie.objects.prefetch_related("razas").all()
-    contexto ={
-        "especies": [
-           {
-              "obj": especie,
-              "icono": obtener_icono_para_especie(especie.nombre),
-              "razas": especie.razas.all(),
+    especies = Especie.objects.prefetch_related('razas').all()
+    
+    # Diccionario de íconos por especie
+    iconos = {
+        "Perro": "fa-dog",
+        "Gato": "fa-cat",
+        "Ave": "fa-dove",
+        "Conejo": "fa-carrot",
+        "Pez": "fa-fish",
+        "Reptil": "fa-dragon",
+        "roedor": "fa-mouse"
+    }
+
+    context = {
+         "especies":[          
+         {
+                "obj": e.nombre,
+                "icono": iconos.get(e.nombre, "fa-paw"),  # o tu función de iconos
+                "razas": e.razas.all(),
             }
-            for especie in especies
+            for e in especies
         ]
-  }
-    return render(request, "user/explorar_especies.html", contexto)
+    }
+    return render(request, "user/explorar_especies.html", context)
+
 
 @login_required(login_url='/login/')
-def explorar_razas(request, especie_id):
-    # Obtenemos la especie o devolvemos 404 si no existe
-    especie = get_object_or_404(Especie, id=especie_id)
-    razas = Raza.objects.filter(especie=especie)
-    return render(request, 'user/explorar_razas.html', {
-        'especie': especie,
-        'razas': razas
-    })
+@login_required(login_url='/login/')
+def explorar_razas(request, raza_id):
+    # Obtengo la raza
+    raza = get_object_or_404(Raza, id=raza_id)
+    especie = raza.especie
+
+    # Obtengo todas las mascotas de esa raza
+    mascotas = Mascotas.objects.filter(raza=raza)
+
+    contexto = {
+        "especie": especie,
+        "raza": raza,
+        "mascotas": mascotas,  # 👈 esto es lo que detalle_mascotas.html necesita
+    }
+
+    return render(request, 'user/detalle_mascotas.html', contexto)
 
 
 # =======================
@@ -498,30 +535,57 @@ def explorar_razas(request, especie_id):
 # =======================
 @login_required(login_url='/login/')
 def mis_adopciones(request):
-    # Filtramos las adopciones del usuario logueado
-    adopciones = Adopcion.objects.filter(usuario=request.user)
+    adopciones_qs = Adopcion.objects.filter(usuario=request.user)
 
-    # Si no tiene adopciones, mostramos un mensaje informativo
-    if not adopciones.exists():
+    adopciones = []
+    for a in adopciones_qs:
+        adopciones.append({
+            "mascota": a.mascota,
+            "especie": a.mascota.raza.especie.nombre,
+            "raza": a.mascota.raza.nombre,
+            "fecha": a.fecha_adopcion,
+            "seguimiento": a.seguimiento,  # si tienes un campo booleano o texto
+        })
+
+    # Mensaje si no hay adopciones
+    if not adopciones:
         storage = messages.get_messages(request)
         if not any(msg.message == "Todavía no realizaste ninguna adopción." for msg in storage):
-           messages.info(request, "Todavía no realizaste ninguna adopción.")
+            messages.info(request, "Todavía no realizaste ninguna adopción.")
 
-    return render(request, 'user/mis_adopciones.html', {'adopciones': adopciones})
+    context = {
+        "adopciones": adopciones
+    }
 
+    return render(request, 'user/mis_adopciones.html', context)
 
+@login_required(login_url='/login/')
+def detalle_mascota(request, mascota_id):
+    """
+    Página de detalle de una mascota.
+    Muestra foto, nombre, raza/especie, sexo, localidad, descripción y botones.
+    """
+    mascota = get_object_or_404(Mascotas, id=mascota_id)
 
+    # Información segura (no asumimos que existan todos los campos)
+    foto_url = mascota.foto.url if getattr(mascota, "foto", None) and getattr(mascota.foto, "url", None) else None
+    nombre = getattr(mascota, "nombre", "Sin nombre")
+    descripcion = getattr(mascota, "descripcion", "")  # si tu modelo no tiene 'descripcion' puede estar vacío
+    sexo = getattr(mascota, "sexo", None)  # si tenés SEXO_CHOICES
+    raza = getattr(mascota, "raza", None)
+    localidad = getattr(mascota, "localidad", None)
 
+    contexto = {
+        "mascota": mascota,
+        "foto_url": foto_url,
+        "nombre": nombre,
+        "descripcion": descripcion,
+        "sexo": sexo,
+        "raza": raza,
+        "localidad": localidad,
+    }
 
-
-
-
-
-
-
-
-
-
+    return render(request, "user/detalle_mascota.html", contexto)
 
 
 

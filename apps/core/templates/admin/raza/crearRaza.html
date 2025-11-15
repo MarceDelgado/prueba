@@ -1,25 +1,45 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Crear Raza{% endblock %}
 
 {% block content %}
-  <div class="form-container">
-    <h1>Crear nueva raza</h1>
+<div class="form-container py-4" style="max-width: 600px; margin: auto;">
+    <h2 class="mb-4 text-primary fw-bold text-center">Crear Nueva Raza</h2>
 
-    <form method="POST">
-      {% csrf_token %}
-      {{ form.as_p }}
+    <form method="POST" class="p-4 border rounded-4 shadow-sm bg-light">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
 
-      <label for="nombre">Nombre de la raza:</label> 
-      <input type="text" name="nombre" id="nombre" required><br><br>
-      
-      <label for="especie">Especie:</label> 
-      <select name="especie" id="especie"> 
-        <option value="">-- Seleccionar especie --</option>   
-        {% for especie in especies %} 
-        <option value="{{ especie.id }}">{{ especie.nombre }}</option> 
-        {% endfor %} </select> <br><br>
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre de la Raza:</label>
+            <input type="text" name="nombre" id="nombre" class="form-control" required>
+        </div>
 
-      <button type="submit" class="btn btn-primary">Guardar</button>
-      <a href="{% url 'listar_razas' %}" class="btn btn-secondary">Cancelar</a>
+        <div class="mb-3">
+            <label for="especie" class="form-label">Especie:</label>
+            <select name="especie" id="especie" class="form-select" required>
+                <option value="">-- Seleccionar especie --</option>
+                {% for especie in especies %}
+                <option value="{{ especie.id }}">{{ especie.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{% url 'listar_razas' %}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
     </form>
-  </div>
+</div>
+
+<style>
+.form-container input, .form-container select {
+    transition: all 0.3s ease;
+}
+.form-container input:focus, .form-container select:focus {
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+    border-color: #0d6efd;
+}
+</style>
 {% endblock %}

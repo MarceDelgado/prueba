@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mis Adopciones{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-dark">Mis Adopciones</h2>
+        <p class="text-muted">Aquí podés ver tus adopciones y su seguimiento</p>
+    </div>
+
+    {% if adopciones %}
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Fecha de Adopción</th>
+                    <th scope="col">Especie</th>
+                    <th scope="col">Raza</th>
+                    <th scope="col">Seguimiento</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for adopcion in adopciones %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ adopcion.fecha_adopcion|date:"d/m/Y" }}</td>
+                    <td>{{ adopcion.mascota.raza.especie.nombre }}</td>
+                    <td>{{ adopcion.mascota.raza.nombre }}</td>
+                    <td>
+                        {% if adopcion.seguimiento %}
+                            <span class="badge bg-success">Activo</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Sin seguimiento</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <div class="text-center mt-5">
+            <p class="text-muted fs-5">No tenés adopciones registradas todavía 🐾</p>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+.table-hover tbody tr:hover {
+    background-color: #eaf4ff;
+    transition: 0.3s;
+}
+</style>
+
+{% endblock %}

@@ -194,3 +194,32 @@ table th, table td {
   .sidebar .collapse.sidebar-submenu {
     transition: all 0.3s ease-in-out;
   }
+
+  /* espacio para la navbar fija */
+body {
+  padding-top: 56px; /* evita que la navbar tape el contenido */
+}
+
+/* ACORDEÓN FULLSCREEN ajustado para navbar fija */
+.accordion-wrapper { /* contenedor full width que pondremos en la plantilla */
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.accordion-fullscreen {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 56px); /* resta la altura de la navbar fija */
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* imgs deben usar 100% del contenedor ahora */
+.accordion-item img {
+  width: 100%;
+  height: 100%; /* antes era 100vh, ahora adaptamos al contenedor */
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}

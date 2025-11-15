@@ -1,12 +1,33 @@
 {% extends 'base.html' %}
+{% block title %}Crear Especie{% endblock %}
+
 {% block content %}
-  <div class="form-container">
-    <h1>Crear Especie</h1>
-    <form method="post">
-      {% csrf_token %}
-      {{form.as_p}}
-      <button type="submit" class="btn btn-primary">Guardar</button>
-      <a href="{% url 'listar_especies' %}" class="btn btn-secondary">Cancelar</a>
+<div class="form-container py-4" style="max-width: 600px; margin: auto;">
+    <h2 class="mb-4 text-primary fw-bold text-center">Crear Nueva Especie</h2>
+
+    <form method="POST" class="p-4 border rounded-4 shadow-sm bg-light">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <div class="mb-3">
+            <label for="{{ form.nombre.id_for_label }}" class="form-label">Nombre de la Especie:</label>
+            {{ form.nombre }}
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{% url 'listar_especies' %}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
     </form>
-  </div>
+</div>
+
+<style>
+.form-container input, .form-container select {
+    transition: all 0.3s ease;
+}
+.form-container input:focus, .form-container select:focus {
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+    border-color: #0d6efd;
+}
+</style>
 {% endblock %}

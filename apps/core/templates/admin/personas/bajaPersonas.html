@@ -1,15 +1,29 @@
 {% extends "base.html" %}
-{% block content %}
-    <div class="form-container">
-        <h1>Dar de baja a Adoptante</h1>
-        <form method="post">
-            {% csrf_token %}
-            <h2>¿ESTÁS SEGURO DE QUERER DAR DE BAJA A ESTA PERSONA? </h2>
-            <h2>"{{persona.nombre}}  {{ persona.apellido }}"</h2>
-            <h3>~Si le da de baja, esta persona no estará habilitada para adoptar~</h3>
-            <button type="submit"class="btn btn-primary">Dar de baja</button>
-            <a href="{% url 'listar_personas' %}"class="btn btn-secondary"> Cancelar </a>
-        </form>
-    </div>
-{% endblock %}
 
+{% block content %}
+<div class="form-container py-4 px-4 shadow-sm rounded-4" style="max-width: 600px; margin: auto; background-color: #f9f9f9;">
+    <h2 class="text-danger fw-bold mb-3 text-center">Dar de baja a Adoptante</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <p class="text-center fs-5 mb-2">¿ESTÁS SEGURO DE QUERER DAR DE BAJA A ESTA PERSONA?</p>
+        <p class="text-center fw-bold fs-4">"{{ persona.nombre }} {{ persona.apellido }}"</p>
+        <p class="text-center text-muted mb-4">Si le das de baja, esta persona no estará habilitada para adoptar.</p>
+
+        <div class="d-flex justify-content-center gap-3">
+            <button type="submit" class="btn btn-danger btn-sm">Dar de baja</button>
+            <a href="{% url 'listar_personas' %}" class="btn btn-secondary btn-sm">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<style>
+.form-container {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.form-container:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+</style>
+{% endblock %}

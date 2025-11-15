@@ -1,14 +1,15 @@
 <div class="admin-dashboard py-5">
     <div class="text-center mb-5">
         <h2 class="fw-bold text-dark mb-2">Bienvenido, {{ user.username }}</h2>
-        <p class="text-dark">Panel de Administración</p>
+        <p class="text-muted fs-5">Panel de Administración</p>
     </div>
 
     <div class="row g-4 justify-content-center">
+        <!-- Mascotas -->
         <div class="col-md-4 col-lg-3">
-            <div class="card text-center shadow-sm border-0 rounded-4">
+            <div class="card text-center shadow-sm border-0 rounded-4 dashboard-card">
                 <div class="card-body py-4">
-                    <i class="fa-solid fa-paw fa-2x text-primary mb-3"></i>
+                    <i class="fa-solid fa-paw fa-3x text-primary mb-3"></i>
                     <h5 class="fw-bold mb-2">Mascotas</h5>
                     <p class="text-muted mb-3">Gestioná todas las mascotas</p>
                     <a href="{% url 'listar_mascotas' %}" class="btn btn-outline-primary btn-sm">Ir</a>
@@ -16,10 +17,11 @@
             </div>
         </div>
 
+        <!-- Razas -->
         <div class="col-md-4 col-lg-3">
-            <div class="card text-center shadow-sm border-0 rounded-4">
+            <div class="card text-center shadow-sm border-0 rounded-4 dashboard-card">
                 <div class="card-body py-4">
-                    <i class="fa-solid fa-dna fa-2x text-success mb-3"></i>
+                    <i class="fa-solid fa-dna fa-3x text-success mb-3"></i>
                     <h5 class="fw-bold mb-2">Razas</h5>
                     <p class="text-muted mb-3">Controlá las razas disponibles</p>
                     <a href="{% url 'listar_razas' %}" class="btn btn-outline-success btn-sm">Ir</a>
@@ -27,10 +29,11 @@
             </div>
         </div>
 
+        <!-- Especies -->
         <div class="col-md-4 col-lg-3">
-            <div class="card text-center shadow-sm border-0 rounded-4">
+            <div class="card text-center shadow-sm border-0 rounded-4 dashboard-card">
                 <div class="card-body py-4">
-                    <i class="fa-solid fa-fish fa-2x text-info mb-3"></i>
+                    <i class="fa-solid fa-fish fa-3x text-info mb-3"></i>
                     <h5 class="fw-bold mb-2">Especies</h5>
                     <p class="text-muted mb-3">Administrá las especies</p>
                     <a href="{% url 'listar_especies' %}" class="btn btn-outline-info btn-sm">Ir</a>
@@ -38,10 +41,11 @@
             </div>
         </div>
 
+        <!-- Personas -->
         <div class="col-md-4 col-lg-3">
-            <div class="card text-center shadow-sm border-0 rounded-4">
+            <div class="card text-center shadow-sm border-0 rounded-4 dashboard-card">
                 <div class="card-body py-4">
-                    <i class="fa-solid fa-user fa-2x text-danger mb-3"></i>
+                    <i class="fa-solid fa-user fa-3x text-danger mb-3"></i>
                     <h5 class="fw-bold mb-2">Personas</h5>
                     <p class="text-muted mb-3">Gestioná los adoptantes</p>
                     <a href="{% url 'listar_personas' %}" class="btn btn-outline-danger btn-sm">Ir</a>
@@ -50,3 +54,15 @@
         </div>
     </div>
 </div>
+
+<style>
+.dashboard-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #f9f9f9;
+}
+.dashboard-card:hover {
+    transform: translateY(-6px) scale(1.05);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    background-color: #eaf6ff;
+}
+</style>

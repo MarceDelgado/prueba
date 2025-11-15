@@ -1,28 +1,60 @@
 {% extends "base.html" %}
 {% block content %}
-    <div class="container py-5">
-        <h1>Cambiar contraseña</h1>
-        <form method="post">
-            {% csrf_token %}
-            <div class="mt-3">
-                <label for="password" class="form-check-label" >Nueva contraseña: </label>
-                <input type="password" name="password" id="password" class="form-control" required>
-            </div>
-            <div class="mt-3">
-                <label for="password2" class="form-check-label">Confirmar contraseña: </label>
-                <input type="password" name="password2" id="password2" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Guardar nueva contraseña</button>
-            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancelar</a>
-        </form>
-        {% if messages %}
+<div class="outer-container py-5" style="background-color:#007bff; min-height:100vh; display:flex; justify-content:center; align-items:flex-start; padding-top:50px;">
+    <div class="frame-container">
+        <div class="form-container">
+            <h1 class="mb-4 text-center">Cambiar contraseña</h1>
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Nueva contraseña</label>
+                    <input type="password" name="password" id="password" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password2" class="form-label">Confirmar contraseña</label>
+                    <input type="password" name="password2" id="password2" class="form-control" required>
+                </div>
+
+                <div class="d-flex gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">Guardar nueva contraseña</button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </form>
+
+            {% if messages %}
             <div class="mt-3">
                 {% for message in messages %}
-                    <div class="alet alert-info">{{message}}</div>
+                    <div class="alert alert-info">{{ message }}</div>
                 {% endfor %}
             </div>
-        {% endif %}
-
+            {% endif %}
+        </div>
     </div>
+</div>
 
+<style>
+.frame-container {
+    display: inline-block; /* se ajusta al contenido */
+    background-color: #cce7ff; /* celeste suave */
+    padding: 15px; /* espacio alrededor del formulario */
+    border-radius: 1rem;
+}
+
+.form-container {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    padding: 2rem;
+    width: 500px; /* ancho del formulario */
+    max-width: 100%; /* responsive */
+    box-shadow: 0 6px 20px rgba(0, 136, 255, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-container:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(0, 136, 255, 0.3);
+}
+</style>
 {% endblock %}

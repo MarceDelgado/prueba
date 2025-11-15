@@ -1,9 +1,19 @@
 <div class="container py-5 text-center">
-    <h2 class="text-light mb-4">Bienvenido, Marche 🐾</h2>
+    <h2 class="text-light mb-4">Bienvenido, {{ user.username }} 🐾</h2>
+
     <div class="bubble-menu">
-        <a href="{% url 'listar_mascotas_usuario' %}" class="bubble"><i class="fa-solid fa-dog"></i><span>Ver Mascotas</span></a>
-        <a href="{% url 'explorar_especies' %}" class="bubble"><i class="fa-solid fa-paw"></i><span>Especies</span></a>
-        <a href="{% url 'mis_adopciones' %}" class="bubble"><i class="fa-solid fa-heart"></i><span>Mis Adopciones</span></a>
+
+        <!-- Ver Mascotas -->
+        <a href="{% url 'listar_mascotas_usuario' %}" class="bubble">
+            <i class="fa-solid fa-dog"></i>
+            <span>Ver Mascotas</span>
+        </a>
+
+        <!-- Especies -->
+        <a href="{% url 'explorar_especies' %}" class="bubble">
+            <i class="fa-solid fa-paw"></i>
+            <span>Especies</span>
+        </a>
     </div>
 </div>
 
