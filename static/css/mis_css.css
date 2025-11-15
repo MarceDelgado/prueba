@@ -88,6 +88,7 @@ table th, table td {
     padding: 30px 20px;
     min-height: 80vh;
 }/* SIDEBAR */
+
 .sidebar {
     width: 250px;
     height: auto;  /* se ajusta al contenido */
@@ -196,9 +197,6 @@ table th, table td {
   }
 
   /* espacio para la navbar fija */
-body {
-  padding-top: 56px; /* evita que la navbar tape el contenido */
-}
 
 /* ACORDEÓN FULLSCREEN ajustado para navbar fija */
 .accordion-wrapper { /* contenedor full width que pondremos en la plantilla */

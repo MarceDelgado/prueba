@@ -559,7 +559,7 @@ def mis_adopciones(request):
 
     return render(request, 'user/mis_adopciones.html', context)
 
-@login_required(login_url='/login/')
+
 def detalle_mascota(request, mascota_id):
     """
     Página de detalle de una mascota.
