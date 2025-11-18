@@ -1,60 +1,76 @@
-<div class="container py-5 text-center">
-    <h2 class="text-light mb-4">Bienvenido, {{ user.username }} 🐾</h2>
+<div class="container">
+    <div class="section hero">
+        <section class="hero" id="inicio">
+            <div class="accordion-fullscreen">
 
-    <div class="bubble-menu">
+                <div class="accordion-item">
+                    <img src="/media/mascotas/nenaperro.jpg" alt="Nena Perro">
 
-        <!-- Ver Mascotas -->
-        <a href="{% url 'listar_mascotas_usuario' %}" class="bubble">
-            <i class="fa-solid fa-dog"></i>
-            <span>Ver Mascotas</span>
-        </a>
+                </div>
 
-        <!-- Especies -->
-        <a href="{% url 'explorar_especies' %}" class="bubble">
-            <i class="fa-solid fa-paw"></i>
-            <span>Especies</span>
-        </a>
+                <div class="accordion-item">
+                    <img src="/media/mascotas/gato.png" alt="Gato">
+
+                </div>
+
+                <div class="accordion-item">
+                    <img src="/media/mascotas/liebre-mascota.jpg" alt="Liebre mascota">
+
+                </div>
+
+                <div class="accordion-item">
+                    <img src="/media/mascotas/perrito1.png" alt="Perro en jaula">
+                </div>
+
+            </div>
+
+            <!-- BANNER -->
+            <div class="banner-welcome text-center">
+                <h1 class="display-4 fw-bold">¡Bienvenido a Universo Peludo!</h1>
+                <p class="fs-4">Conocé nuestras mascotas y encontrá a tu compañero ideal 🐾</p>
+                <p class="fs-5">
+                    Somos una organización sin fines de lucro fundada en 2020, comprometida con el rescate y
+                    rehabilitación de
+                    animales.
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <div class="verMascotas">
+        <section class="contenido" id="contenido">
+            <div class="container py-5 text-center">
+                <div class="bubble-menu">
+
+                    <!-- Ver Mascotas -->
+                    <a href="{% url 'listar_mascotas_usuario' %}" class="bubble">
+                        <i class="fa-solid fa-dog"></i>
+                        <span>Ver Mascotas</span>
+                    </a>
+
+                    <!-- Especies -->
+                    <a href="{% url 'explorar_especies' %}" class="bubble">
+                        <i class="fa-solid fa-paw"></i>
+                        <span>Especies</span>
+                    </a>
+                </div>
+            </div>
+            <!--SECCION PARA VER LAS MASCOTAS DISPONIBLES-->
+            {% include "user/listaMascotas.html" with mascotas=mascotas %}
+
+            <!-- BOTÓN VER MÁS -->
+            <div class="text-end">
+                <a href="{% url 'listar_mascotas_usuario' %}" class="btn btn-outline-primary"
+                    style="background-color: aliceblue;">
+                    Ver más →
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <div class="contactos">
+        <section>
+            <h1>HOLANGAAAAAAAAAAAAAAA</h1>
+        </section>
     </div>
 </div>
-
-<style>
-body {
-    background: linear-gradient(135deg, #007bff, #00c6ff);
-}
-.bubble-menu {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 40px;
-}
-.bubble {
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    background: #fff;
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-decoration: none;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    transition: 0.3s ease;
-}
-.bubble i {
-    font-size: 2rem;
-    color: #1abc9c;
-}
-.bubble span {
-    margin-top: 10px;
-    font-weight: 600;
-}
-.bubble:hover {
-    transform: translateY(-8px) scale(1.1);
-    background: #1abc9c;
-    color: #fff;
-}
-.bubble:hover i {
-    color: #fff;
-}
-</style>

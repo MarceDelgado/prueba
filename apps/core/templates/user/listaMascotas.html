@@ -1,50 +1,51 @@
-{% extends 'base.html' %}
+{%load static%}
+{% if mascotas %}
+{% for m in mascotas %}
 
-{% block content %}
-<div class="container py-5">
-    <h2 class="text-center text-dark mb-4">Listado de Mascotas</h2>
-    <table class="table table-striped table-hover align-middle">
-        <thead class="table-dark">
-            <tr>
-                <th>Especie</th>
-                <th>Raza</th>
-                <th>Sexo</th>
-                <th>Tamaño</th>
-                <th>Localidad</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for m in mascotas_list %}
-            <tr>
-                <td>{{ m.raza.especie.nombre }}</td>
-                <td>{{ m.raza.nombre }}</td>
-                <td>{{ m.sexo }}</td>
-                <td>{{ m.tamaño }}</td>
-                <td>{{ m.localidad.descripcion }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="5" class="text-center">No hay mascotas disponibles</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="card mb-4 shadow-sm border-0 rounded-4 horizontal-card">
+    <div class="row g-0">
 
-    <!-- BOTÓN VOLVER -->
-    <div class="text-center mt-4">
-        <a href="{% url 'dashboard' %}" class="btn btn-outline-black">
-            ← Volver al menú
-        </a>
+        <!-- FOTO -->
+        <div class="col-md-4">
+            {% if m.foto %}
+            <img src="{{ m.foto.url }}" class="img-fluid rounded-start" alt="{{ m.nombre }}">
+            {% else %}
+            <img src="{% static 'imagenes/sin_foto.jpg' %}" class="img-fluid rounded-start" alt="Sin foto">
+            {% endif %}
+        </div>
+
+        <div class="col-md-8">
+            <div class="card-body">
+
+                <h5 class="card-title fw-bold">{{ m.nombre }}</h5>
+                <p class="mb-1"><strong>Raza:</strong> {{ m.raza.nombre }}</p>
+                <p class="mb-1"><strong>Especie:</strong> {{ m.raza.especie.nombre }}</p>
+                <p class="mb-1"><strong>Sexo:</strong> {{ m.sexo }}</p>
+                <p class="mb-1"><strong>Tamaño:</strong> {{ m.tamano|default:"No disponible" }}</p>
+                <p class="mb-1"><strong>Localidad:</strong> {{ m.localidad.descripcion }}</p>
+
+                <hr>
+                <p class="card-text">{{ m.descripcion|default:"Sin información adicional" }}</p>
+
+                <!-- BOTÓN ADOPTAR -->
+                {% if user.is_authenticated %}
+                <a href="{% url 'formulario_adopcion' m.id %}" class="btn btn-success mt-2">
+                    Adoptar
+                </a>
+                {% else %}
+                <a href="{% url 'login' %}?next={% url 'formulario_adopcion' m.id %}"
+                    class="btn btn-outline-primary mt-2">
+                    Adoptar
+                </a>
+                {% endif %}
+            </div>
+        </div>
+
     </div>
 </div>
-
-<style>
-.table-hover tbody tr:hover {
-    background-color: #e0f7fa;
-}
-.table-striped>tbody>tr:nth-of-type(odd) {
-    background-color: #f1f8e9;
-}
-</style>
-{% endblock %}
-
+{% endfor %}
+{% else %}
+<div class="text-center mt-5">
+    <p class="text-muted fs-4">No hay mascotas disponibles por ahora 🐾</p>
+</div>
+{% endif %}

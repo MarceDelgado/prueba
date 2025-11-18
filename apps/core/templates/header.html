@@ -1,0 +1,82 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container-fluid">
+        <!-- Logo -->
+        <a class="navbar-brand" href="/">UNIVERSO PELUDO</a>
+        
+        {% if not user.is_superuser and not user.is_staff %}
+
+            <!-- Botón hamburguesa en móviles -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Links colapsables (agregados: Ver Mascotas, Quiénes somos, Hacé tu consulta, Mi cuenta) -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}#contenido">Ver Mascotas</a>
+
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">¿Quiénes somos?</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Hacé tu consulta</a>
+                    </li>
+                </ul>
+        {% endif %}
+            <!-- MI CUENTA: pequeño menú en la derecha dentro del collapse -->
+            <ul class="navbar-nav ms-auto">
+
+                {% if user.is_authenticated %}
+                    {% if not user.is_superuser or not user.is_staff %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="cuentaMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Mi cuenta
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="cuentaMenu">
+                                <li><a class="dropdown-item" href="{% url 'home' %}">Perfil</a></li>
+                                <li><a class="dropdown-item" href="{% url 'mis_adopciones' %}">Mis solicitudes de adopción</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" action="{% url 'logout' %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item text-danger">Cerrar sesión</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="cuentaMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Mi cuenta
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="cuentaMenu">
+                            <li><a class="dropdown-item" href="{% url 'login' %}">Iniciar sesión</a></li>
+                            <li><a class="dropdown-item" href="{% url 'registro' %}">Crear cuenta</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+            </ul>
+        
+        </div>
+
+        <!-- Botón iniciar sesión o mostrar usuario logueado (mantengo tu bloque original sin cambiarlo) -->
+        <div class="d-flex align-items-center">
+            {% if user.is_authenticated %}
+                <span class="text-white me-3">Hola, {{ user.first_name }}!</span>
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-light">
+                        <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                    </button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}" class="btn btn-outline-light">
+                    <i class="bi bi-box-arrow-in-right"></i> Iniciar sesión
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</nav>

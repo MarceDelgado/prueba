@@ -1,6 +1,4 @@
-
 {% extends "base.html" %}
-{% load static %}
 
 {% block title %}Iniciar sesión - Universo Peludo{% endblock %}
 
@@ -55,6 +53,13 @@
             </div>
         </form>
     </div>
+</div>
+
+<!--BOTON VOLVER-->
+<div class="mb-4">
+    <a href="{% url 'home' %}" class="btn btn-outline-dark">
+        ← Volver al inicio
+    </a>
 </div>
 {% endblock %}
 

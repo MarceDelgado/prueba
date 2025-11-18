@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 
+from django.conf import settings
+
 class Provincia(models.Model):
     descripcion = models.CharField(max_length=100, unique=True)
 
@@ -117,3 +119,37 @@ class Adopcion(models.Model):
 
     def __str__(self):
         return f"{self.usuario.username} adoptó a {self.mascota}"
+
+class SolicitudAdopcion(models.Model):
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente'),
+        ('aprobada', 'Aprobada'),
+        ('rechazada', 'Rechazada'),
+    ]
+
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    mascota = models.ForeignKey('Mascotas', on_delete=models.CASCADE)
+    mensaje = models.TextField(blank=True)              # info adicional del solicitante
+    telefono = models.CharField(max_length=30, blank=True)
+    direccion = models.CharField(max_length=255, blank=True)
+    fecha_solicitud = models.DateTimeField(auto_now_add=True)
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
+    respuesta_admin = models.TextField(blank=True)     # texto de aprobación/rechazo del admin
+    procesada_por = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='procesadas')  # admin que procesa
+
+    class Meta:
+        ordering = ['-fecha_solicitud']
+
+    def __str__(self):
+        return f"Solicitud #{self.id} - {self.mascota} - {self.usuario}"
+    
+    class ContactMessage(models.Model):
+        nombre = models.CharField(max_length=120)
+        email = models.EmailField()
+        telefono = models.CharField(max_length=30, blank=True)
+        mensaje = models.TextField()
+        creado = models.DateTimeField(auto_now_add=True)
+        leido = models.BooleanField(default=False)
+
+        def __str__(self):
+            return f"{self.nombre} - {self.email}"

@@ -92,8 +92,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'universoPeludo.wsgi.application'
 
 
-
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -104,8 +102,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-
 
 
 # Password validation
@@ -127,12 +123,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
-
 
 LANGUAGE_CODE = 'en-us'
 
@@ -151,7 +143,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Redirección después de iniciar sesión
 LOGIN_REDIRECT_URL = 'inicio'
-
 
 # Redirección después de cerrar sesión
 LOGOUT_REDIRECT_URL = 'login'
@@ -179,3 +170,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER =config('EMAIL_HOST_USER') #lo lee desde .env 'universopeludo@gmail.com'
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')#lo lee desde .env ''poner clave generada por google de 16 caracteres sin espacio
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# para mail_admins
+ADMINS = [('Admin', 'tu-admin@example.com')]
+DEFAULT_FROM_EMAIL = 'webmaster@tu-dominio.local'

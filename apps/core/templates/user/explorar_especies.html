@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load static %}
 
 {% block title %}Explorar Especies{% endblock %}
 
@@ -58,31 +57,5 @@
 
 </div>
 
-<style>
-.underline {
-    width: 80px;
-    height: 4px;
-    background-color: #1abc9c;
-    border-radius: 2px;
-}
-
-.raza-card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-    background-color: #f9f9f9;
-}
-.raza-card:hover {
-    transform: translateY(-5px) scale(1.03);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-    background-color: #ecfdf5;
-}
-
-/* Emoji de patita más grande y negro */
-.emoji-title {
-    font-size: 3rem; /* aumenta el tamaño del emoji y del texto */
-}
-.emoji-title::first-letter {
-    color: black; /* aplica color negro solo al primer caracter, el emoji */
-}
-</style>
 {% endblock %}
 

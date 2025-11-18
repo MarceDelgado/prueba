@@ -1,12 +1,11 @@
-#el menuAdmin(dashboard), te paso la vista para que verifiques solo la parte de administrador
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from apps.core.models import Especie, Mascotas, Raza, Persona, Adopcion
-from .forms import EspecieForm, RazaForm, RegistroUsuarioForm, MascotasForm, PersonasForm, DomicilioForm, UserProfileForm
+from .forms import EspecieForm, RazaForm, RegistroUsuarioForm, MascotasForm, PersonasForm, DomicilioForm, UserProfileForm, SolicitudAdopcionForm
 from django.contrib.auth import authenticate, login, logout as auth_logout  # importamos la funcion "authenticate"
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, View  # importamos las clases bases para el abm
-from .models import Localidad, UserProfile
+from .models import Localidad, UserProfile, SolicitudAdopcion
 
 # correo
 from django.contrib.auth.models import User
@@ -14,6 +13,7 @@ from django.utils.crypto import get_random_string
 from .emails import enviar_correo
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from django.core.mail import mail_admins
 
 from django.contrib.auth.hashers import make_password
 import random, string
@@ -27,7 +27,12 @@ from django.utils.decorators import method_decorator  # -> para cbv
 # PÁGINAS PÚBLICAS
 # =======================
 def home(request):
-    return render(request, 'home.html', {})
+    # Las 5 mascotas más recientes (suponiendo que tu modelo tenga un campo fecha o id autoincremental)
+    mascotas_recientes = Mascotas.objects.order_by('-created_at')[:5]
+
+    return render(request, "home.html", {
+        'mascotas': mascotas_recientes
+    })
 
 def buscar_animales(request):
     # Lógica para buscar animales (por ahora puede ser un render simple)
@@ -64,17 +69,17 @@ def login_view(request):
             login(request, user)
             if user.userprofile.primer_ingreso:
                 return redirect('cambiar_password', id=user.userprofile.id)
-            return redirect('dashboard')
+            return redirect('home')
        else:
             mensaje = 'usuario y/o contraseña incorrecta'
             contexto = {'mensaje': mensaje}
             return render(request, 'login.html', contexto)
-
    return render(request, 'login.html')
 
 
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    
+    return render(request, 'home.html', {})
 
 
 def logout_view(request):
@@ -106,7 +111,6 @@ def registro(request):
     
     return render(request, "registro.html", {"form": form})
 
-
 # =======================
 # ABM MASCOTAS (cbv, fbv) sabri
 # =======================
@@ -122,24 +126,23 @@ class ListarMascotas(Restringir_acceso, ListView):
 
 class ListarMascotasUsuario(ListView):
     model = Mascotas
-    template_name = 'user/listaMascotas.html'
-    context_object_name = 'mascotas_list'
-
+    template_name = 'user/detalle_mascotas.html'
+    context_object_name = 'mascotas'
+    
     def get_queryset(self):
-        qs = super().get_queryset()
-        raza_id=self.request.GET.get("raza")
+        mascotas = super().get_queryset()  # equivale a Mascotas.objects.all()
+
+        raza_id = self.request.GET.get("raza")
         if raza_id:
-            qs = qs.filter(raza_id=raza_id)
-        return qs                                    
+            mascotas = mascotas.filter(raza_id=raza_id)
+
+        return mascotas
         
-
-
 class ModificarMascota(UpdateView, Restringir_acceso):
     model = Mascotas
     form_class = MascotasForm
     template_name = 'admin/mascotas/modificarMascota.html'
     success_url = reverse_lazy('listar_mascotas')
-
 
 @login_required(login_url='/login/')
 def crear_mascota(request):
@@ -152,7 +155,6 @@ def crear_mascota(request):
         form = MascotasForm()
     return render(request, 'admin/mascotas/crearMascota.html', {'form': form})
 
-
 @login_required(login_url='/login/')
 def eliminar_mascota(request, id):
     mascota = get_object_or_404(Mascotas, pk=id)
@@ -161,17 +163,16 @@ def eliminar_mascota(request, id):
         return redirect('listar_mascotas')
     return render(request, 'admin/mascotas/eliminarMascota.html', {'mascota': mascota})
 
-
 # =======================
 # ABM RAZA (fbv)
 # =======================
-# listar -> sabri
+# listar 
 @login_required(login_url='/login/')
 def listar_razas(request):
     razas = Raza.objects.all()
     return render(request, 'admin/raza/listarRaza.html', {'razas': razas})
 
-# crear -> cami
+# crear 
 @login_required(login_url='/login/')
 def crear_raza(request):
     if request.method == 'POST':
@@ -189,7 +190,7 @@ def crear_raza(request):
     especies = Especie.objects.all()
     return render(request, 'admin/raza/crearRaza.html', {'especies': especies})
 
-# eliminar -> marce
+# eliminar 
 @login_required(login_url='/login/')
 def eliminar_raza(request, raza_id):
     raza = get_object_or_404(Raza, id=raza_id)
@@ -199,7 +200,7 @@ def eliminar_raza(request, raza_id):
         return redirect('listar_razas')
     return render(request, 'admin/raza/eliminarRaza.html', {'raza': raza})
 
-# modificar -> jessi
+# modificar
 @login_required(login_url='/login/')
 def modificar_raza(request, raza_id):
     raza = get_object_or_404(Raza, id=raza_id)
@@ -212,41 +213,39 @@ def modificar_raza(request, raza_id):
         form = RazaForm(instance=raza)
     return render(request, 'admin/raza/modificarRaza.html', {'form': form})
 
-
 # =======================
 # ABM ESPECIE (cbv)
 # =======================
-# crear -> jessi
+# crear 
 class CrearEspecieView(CreateView, Restringir_acceso):
     model = Especie
     form_class = EspecieForm
     template_name = 'admin/especie/crearEspecie.html'
     success_url = reverse_lazy('listar_especies')
 
-# eliminar -> sabri
+# eliminar
 class EliminarEspecie(DeleteView, Restringir_acceso):
     model = Especie
     template_name = 'admin/especie/eliminarEspecie.html'
     success_url = reverse_lazy('listar_especies')
 
-# modificar -> cami
+# modificar
 class ModificarEspecieView(UpdateView, Restringir_acceso):
     model = Especie
     form_class = EspecieForm
     template_name = 'admin/especie/modificarEspecie.html'
     success_url = reverse_lazy('listar_especies')
 
-# listar -> marce
+# listar
 class ListarEspeciesView(ListView, Restringir_acceso):
     model = Especie
     template_name = 'admin/especie/listarEspecie.html'
     context_object_name = 'especies'
 
-
 # =======================
 # ABM PERSONA (fbv)
 # =======================
-# crear -> marce
+# crear
 @login_required(login_url='/login/')
 def crear_persona(request):
     if request.method == 'POST':
@@ -267,7 +266,7 @@ def crear_persona(request):
         domicilio_form = DomicilioForm()
     return render(request, 'admin/personas/crearPersonas.html', {'form': form, 'domicilio_form': domicilio_form})
 
-# modificar -> sabri
+# modificar
 @login_required(login_url='/login/')
 def modificar_persona(request, id):
     persona = get_object_or_404(Persona, pk=id)
@@ -284,7 +283,7 @@ def modificar_persona(request, id):
         domicilio_form = DomicilioForm(instance=domicilio)
     return render(request, 'admin/personas/modificarPersona.html', {'form': form, 'domicilio_form': domicilio_form})
 
-# baja que no puede adoptar ni registrarse -> cami
+# baja que no puede adoptar ni registrarse
 @login_required(login_url='/login/')
 def eliminar_persona(request, persona_id):
     persona = get_object_or_404(Persona, id=persona_id)
@@ -301,7 +300,7 @@ def eliminar_persona(request, persona_id):
     
     return render(request, 'admin/personas/bajaPersonas.html', {'persona': persona})
 
-# alta puede adoptar y registrarse -> cami
+# alta puede adoptar y registrarse
 @login_required(login_url='/login/')
 def habilitar_persona(request, persona_id):
     persona = get_object_or_404(Persona, id=persona_id)
@@ -330,15 +329,13 @@ def baja_persona_confirmar(request, persona_id):
 
     return render(request, 'admin/personas/bajaPersonas.html', {'persona': persona})
 
-
-# listar -> jessi
+# listar 
 @login_required(login_url='/login/')
 def listar_personas(request):
     persona = Persona.objects.all()
     for p in persona:
         print("persona=" + p.nombre)
     return render(request, 'admin/personas/listaPersonas.html', {'personas': persona})
-
 
 # =======================
 # PERFIL DE USUARIO
@@ -355,19 +352,16 @@ def edit_profile(request):
         form = UserProfileForm(instance=profile)
     return render(request, 'admin/edit_profile.html', {'form': form})
 
-
 @login_required(login_url='/login/')
 def view_profile(request):
     profile = UserProfile.objects.get(user=request.user)
     return render(request, 'view_profile.html', {'profile': profile})
-
 
 # =======================
 # CORREO ELECTRÓNICO
 # =======================
 def generar_contraseña_temporal(longitud=8):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=longitud))
-
 
 def recuperar_contraseña(request):
     mensaje = ""
@@ -394,7 +388,6 @@ def recuperar_contraseña(request):
             mensaje = "No existe un usuario con ese correo."
     return render(request, "contraseña/recu_contraseña.html", {"mensaje": mensaje})
 
-
 # =======================
 # CAMBIO DE CONTRASEÑA
 # =======================
@@ -418,7 +411,6 @@ def cambiar_password(request, id):
             return render(request, 'contraseña/cambiarContraseña.html', {'mensaje': mensaje})
     return render(request, 'contraseña/cambiarContraseña.html')
 
-
 @login_required(login_url='/login/')
 def cambiar_contraseña_voluntariamente(request):
     if request.method == 'POST':
@@ -433,11 +425,9 @@ def cambiar_contraseña_voluntariamente(request):
             messages.error(request, "Lo lamento, las contraseñas no coinciden")
     return render(request, 'contraseña/cambiarContraseña.html')
 
-
 # =======================
 # FILTRO DE MASCOTAS
 # =======================
-@login_required(login_url='/login/')
 def filtrar_mascotas(request):
     # Listas completas
     razas = Raza.objects.all()
@@ -461,7 +451,6 @@ def filtrar_mascotas(request):
         mascotas = mascotas.filter(raza__especie_id=int(selected_especie))
         razas = razas.filter(especie_id=selected_especie)
 
-
     if selected_localidad:
         mascotas = mascotas.filter(localidad_id=int(selected_localidad))
 
@@ -478,11 +467,9 @@ def filtrar_mascotas(request):
 
     return render(request, 'user/detalle_mascotas.html', context)
 
-
 # =======================
-# EXPLORAR ESPECIES Y RAZAS (sabri)
+# EXPLORAR MASCOTAS, ESPECIES Y RAZAS
 # =======================
-@login_required(login_url='/login/')
 def explorar_especies(request):
 
     especies = Especie.objects.prefetch_related('razas').all()
@@ -510,9 +497,6 @@ def explorar_especies(request):
     }
     return render(request, "user/explorar_especies.html", context)
 
-
-@login_required(login_url='/login/')
-@login_required(login_url='/login/')
 def explorar_razas(request, raza_id):
     # Obtengo la raza
     raza = get_object_or_404(Raza, id=raza_id)
@@ -529,9 +513,8 @@ def explorar_razas(request, raza_id):
 
     return render(request, 'user/detalle_mascotas.html', contexto)
 
-
 # =======================
-# MÓDULO ADOPCIONES (sabri)
+# MÓDULO ADOPCIONES
 # =======================
 @login_required(login_url='/login/')
 def mis_adopciones(request):
@@ -587,7 +570,109 @@ def detalle_mascota(request, mascota_id):
 
     return render(request, "user/detalle_mascota.html", contexto)
 
+@login_required(login_url='/login/')
+def formulario_adopcion(request, mascota_id):
+    mascota = get_object_or_404(Mascotas, id=mascota_id)
 
+    # Evitar duplicados: opcional, por ejemplo no permitir más de una solicitud pendiente por el mismo usuario/mascota
+    pendiente = SolicitudAdopcion.objects.filter(usuario=request.user, mascota=mascota, estado='pendiente').exists()
+    if pendiente:
+        messages.info(request, "Ya tenés una solicitud pendiente para esta mascota.")
+        return redirect('detalle_mascota', mascota_id=mascota.id)
+
+    if request.method == 'POST':
+        form = SolicitudAdopcionForm(request.POST)
+        if form.is_valid():
+            solicitud = form.save(commit=False)
+            solicitud.usuario = request.user
+            solicitud.mascota = mascota
+            solicitud.save()
+
+            # Notificar a administradores (usa settings.ADMINS)
+            subject = f"Nueva solicitud de adopción: {mascota.nombre} (id {solicitud.id})"
+            message = (
+                f"Usuario: {request.user.get_full_name() or request.user.username}\n"
+                f"Email: {request.user.email}\n"
+                f"Teléfono: {solicitud.telefono}\n"
+                f"Dirección: {solicitud.direccion}\n\n"
+                f"Mensaje:\n{solicitud.mensaje}\n\n"
+                f"Ver en admin: /admin/{solicitud._meta.app_label}/{solicitud._meta.model_name}/{solicitud.id}/change/\n"
+            )
+            # mail_admins envía a la lista en settings.ADMINS
+            try:
+                mail_admins(subject, message)
+            except Exception:
+                # fallback: no romper si no está configurado el email
+                pass
+
+            messages.success(request, "Tu solicitud se envió correctamente. Los administradores la evaluarán y te contactarán.")
+            return redirect('mis_adopciones')  # o a donde prefieras
+    else:
+        # prellenar datos del usuario si existen (si querés)
+        initial = {}
+        profile = getattr(request.user, 'userprofile', None)
+        if profile:
+            # si tenés campos en el profile para telefono/direccion
+            if getattr(profile, 'telefono', None):
+                initial['telefono'] = profile.telefono
+            if getattr(profile, 'direccion', None):
+                initial['direccion'] = profile.direccion
+
+        form = SolicitudAdopcionForm(initial=initial)
+
+    return render(request, 'user/formulario_adopcion.html', {'form': form, 'mascota': mascota})
+
+#@staff_member_required
+def procesar_solicitud(request, pk):
+    s = get_object_or_404(SolicitudAdopcion, pk=pk)
+    if request.method == 'POST':
+        accion = request.POST.get('accion')
+        respuesta = request.POST.get('respuesta', '')
+        if accion == 'aprobar':
+            s.estado = 'aprobada'
+        elif accion == 'rechazar':
+            s.estado = 'rechazada'
+        s.respuesta_admin = respuesta
+        s.procesada_por = request.user
+        s.save()
+
+        # notificar al usuario (opcional)
+        try:
+            from django.core.mail import send_mail
+            send_mail(
+                f"Tu solicitud #{s.id} ha sido {s.get_estado_display()}",
+                f"Hola {s.usuario.get_full_name() or s.usuario.username},\n\n"
+                f"Tu solicitud para adoptar {s.mascota.nombre} ha sido {s.estado}.\n\n"
+                f"Comentario del admin:\n{respuesta}",
+                None,  # from_email: None -> usa DEFAULT_FROM_EMAIL
+                [s.usuario.email],
+                fail_silently=True,
+            )
+        except Exception:
+            pass
+
+        return redirect('lista_solicitudes')
+
+    return render(request, 'core/procesar_solicitud.html', {'s': s})
+
+def contacto_submit(request):
+    if request.method == 'POST':
+        form = ContactMessageForm(request.POST)
+        if form.is_valid():
+            msg = form.save()
+            # notificar admin
+            try:
+                mail_admins(
+                  subject=f"Nueva consulta #{msg.id} - {msg.nombre}",
+                  message=msg.mensaje + f"\n\nEmail: {msg.email}\nTel: {msg.telefono}"
+                )
+            except Exception:
+                pass
+            messages.success(request, "Gracias, tu consulta fue enviada. Te contactaremos pronto.")
+            return redirect('home')
+    else:
+        form = ContactMessageForm()
+    return render(request, 'core/contacto_form.html', {'form': form})
 
 
 

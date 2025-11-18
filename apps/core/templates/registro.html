@@ -1,11 +1,10 @@
-
 {% extends "base.html" %}
-{% load static %}
-{% load widget_tweaks %} {# Para aplicar clases de Bootstrap fácilmente #}
+{% load widget_tweaks %}
 
 {% block title %}Registrarse - Universo Peludo{% endblock %}
 
 {% block content %}
+
 <div class="d-flex justify-content-center align-items-center" style="min-height: 90vh;">
     <div class="card shadow-lg p-4" style="width: 450px; border-radius: 15px;">
         <h3 class="text-center mb-4">Crear cuenta</h3>
@@ -75,4 +74,10 @@
         </form>
     </div>
 </div>
+        <!--BOTON VOLVER-->
+        <div class="mb-4">
+            <a href="{% url 'login' %}" class="btn btn-outline-dark">
+                ← Volver al login
+            </a>
+        </div>
 {% endblock %}

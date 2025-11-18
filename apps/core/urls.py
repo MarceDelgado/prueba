@@ -61,8 +61,19 @@ urlpatterns = [
     # Adopciones
     path('mis_adopciones/', mis_adopciones, name='mis_adopciones'),
 
-    # Detalle mascota (CORREGIDO)
+    # Detalle mascota
     path("mascota/<int:mascota_id>/", views.detalle_mascota, name="detalle_mascota"),
+
+    #Formulario de adopcion
+    path("adoptar/<int:mascota_id>/", views.formulario_adopcion, name="formulario_adopcion"),
+
+    #Formulario para enviar emails a los administradores
+    path('contacto/enviar/', views.contacto_submit, name='contacto_submit'),
+
+    # apps/core/urls.py
+   # path('admin/solicitudes/', views.lista_solicitudes, name='lista_solicitudes'),
+   # path('admin/solicitud/<int:pk>/procesar/', views.procesar_solicitud, name='procesar_solicitud'),
+
 ]
 
  

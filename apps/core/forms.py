@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import UserProfile
+from .models import UserProfile, SolicitudAdopcion
 from apps.core.models import Mascotas, Persona, Raza, Especie, Domicilio
 
 # Formulario de registro de usuario
@@ -104,4 +104,19 @@ class DomicilioForm(forms.ModelForm):
             'numero': forms.TextInput(attrs={'class':'form-control'}),
             'localidad': forms.Select(attrs={'class':'form-select'}),
             'codigo_postal': forms.TextInput(attrs={'class':'form-control'}),
+        }
+
+class SolicitudAdopcionForm(forms.ModelForm):
+    class Meta:
+        model = SolicitudAdopcion
+        fields = ['mensaje', 'telefono', 'direccion']
+        widgets = {
+            'mensaje': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Contanos por qué querés adoptar a esta mascota...'}),
+            'telefono': forms.TextInput(attrs={'placeholder': 'Teléfono de contacto'}),
+            'direccion': forms.TextInput(attrs={'placeholder': 'Dirección (ciudad, barrio)'}),
+        }
+        labels = {
+            'mensaje': 'Motivo / Información adicional',
+            'telefono': 'Teléfono',
+            'direccion': 'Dirección',
         }

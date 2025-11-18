@@ -1,91 +1,17 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block title %}Detalle de Mascota{% endblock %}
+{% extends "base.html" %}
 
 {% block content %}
 <div class="container py-5">
 
     <!-- TÍTULO -->
     <div class="text-center mb-5">
-        <h1 class="fw-bold text-dark">Mascotas disponibles</h1>
-        <p class="text-dark fs-5">
-            {{ especie.nombre }} • {{ raza.nombre }}
-        </p>
+        <h2 class="fw-bold text-dark mb-3 emoji-title">
+            🐾 Explorar Mascotas
+        </h2>
     </div>
 
-    <!-- BOTÓN VOLVER -->
-    <div class="mb-4">
-        <a href="{% url 'explorar_especies' %}" class="btn btn-outline-dark">
-            ← Volver a inicio
-        </a>
-    </div>
-
-    <!-- LISTADO HORIZONTAL -->
-    {% if mascotas %}
-        {% for m in mascotas %}
-        <div class="card mb-4 shadow-sm border-0 rounded-4 horizontal-card">
-            <div class="row g-0">
-                <!-- FOTO -->
-                <div class="col-md-4">
-                    {% if m.foto %}
-                        <img src="{{ m.foto.url }}" class="img-fluid rounded-start" alt="{{ m.nombre }}">
-                    {% else %}
-                        <img src="{% static 'imagenes/sin_foto.jpg' %}" class="img-fluid rounded-start" alt="Sin foto">
-                    {% endif %}
-                </div>
-
-                <!-- INFORMACIÓN -->
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold">{{ m.nombre }}</h5>
-                        <p class="mb-1"><strong>Raza:</strong> {{ m.raza.nombre }}</p>
-                        <p class="mb-1"><strong>Especie:</strong> {{ m.raza.especie.nombre }}</p>
-                        <p class="mb-1"><strong>Sexo:</strong> {{ m.sexo }}</p>
-                        <p class="mb-1"><strong>Tamaño:</strong> {{ m.tamano|default:"No disponible" }}</p>
-                        <p class="mb-1"><strong>Localidad:</strong> {{ m.localidad.descripcion }}</p>
-
-                        <hr>
-                        <p class="card-text">{{ m.descripcion|default:"Sin información adicional" }}</p>
-
-                        {% if user.is_authenticated %}
-                            {% if user.persona.puede_adoptar %}
-                                <a href="{% url 'mis_adopciones' %}" class="btn btn-success mt-2">
-                                    Adoptar
-                                </a>
-                            {% else %}
-                                <button class="btn btn-secondary mt-2" disabled>No habilitado</button>
-                            {% endif %}
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    {% else %}
-        <div class="text-center mt-5">
-            <p class="text-muted fs-4">No hay mascotas disponibles para esta raza 🐾</p>
-        </div>
-    {% endif %}
-
+    <!-- LISTADO -->
+    {% include "user/listaMascotas.html" with mascotas=mascotas %}
 </div>
-
-<style>
-.horizontal-card {
-    transition: 0.3s ease-in-out;
-    border-radius: 20px;
-}
-
-.horizontal-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0, 98, 255, 0.3);
-}
-
-.horizontal-card img {
-    height: 100%;
-    object-fit: cover;
-    border-radius: 20px 0 0 20px;
-}
-</style>
 
 {% endblock %}

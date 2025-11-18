@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Formulario de adopción - {{ mascota.nombre }}{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Solicitud de adopción: {{ mascota.nombre }}</h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            {% if mascota.foto %}
+                <img src="{{ mascota.foto.url }}" class="img-fluid rounded" alt="{{ mascota.nombre }}">
+            {% endif %}
+            <p><strong>Raza:</strong> {{ mascota.raza.nombre }}</p>
+            <p><strong>Especie:</strong> {{ mascota.raza.especie.nombre }}</p>
+        </div>
+
+        <div class="col-md-6">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="mb-3">
+                    {{ form.mensaje.label_tag }}
+                    {{ form.mensaje }}
+                    {{ form.mensaje.errors }}
+                </div>
+                <div class="mb-3">
+                    {{ form.telefono.label_tag }}
+                    {{ form.telefono }}
+                    {{ form.telefono.errors }}
+                </div>
+                <div class="mb-3">
+                    {{ form.direccion.label_tag }}
+                    {{ form.direccion }}
+                    {{ form.direccion.errors }}
+                </div>
+
+                <button class="btn btn-success" type="submit">Enviar solicitud</button>
+                <a href="{% url 'home' %}" class="btn btn-link">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

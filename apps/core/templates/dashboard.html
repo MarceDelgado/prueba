@@ -1,6 +1,3 @@
-{% extends "base.html" %}
-{% load static %}
-
 {% block title %}Panel de control - Universo Peludo{% endblock %}
 
 {% block content %}
@@ -9,7 +6,7 @@
         {% if user.is_superuser or user.is_staff %}
             {% include 'admin/menuAdmin.html' %}
         {% else %}
-            {% include 'user/menuUsuario.html' %}
+            {% include 'home.html' %}
         {% endif %}
     {% else %}
         <div class="alert alert-warning text-center mt-5">
