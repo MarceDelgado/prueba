@@ -1,0 +1,27 @@
+{% load static %}
+{% if novedades %}
+<div class="row">
+    {% for novedades in novedades %}
+    <div class="col-md-4">
+        <div class="card shadow-sm mb-4">
+            {% if novedades.imagen %}
+            <img src="{{ novedades.imagen.url }}" class="card-img-top img-noticia" alt="{{ novedades.titulo }}">
+
+            {% endif %}
+
+            <div class="card-body">
+                <a href="{% url 'detalle_novedad' novedades.id %}">
+                    <h2>{{ novedades.titulo }}</h2>
+                </a>
+                <p>{{ novedades.descripcion }}</p>
+                <small class="text-muted">{{ novedades.fecha|date:"d/m/Y" }}</small>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="text-center mt-5">
+        <p class="text-muted fs-4">No hay noticias disponibles por ahora 🐾</p>
+    </div>
+    {% endif %}
+</div>

@@ -1,11 +1,14 @@
 from django.urls import reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from apps.core.models import Especie, Mascotas, Raza, Persona, Adopcion
-from .forms import EspecieForm, RazaForm, RegistroUsuarioForm, MascotasForm, PersonasForm, DomicilioForm, UserProfileForm, SolicitudAdopcionForm
+from apps.core.models import Especie, Mascotas, Raza, Persona, Adopcion, Novedad
+from .forms import EspecieForm, RazaForm, RegistroUsuarioForm, MascotasForm, PersonasForm, DomicilioForm, UserProfileForm, SolicitudAdopcionForm, NovedadForm
 from django.contrib.auth import authenticate, login, logout as auth_logout  # importamos la funcion "authenticate"
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, View  # importamos las clases bases para el abm
 from .models import Localidad, UserProfile, SolicitudAdopcion
+from django.conf import settings
+
+
 
 # correo
 from django.contrib.auth.models import User
@@ -27,11 +30,15 @@ from django.utils.decorators import method_decorator  # -> para cbv
 # PÁGINAS PÚBLICAS
 # =======================
 def home(request):
-    # Las 5 mascotas más recientes (suponiendo que tu modelo tenga un campo fecha o id autoincremental)
+    # Las 5 mascotas más recientes
     mascotas_recientes = Mascotas.objects.order_by('-created_at')[:5]
 
+    # Las 3 novedades más recientes
+    novedades_recientes = Novedad.objects.all()[:3]
+
     return render(request, "home.html", {
-        'mascotas': mascotas_recientes
+        'mascotas': mascotas_recientes,
+        'novedades': novedades_recientes
     })
 
 def buscar_animales(request):
@@ -338,6 +345,78 @@ def listar_personas(request):
     return render(request, 'admin/personas/listaPersonas.html', {'personas': persona})
 
 # =======================
+# ABM NOVEDADES (fbv)
+# =======================
+
+# listar 
+@login_required(login_url='/login/')
+def listar_novedades(request):
+    lista_novedades = Novedad.objects.all()
+    return render(request, 'admin/novedades/listaNovedades.html', {'novedades': lista_novedades})
+
+
+# crear 
+@login_required(login_url='/login/')
+def crear_novedades(request):
+    if request.method == 'POST':
+        form = NovedadForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('listar_novedades')
+    else:
+        form = NovedadForm()
+    
+    return render(request, 'admin/novedades/crearNovedades.html', {'form': form})
+
+
+# eliminar 
+@login_required(login_url='/login/')
+def eliminar_novedades(request, novedad_id):
+    novedad = get_object_or_404(Novedad, id=novedad_id)
+    
+    if request.method == 'POST':
+        novedad.delete()
+        return redirect('listar_novedades')
+    
+    return render(request, 'admin/novedades/eliminarNovedades.html', {'novedad': novedad})
+
+
+# modificar
+@login_required(login_url='/login/')
+def modificar_novedades(request, novedad_id):
+    novedad = get_object_or_404(Novedad, id=novedad_id)
+
+    if request.method == 'POST':
+        form = NovedadForm(request.POST, request.FILES, instance=novedad)
+        if form.is_valid():
+            form.save()
+            return redirect('listar_novedades')
+    else:
+        form = NovedadForm(instance=novedad)
+
+    return render(request, 'admin/novedades/modificarNovedades.html', {'form': form})
+
+class ListarNovedadesUsuario(ListView):
+    model = Novedad
+    template_name = 'user/detalle_novedades.html'
+    context_object_name = 'novedades'
+
+    def get_queryset(self):
+        novedades = super().get_queryset()  # Novedad.objects.all()
+
+        # Si en un futuro querés filtrar por categoría, fecha, etc:
+        categoria = self.request.GET.get("categoria")
+        if categoria:
+            novedades = novedades.filter(categoria=categoria)
+
+        return novedades
+
+#VISUALIZAR LA NOVEDAD COMPLETA
+def detalle_novedad(request, id):
+    novedad = get_object_or_404(Novedad, id=id)
+    return render(request, "user/novedades_completa.html", {"novedad": novedad})
+
+# =======================
 # PERFIL DE USUARIO
 # =======================
 @login_required(login_url='/login/')
@@ -468,7 +547,7 @@ def filtrar_mascotas(request):
     return render(request, 'user/detalle_mascotas.html', context)
 
 # =======================
-# EXPLORAR MASCOTAS, ESPECIES Y RAZAS
+# EXPLORAR MASCOTAS, ESPECIES, RAZAS Y NOVEDADES
 # =======================
 def explorar_especies(request):
 
@@ -512,6 +591,26 @@ def explorar_razas(request, raza_id):
     }
 
     return render(request, 'user/detalle_mascotas.html', contexto)
+
+def explorar_novedades(request):
+    
+    novedades = Novedad.objects.all()
+
+    context = {
+        "novedades": [
+            {
+                "titulo": n.titulo,
+                "descripcion": n.descripcion_corta,
+                "imagen": n.imagen.url if n.imagen else None,
+                "fecha": n.fecha,
+                "id": n.id,
+            }
+            for n in novedades
+        ]
+    }
+
+    return render(request, "user/explorar_novedades.html", context)
+
 
 # =======================
 # MÓDULO ADOPCIONES
@@ -674,6 +773,18 @@ def contacto_submit(request):
         form = ContactMessageForm()
     return render(request, 'core/contacto_form.html', {'form': form})
 
+#VISTA QUE SOLO MUESTRA UN TEMPLATE ESTATICO
+def quienesSomos(request):
+    
+    return render(request, 'quienes_somos.html')
+
+#VISTA PARA LAS NOVEDEDADES (NOTICIAS)
+def lista_novedades(request):
+    novedades = Novedad.objects.all()
+
+    print(settings.DEBUG)
+
+    return render(request, 'novedades.html', {'novedades': novedades})
 
 
 

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="mb-4 text-danger">Eliminar Novedad</h2>
+
+<p>¿Estás seguro que deseas eliminar la novedad <strong>"{{ novedad.titulo }}"</strong>?</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+    <a href="{% url 'listar_novedades' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+
+{% endblock %}

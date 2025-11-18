@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import UserProfile, SolicitudAdopcion
-from apps.core.models import Mascotas, Persona, Raza, Especie, Domicilio
+from apps.core.models import Mascotas, Persona, Raza, Especie, Domicilio, Novedad
 
 # Formulario de registro de usuario
 class RegistroUsuarioForm(UserCreationForm):
@@ -119,4 +119,15 @@ class SolicitudAdopcionForm(forms.ModelForm):
             'mensaje': 'Motivo / Información adicional',
             'telefono': 'Teléfono',
             'direccion': 'Dirección',
+        }
+
+class NovedadForm(forms.ModelForm):
+    class Meta:
+        model = Novedad
+        fields = ["titulo", "descripcion_corta", "contenido", "imagen"]
+        widgets = {
+            'titulo': forms.TextInput(attrs={'class':'form-control'}),
+            'descripcion_corta': forms.Textarea(attrs={'class':'form-control','rows':4}),
+            'contenido': forms.Textarea(attrs={'class':'form-control','rows':6}),
+            'imagen': forms.ClearableFileInput(attrs={'class':'form-control'}),
         }

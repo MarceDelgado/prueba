@@ -153,3 +153,17 @@ class SolicitudAdopcion(models.Model):
 
         def __str__(self):
             return f"{self.nombre} - {self.email}"
+
+#===MODELO PARA CREAR NOTICIAS/NOVEDADES DESDE EL ADMIN Y QUE SE VEAN PUBLICAMENTE===#
+class Novedad(models.Model):
+    titulo = models.CharField(max_length=200)
+    descripcion_corta = models.TextField(max_length=300)
+    contenido = models.TextField()
+    imagen = models.ImageField(upload_to="novedades/", blank=True, null=True)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-fecha']  # más nuevas primero
+
+    def __str__(self):
+        return self.titulo

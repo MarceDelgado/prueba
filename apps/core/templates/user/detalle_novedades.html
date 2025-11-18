@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+
+    <!-- TÍTULO -->
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-dark mb-3 emoji-title">
+            🐾 Explorar Novedades 
+        </h2>
+    </div>
+
+    <!-- LISTADO -->
+    {% include "user/listaNovedades.html" with novedades=novedades %}
+</div>
+
+{% endblock %}

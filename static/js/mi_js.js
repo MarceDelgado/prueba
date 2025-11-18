@@ -54,4 +54,3 @@ backToTopBtn.addEventListener("click", function () {
         behavior: 'smooth'
     });
 });
-

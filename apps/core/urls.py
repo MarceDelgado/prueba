@@ -2,13 +2,14 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views   # ← NECESARIO
 from .views import (
-    home, buscar_animales, contacto, login_view, logout_view, registro, dashboard,
-    ListarMascotas, ListarMascotasUsuario, crear_mascota, ModificarMascota, eliminar_mascota,
+    home, buscar_animales, contacto, login_view, logout_view, registro, dashboard, quienesSomos, lista_novedades,
+    ListarMascotas, ListarMascotasUsuario, ListarNovedadesUsuario, crear_mascota, ModificarMascota, eliminar_mascota,
     ModificarEspecieView, EliminarEspecie, ListarEspeciesView, CrearEspecieView,
     crear_raza, listar_razas, eliminar_raza, modificar_raza, recuperar_contraseña, cambiar_password,
     listar_personas, crear_persona, eliminar_persona, modificar_persona, habilitar_persona,
     cambiar_contraseña_voluntariamente, filtrar_mascotas, explorar_especies,
-    explorar_razas, mis_adopciones, detalle_mascota
+    explorar_razas, mis_adopciones, detalle_mascota, crear_novedades, eliminar_novedades, listar_novedades, modificar_novedades,
+    detalle_novedad
 )
 
 urlpatterns = [
@@ -19,6 +20,8 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('registro/', registro, name='registro'),
     path('dashboard/', dashboard, name='dashboard'),
+    path('quienesSomos/', quienesSomos, name='quienes_somos'),
+
 
     # ABM Mascotas
     path('filtrar_mascotas/', ListarMascotas.as_view(), name='listar_mascotas'),
@@ -45,6 +48,15 @@ urlpatterns = [
     path('crear_persona/', crear_persona, name='crear_persona'),
     path('personas/<int:persona_id>/baja/', views.baja_persona_confirmar, name='baja_persona_confirmar'),
     path('habilitar_persona/<int:persona_id>/', habilitar_persona, name='habilitar_persona'),
+
+    # ABM Novedades
+    path('novedades/listar/', listar_novedades, name='listar_novedades'),
+    path('listar_novedades_usuario/', ListarNovedadesUsuario.as_view(), name='listar_novedades_usuario'),
+    path('novedades/crear/', crear_novedades, name='crear_novedades'),
+    path('novedades/modificar/<int:novedad_id>/', modificar_novedades, name='modificar_novedades'),
+    path('novedades/eliminar/<int:novedad_id>/', eliminar_novedades, name='eliminar_novedades'),
+    path('novedad/<int:id>/', detalle_novedad, name='detalle_novedad'),
+
 
     # Recuperación de contraseña
     path('solicitar-recuperacion/', recuperar_contraseña, name='solicitar_recuperacion'),

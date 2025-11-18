@@ -1,5 +1,5 @@
 <div class="container">
-    <div class="section hero">
+    <div class="container">
         <section class="hero" id="inicio">
             <div class="accordion-fullscreen">
 
@@ -37,11 +37,10 @@
         </section>
     </div>
 
-    <div class="verMascotas">
-        <section class="contenido" id="contenido">
+    <div class="container">
+        <section class="ver_mascotas" id="contenido">
             <div class="container py-5 text-center">
                 <div class="bubble-menu">
-
                     <!-- Ver Mascotas -->
                     <a href="{% url 'listar_mascotas_usuario' %}" class="bubble">
                         <i class="fa-solid fa-dog"></i>
@@ -55,22 +54,45 @@
                     </a>
                 </div>
             </div>
+
             <!--SECCION PARA VER LAS MASCOTAS DISPONIBLES-->
             {% include "user/listaMascotas.html" with mascotas=mascotas %}
 
             <!-- BOTÓN VER MÁS -->
             <div class="text-end">
                 <a href="{% url 'listar_mascotas_usuario' %}" class="btn btn-outline-primary"
-                    style="background-color: aliceblue;">
+                    style="background-color: rgb(255, 255, 255);">
+                    Ver más →
+                </a>
+            </div>
+        </section>
+    </div><br>
+
+    <div class="container">
+        <section id="novedades">
+
+            {% include "user/listaNovedades.html" with novedades=novedades %}
+
+            <div class="text-end">
+                <a href="{% url 'listar_novedades_usuario' %}" class="btn btn-outline-primary"
+                    style="background-color: rgb(255, 255, 255);">
                     Ver más →
                 </a>
             </div>
         </section>
     </div>
 
-    <div class="contactos">
-        <section>
-            <h1>HOLANGAAAAAAAAAAAAAAA</h1>
+    <div class="container">
+        <div class="quienes_somos">
+            <section id="contenido2">
+                {% include 'quienes_somos.html' %}
+            </section>
+        </div>
+    </div>
+
+    <div class="container">
+        <section id="contenido3">
+            {% include 'contacto.html' %}
         </section>
     </div>
 </div>

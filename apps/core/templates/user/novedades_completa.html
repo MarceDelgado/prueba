@@ -1,0 +1,138 @@
+
+{% load static %}
+
+<div class="container my-5">
+    
+    <div class="card shadow-lg border-0 rounded-4 p-4 articulo-cute">
+
+        <!-- Imagen principal -->
+        {% if novedad.imagen %}
+        <div class="text-center mb-4">
+            <img src="{{ novedad.imagen.url }}" 
+                 alt="{{ novedad.titulo }}" 
+                 class="img-fluid rounded-4 img-articulo">
+        </div>
+        {% endif %}
+
+        <!-- Título -->
+        <h1 class="fw-bold text-center mb-3 titulo-cute">
+            {{ novedad.titulo }}
+        </h1>
+
+        <!-- Fecha -->
+        <p class="text-center text-muted mb-4">
+            🗓️ Publicado el {{ novedad.fecha|date:"d/m/Y" }}
+        </p>
+
+        <!-- Descripción corta -->
+        <p class="lead text-center desc-corta">
+            {{ novedad.descripcion_corta }}
+        </p>
+
+        <hr class="my-4">
+
+        <!-- Contenido completo -->
+        <div class="contenido-articulo">
+            <p>{{ novedad.contenido|linebreaks }}</p>
+        </div>
+
+        <!-- Botón volver -->
+        <div class="text-center mt-4">
+           <a href="{% url 'listar_novedades_usuario' %}" class="btn-volver">
+    ⬅ Volver a todas las novedades
+</a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Estilos personalizados azul pastel -->
+<style>
+body {
+    background: linear-gradient(180deg, #e0f7ff, #c4f0ff, #e0f7ff);
+    min-height: 100vh;
+    font-family: "Poppins", "Nunito", sans-serif;
+}
+
+/* Contenedor general cute */
+.articulo-cute {
+    background: #d4f9ffcc; /* azul pastel con transparencia */
+    backdrop-filter: blur(8px); 
+    border-radius: 22px;
+    padding: 35px;
+    border: 2px solid #a0e0ff;
+    box-shadow: 0 10px 28px rgba(160, 224, 255, 0.35);
+}
+
+/* Imagen de la novedad */
+.img-articulo {
+    max-height: 350px;
+    object-fit: cover;
+    border-radius: 18px;
+    border: 3px solid #a0e0ff;
+    box-shadow: 0 4px 15px rgba(160, 224, 255, 0.2);
+}
+
+/* Título principal */
+.titulo-cute {
+    font-size: 2.2rem;
+    color: #3daee9;
+    text-shadow: 1px 1px 0 #ffffffaa;
+    text-align: center;
+}
+
+/* Descripción corta */
+.desc-corta {
+    font-size: 1.15rem;
+    color: #444;
+    background: #b8e6ff;
+    padding: 12px 18px;
+    border-radius: 12px;
+    border-left: 5px solid #5cc0ff;
+    display: inline-block;
+    text-align: center;
+}
+
+/* Contenido del artículo */
+.contenido-articulo p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #555;
+    margin-bottom: 1.2rem;
+}
+
+/* Línea separadora */
+hr {
+    border-top: 2px dashed #5cc0ff;
+    margin: 30px 0;
+}
+
+/* Botón volver cute */
+.btn-volver {
+    background-color: #5cc0ff;
+    color: white !important;
+    font-weight: 600;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 30px;
+    box-shadow: 0 4px 10px rgba(92, 192, 255, 0.4);
+    transition: 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-volver:hover {
+    background-color: #3daee9;
+    transform: scale(1.07);
+    box-shadow: 0 6px 13px rgba(61, 174, 233, 0.5);
+}
+
+/* Botón outline (si se usa) */
+.btn-outline-primary:hover {
+    background-color: #3daee9 !important;
+    color: white !important;
+    transform: scale(1.05);
+}
+</style>

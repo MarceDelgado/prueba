@@ -7,8 +7,8 @@
 
         <!-- FOTO -->
         <div class="col-md-4">
-            {% if m.foto %}
-            <img src="{{ m.foto.url }}" class="img-fluid rounded-start" alt="{{ m.nombre }}">
+            {% if m.fotos %}
+            <img src="{{ m.fotos.url }}" class="img-fluid rounded-start" alt="{{ m.nombre }}">
             {% else %}
             <img src="{% static 'imagenes/sin_foto.jpg' %}" class="img-fluid rounded-start" alt="Sin foto">
             {% endif %}
