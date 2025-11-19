@@ -131,7 +131,7 @@ class ListarMascotas(Restringir_acceso, ListView):
     template_name = 'admin/mascotas/listaMascotas.html'
 
 
-class ListarMascotasUsuario(ListView):
+class ListarMascotasUsuario(ListView,Restringir_acceso):
     model = Mascotas
     template_name = 'user/detalle_mascotas.html'
     context_object_name = 'mascotas'
@@ -625,8 +625,7 @@ def mis_adopciones(request):
             "mascota": a.mascota,
             "especie": a.mascota.raza.especie.nombre,
             "raza": a.mascota.raza.nombre,
-            "fecha": a.fecha_adopcion,
-            "seguimiento": a.seguimiento,  # si tienes un campo booleano o texto
+            "fecha": a.fecha_adopcion,  # si tienes un campo booleano o texto
         })
 
     # Mensaje si no hay adopciones

@@ -1,44 +1,45 @@
 {% extends "base.html" %}
-
+{% load static %}
 
 {% block title %}Mis Adopciones{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <h2 class="text-center mb-4">Mis Adopciones</h2>
 
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-info text-center" role="alert">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
+    <div class="container py-5">
+        <h2 class="text-center mb-4">Mis Adopciones</h2>
 
-    {% if adopciones.exists %}
-        <div class="row row-cols-1 row-cols-md-2 g-4">
-            {% for adopcion in adopciones %}
-            <div class="col">
-                <div class="card h-100">
-                    {% if adopcion.mascota.imagen %}
-                        <img src="{{ adopcion.mascota.imagen.url }}" class="card-img-top" alt="{{ adopcion.mascota.nombre }}">
-                    {% else %}
-                        <img src="{% static 'imagenes/default_pet.png' %}" class="card-img-top" alt="Mascota">
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ adopcion.mascota.nombre }}</h5>
-                        <p class="card-text">
-                            <strong>Especie:</strong> {{ adopcion.mascota.especie }}<br>
-                            <strong>Raza:</strong> {{ adopcion.mascota.raza }}<br>
-                            <strong>Fecha de adopción:</strong> {{ adopcion.fecha_adopcion|date:"d/m/Y" }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
+        <!-- BOTÓN VOLVER -->
+        <div class="mb-4">
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-dark">
+                ← Volver al menú
+            </a>
         </div>
-    {% else %}
-        <p class="text-center mt-4">No tienes adopciones registradas aún.</p>
-    {% endif %}
-</div>
+
+ 
+        {% if adopciones.exists %}
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+                {% for adopcion in adopciones %}
+                    <div class="col">
+                        <div class="card h-100">
+                            {% if adopcion.mascota.imagen %}
+                                <img src="{{ adopcion.mascota.imagen.url }}" class="card-img-top" alt="{{ adopcion.mascota.nombre }}">
+                            {% else %}
+                                <img src="{% static 'imagenes/default_foto.png' %}" class="card-img-top" alt="adopcion.mascota">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ adopcion.mascota.nombre }}</h5>
+                                <p class="card-text">
+                                    <strong>Especie:</strong> {{ adopcion.mascota.especie }}<br>
+                                    <strong>Raza:</strong> {{ adopcion.mascota.raza }}<br>
+                                    <strong>Fecha de adopción:</strong> {{ adopcion.fecha_adopcion|date:"d/m/Y" }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% endif %}
+    </div>
+
 {% endblock %}

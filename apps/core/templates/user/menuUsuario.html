@@ -1,4 +1,5 @@
 <div class="container">
+     {% if not request.user.is_authenticated %}
     <div class="container">
         <section class="hero" id="inicio">
             <div class="accordion-fullscreen">
@@ -36,11 +37,19 @@
             </div>
         </section>
     </div>
+    {% endif %}
 
     <div class="container">
         <section class="ver_mascotas" id="contenido">
             <div class="container py-5 text-center">
                 <div class="bubble-menu">
+
+                    <!-- Mi Cuenta -->
+                    <a href="{% url 'explorar_especies' %}" class="bubble">
+                        <i class="fa-solid fa-user"></i>
+                        <span>Mi Cuenta</span>
+                    </a>
+
                     <!-- Ver Mascotas -->
                     <a href="{% url 'listar_mascotas_usuario' %}" class="bubble">
                         <i class="fa-solid fa-dog"></i>
@@ -51,6 +60,12 @@
                     <a href="{% url 'explorar_especies' %}" class="bubble">
                         <i class="fa-solid fa-paw"></i>
                         <span>Especies</span>
+                    </a>
+
+                    <!-- Especies -->
+                    <a href="{% url 'mis_adopciones' %}" class="bubble">
+                        <i class="fa-solid fa-heart"></i>
+                        <span>Mis adopciones</span>
                     </a>
                 </div>
             </div>
