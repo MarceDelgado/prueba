@@ -174,3 +174,4 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # para mail_admins
 ADMINS = [('Admin', 'tu-admin@example.com')]
 DEFAULT_FROM_EMAIL = 'webmaster@tu-dominio.local'
+    

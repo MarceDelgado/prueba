@@ -3,7 +3,7 @@ from django.contrib.auth import views as auth_views
 from . import views   # ← NECESARIO
 from .views import (
     home, buscar_animales, contacto, login_view, logout_view, registro, dashboard, quienesSomos, lista_novedades,
-    ListarMascotas, ListarMascotasUsuario, ListarNovedadesUsuario, crear_mascota, ModificarMascota, eliminar_mascota,
+    ListarMascotas, ListarMascotasUsuario, ListarNovedadesUsuario, crear_mascota, ModificarMascota, eliminar_mascota_ajax,
     ModificarEspecieView, EliminarEspecie, ListarEspeciesView, CrearEspecieView,
     crear_raza, listar_razas, eliminar_raza, modificar_raza, recuperar_contraseña, cambiar_password,
     listar_personas, crear_persona, eliminar_persona, modificar_persona, habilitar_persona,
@@ -28,7 +28,7 @@ urlpatterns = [
     path('listar_mascotas_usuario/', ListarMascotasUsuario.as_view(), name='listar_mascotas_usuario'),
     path('crear_mascota/', crear_mascota, name='crear_mascotas'),
     path('modificar_mascota/<int:pk>/', ModificarMascota.as_view(), name='modificar_mascotas'),
-    path('eliminar_mascota/<int:id>/', eliminar_mascota, name='eliminar_mascotas'),
+    path('eliminar_mascota_ajax/', eliminar_mascota_ajax, name='eliminar_mascotas'),
 
     # ABM Raza
     path('eliminar_raza/<int:raza_id>/', eliminar_raza, name='eliminar_raza'),

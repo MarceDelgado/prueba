@@ -5,12 +5,7 @@
 {% block content %}
 <div class="container py-5">
 
-    <!-- BOTÓN VOLVER -->
-    <div class="mb-4">
-        <a href="{% url 'dashboard' %}" class="btn btn-outline-dark">
-            ← Volver al menú
-        </a>
-    </div>
+
 
     <!-- TÍTULO -->
     <div class="text-center mb-5">
@@ -19,7 +14,12 @@
         </h2>
         <p class="text-dark">Descubrí las especies disponibles y sus razas</p>
     </div>
-
+    <!-- BOTÓN VOLVER -->
+    <div class="mb-4">
+        <a href="{% url 'home' %}" class="btn btn-outline-dark">
+            ← Volver al menú
+        </a>
+    </div>
     {% for especie in especies %}
         <div class="mb-5 raza-section">
             <!-- Encabezado de especie -->

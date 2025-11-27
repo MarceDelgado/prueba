@@ -100,7 +100,6 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.username
     
-
 #Django lo ejecuta automaticamente, cada vez que se cree un User se crea tambien su UserProfile
 @receiver(post_save, sender=User)
 def crear_perfil_usuario(sender, instance, created, **kwargs):

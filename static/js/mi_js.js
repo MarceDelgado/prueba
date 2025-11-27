@@ -14,7 +14,7 @@ document.getElementById('scrollBtn').addEventListener('click', function () {
     document.getElementById('contenido').scrollIntoView();
 });
 
-// ACORDEÓN AUTOMÁTICO
+// CARRUSEL AUTOMÁTICO
 document.addEventListener("DOMContentLoaded", function () {
     const items = document.querySelectorAll(".accordion-item");
     let index = 0;
@@ -26,16 +26,6 @@ document.addEventListener("DOMContentLoaded", function () {
         items[index].querySelector("img").style.transform = "scale(1.1)";
         index = (index + 1) % total;
     }, 3000);
-});
-
-/* BASE */
-$(document).ready(function () {
-    $('#tablaUP').DataTable({
-        language: {
-            url: "//cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json"
-        },
-        pageLength: 5
-    });
 });
 
 const backToTopBtn = document.getElementById("backToTopBtn");

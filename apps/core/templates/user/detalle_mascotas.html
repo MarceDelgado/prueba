@@ -3,12 +3,7 @@
 {% block content %}
 <div class="container py-5">
 
-    <!-- BOTÓN VOLVER -->
-    <div class="mb-4">
-        <a href="{% url 'dashboard' %}" class="btn btn-outline-dark">
-            ← Volver al menú
-        </a>
-    </div>
+
     
     <!-- TÍTULO -->
     <div class="text-center mb-5">
@@ -16,7 +11,12 @@
             🐾 Explorar Mascotas
         </h2>
     </div>
-
+    <!-- BOTÓN VOLVER -->
+    <div class="mb-4">
+        <a href="{% url 'home' %}" class="btn btn-outline-dark">
+            ← Volver al menú
+        </a>
+    </div>
     <!-- LISTADO -->
     {% include "user/listaMascotas.html" with mascotas=mascotas %}
 </div>

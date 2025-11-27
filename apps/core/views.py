@@ -8,7 +8,8 @@ from django.views.generic import CreateView, UpdateView, DeleteView, ListView, V
 from .models import Localidad, UserProfile, SolicitudAdopcion
 from django.conf import settings
 
-
+#AJAX - respuesta Json
+from django.http import JsonResponse
 
 # correo
 from django.contrib.auth.models import User
@@ -119,7 +120,7 @@ def registro(request):
     return render(request, "registro.html", {"form": form})
 
 # =======================
-# ABM MASCOTAS (cbv, fbv) sabri
+# ABM MASCOTAS (cbv, fbv)
 # =======================
 @method_decorator(login_required(login_url='/login/'), name='dispatch')
 class Restringir_acceso(View):  # para el decorador login_required de las clases
@@ -163,12 +164,16 @@ def crear_mascota(request):
     return render(request, 'admin/mascotas/crearMascota.html', {'form': form})
 
 @login_required(login_url='/login/')
-def eliminar_mascota(request, id):
-    mascota = get_object_or_404(Mascotas, pk=id)
-    if request.method == 'POST':
-        mascota.delete()
-        return redirect('listar_mascotas')
-    return render(request, 'admin/mascotas/eliminarMascota.html', {'mascota': mascota})
+def eliminar_mascota_ajax(request):
+   if request.method == 'POST':
+       id_mascota=request.POST.get("id")
+       try:
+           mascota=Mascotas.objects.get(id=id_mascota)#compara el valor que mando js con el campo id de Mascotas
+           mascota.delete()
+           return JsonResponse({"status":"ok", "mensaje":"La mascota fue elimina"})
+       except Mascotas.DoesNotExist:
+           return JsonResponse({"status":"error","mensaje":"No se encontro la mascota"})
+   return JsonResponse({"status":"error","mensaje": "Esto solo puede hacerse desde la pagina, no desde la URL."}, status=400)
 
 # =======================
 # ABM RAZA (fbv)
