@@ -61,7 +61,7 @@ def contacto(request):
             subject="Nuevo mensaje desde el formulario",
             message=cuerpo,
             from_email=settings.EMAIL_HOST_USER,
-            recipient_list=["mar.ale7351@gmail.com"],
+            recipient_list=["universopeludo2025@gmail.com"],
             fail_silently=False,
         )
         messages.success(request, "Gracias por contactarnos")
