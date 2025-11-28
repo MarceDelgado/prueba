@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login, logout as auth_logout  # im
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, View  # importamos las clases bases para el abm
 from .models import Localidad, UserProfile, SolicitudAdopcion
 from django.conf import settings
+from django.core.mail import send_mail
 
 #AJAX - respuesta Json
 from django.http import JsonResponse
@@ -50,11 +51,21 @@ def contacto(request):
     if request.method == 'POST':
         # Aquí podrías procesar el formulario
         nombre = request.POST.get('nombre')
-        correo = request.POST.get('correo')
+        correo = request.POST.get('email')
         mensaje = request.POST.get('mensaje')
         # Guardar datos o enviar mail...
-        return render(request, 'contacto_exito.html')
-    return render(request, 'contacto.html')
+        email = correo
+        cuerpo = f"Nombre: {nombre}\nEmail: {email}\nMensaje:\n{mensaje}"
+
+        send_mail(
+            subject="Nuevo mensaje desde el formulario",
+            message=cuerpo,
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=["mar.ale7351@gmail.com"],
+            fail_silently=False,
+        )
+        messages.success(request, "Gracias por contactarnos")
+    return render(request, 'home.html')
 
 
 # =======================
@@ -424,22 +435,32 @@ def detalle_novedad(request, id):
 # =======================
 # PERFIL DE USUARIO
 # =======================
-@login_required(login_url='/login/')
+
+@login_required(login_url='login')
 def edit_profile(request):
     profile, created = UserProfile.objects.get_or_create(user=request.user)
+
     if request.method == 'POST':
-        form = UserProfileForm(request.POST, request.FILES, instance=profile)
+        form = UserProfileForm(
+            request.POST,
+            request.FILES,
+            instance=profile
+        )
+
         if form.is_valid():
             form.save()
+            messages.success(request, "Perfil actualizado correctamente")
             return redirect('view_profile')
     else:
         form = UserProfileForm(instance=profile)
-    return render(request, 'admin/edit_profile.html', {'form': form})
+
+    return render(request, 'user/edit_profile.html', {'form': form})
+
 
 @login_required(login_url='/login/')
 def view_profile(request):
-    profile = UserProfile.objects.get(user=request.user)
-    return render(request, 'view_profile.html', {'profile': profile})
+    profile, created = UserProfile.objects.get_or_create(user=request.user)
+    return render(request, 'user/mostrar_perfil.html', {'profile': profile})
 
 # =======================
 # CORREO ELECTRÓNICO
@@ -622,28 +643,19 @@ def explorar_novedades(request):
 # =======================
 @login_required(login_url='/login/')
 def mis_adopciones(request):
-    adopciones_qs = Adopcion.objects.filter(usuario=request.user)
-
-    adopciones = []
-    for a in adopciones_qs:
-        adopciones.append({
-            "mascota": a.mascota,
-            "especie": a.mascota.raza.especie.nombre,
-            "raza": a.mascota.raza.nombre,
-            "fecha": a.fecha_adopcion,  # si tienes un campo booleano o texto
-        })
-
-    # Mensaje si no hay adopciones
-    if not adopciones:
-        storage = messages.get_messages(request)
-        if not any(msg.message == "Todavía no realizaste ninguna adopción." for msg in storage):
-            messages.info(request, "Todavía no realizaste ninguna adopción.")
+    # Adopciones aprobadas
+    adopciones = Adopcion.objects.filter(usuario=request.user).select_related('mascota', 'mascota__raza', 'mascota__raza__especie')
+    
+    # Solicitudes pendientes
+    solicitudes = SolicitudAdopcion.objects.filter(usuario=request.user, estado='pendiente').select_related('mascota', 'mascota__raza', 'mascota__raza__especie')
 
     context = {
-        "adopciones": adopciones
+        "adopciones": adopciones,
+        "solicitudes": solicitudes
     }
 
     return render(request, 'user/mis_adopciones.html', context)
+
 
 
 def detalle_mascota(request, mascota_id):
@@ -671,7 +683,7 @@ def detalle_mascota(request, mascota_id):
         "localidad": localidad,
     }
 
-    return render(request, "user/detalle_mascota.html", contexto)
+    return render(request, "user/detalle_mascotas.html", contexto)
 
 @login_required(login_url='/login/')
 def formulario_adopcion(request, mascota_id):
@@ -692,7 +704,7 @@ def formulario_adopcion(request, mascota_id):
             solicitud.save()
 
             # Notificar a administradores (usa settings.ADMINS)
-            subject = f"Nueva solicitud de adopción: {mascota.nombre} (id {solicitud.id})"
+            subject = f"Nueva solicitud de adopción: {mascota.raza.nombre} (id {solicitud.id})"
             message = (
                 f"Usuario: {request.user.get_full_name() or request.user.username}\n"
                 f"Email: {request.user.email}\n"
@@ -745,7 +757,7 @@ def procesar_solicitud(request, pk):
             send_mail(
                 f"Tu solicitud #{s.id} ha sido {s.get_estado_display()}",
                 f"Hola {s.usuario.get_full_name() or s.usuario.username},\n\n"
-                f"Tu solicitud para adoptar {s.mascota.nombre} ha sido {s.estado}.\n\n"
+                f"Tu solicitud para adoptar {s.mascota.raza.nombre} ha sido {s.estado}.\n\n"
                 f"Comentario del admin:\n{respuesta}",
                 None,  # from_email: None -> usa DEFAULT_FROM_EMAIL
                 [s.usuario.email],
@@ -789,31 +801,6 @@ def lista_novedades(request):
     print(settings.DEBUG)
 
     return render(request, 'novedades.html', {'novedades': novedades})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 """

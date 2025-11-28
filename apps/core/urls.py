@@ -2,25 +2,29 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views   # ← NECESARIO
 from .views import (
-    home, buscar_animales, contacto, login_view, logout_view, registro, dashboard, quienesSomos, lista_novedades,
+    edit_profile, home, buscar_animales, contacto, login_view, logout_view, registro, dashboard, quienesSomos, lista_novedades,
     ListarMascotas, ListarMascotasUsuario, ListarNovedadesUsuario, crear_mascota, ModificarMascota, eliminar_mascota_ajax,
     ModificarEspecieView, EliminarEspecie, ListarEspeciesView, CrearEspecieView,
     crear_raza, listar_razas, eliminar_raza, modificar_raza, recuperar_contraseña, cambiar_password,
     listar_personas, crear_persona, eliminar_persona, modificar_persona, habilitar_persona,
     cambiar_contraseña_voluntariamente, filtrar_mascotas, explorar_especies,
     explorar_razas, mis_adopciones, detalle_mascota, crear_novedades, eliminar_novedades, listar_novedades, modificar_novedades,
-    detalle_novedad
+    detalle_novedad, view_profile
 )
 
 urlpatterns = [
     path('', home, name='home'),
     path('buscar/', buscar_animales, name='buscar_animales'),
-    path('contacto/', contacto, name='contacto'),
+    path('contacto/', views.contacto, name='contacto'),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     path('registro/', registro, name='registro'),
     path('dashboard/', dashboard, name='dashboard'),
     path('quienesSomos/', quienesSomos, name='quienes_somos'),
+
+    # PERFIL
+    path('perfil/', view_profile, name='view_profile'),
+    path('perfil/editar/', edit_profile, name='edit_profile'),
 
 
     # ABM Mascotas
