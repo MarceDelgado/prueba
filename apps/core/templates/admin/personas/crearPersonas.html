@@ -1,56 +1,71 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="outer-container py-5" >
-    <div class="form-container py-4 px-4">
-        <h1 class="mb-4 text-center">Crear Persona</h1>
+<div class="container py-5" style="min-height:80vh;">
+    <div class="card shadow rounded-4 p-4 mx-auto" 
+         style="max-width:900px; background-color:#ffffff;">
+
+        <h1 class="mb-4 text-center text-primary">Crear Persona</h1>
+
         <form method="post">
             {% csrf_token %}
             {{ form.non_field_errors }}
 
-            <div class="mb-3">
-                <label for="{{ form.nombre.id_for_label }}" class="form-label">Nombre</label>
-                {{ form.nombre }}
+            <div class="row">
+                <!-- Columna izquierda -->
+                <div class="col-md-6 col-12">
+
+                    <div class="mb-3">
+                        <label for="{{ form.nombre.id_for_label }}" class="form-label">Nombre</label>
+                        {{ form.nombre }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">Correo electrónico</label>
+                        {{ form.email }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.dni.id_for_label }}" class="form-label">DNI</label>
+                        {{ form.dni }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.domicilio.id_for_label }}" class="form-label">Domicilio</label>
+                        {{ form.domicilio }}
+                    </div>
+
+                </div>
+
+                <!-- Columna derecha -->
+                <div class="col-md-6 col-12">
+
+                    <div class="mb-3">
+                        <label for="{{ form.apellido.id_for_label }}" class="form-label">Apellido</label>
+                        {{ form.apellido }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.telefono.id_for_label }}" class="form-label">Teléfono</label>
+                        {{ form.telefono }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.fecha_nacimiento.id_for_label }}" class="form-label">Fecha de nacimiento</label>
+                        {{ form.fecha_nacimiento }}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.user.id_for_label }}" class="form-label">Usuario asociado</label>
+                        {{ form.user }}
+                    </div>
+
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label for="{{ form.apellido.id_for_label }}" class="form-label">Apellido</label>
-                {{ form.apellido }}
-            </div>
-
-            <div class="mb-3">
-                <label for="{{ form.email.id_for_label }}" class="form-label">Correo electrónico</label>
-                {{ form.email }}
-            </div>
-
-            <div class="mb-3">
-                <label for="{{ form.telefono.id_for_label }}" class="form-label">Teléfono</label>
-                {{ form.telefono }}
-            </div>
-
-            <div class="mb-3">
-                <label for="{{ form.dni.id_for_label }}" class="form-label">DNI</label>
-                {{ form.dni }}
-            </div>
-
-            <div class="mb-3">
-                <label for="{{ form.fecha_nacimiento.id_for_label }}" class="form-label">Fecha de nacimiento</label>
-                {{ form.fecha_nacimiento }}
-            </div>
-
-            <div class="mb-3">
-                <label for="{{ form.domicilio.id_for_label }}" class="form-label">Domicilio</label>
-                {{ form.domicilio }}
-            </div>
-
-            <div class="mb-3">
-                <label for="{{ form.user.id_for_label }}" class="form-label">Usuario asociado</label>
-                {{ form.user }}
-            </div>
-
-            <div class="d-flex gap-2 mt-4">
-                <button type="submit" class="btn btn-primary">Guardar</button>
+            <div class="d-flex justify-content-between mt-4">
                 <a href="{% url 'listar_personas' %}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Guardar</button>
             </div>
         </form>
 
@@ -61,6 +76,7 @@
             {% endfor %}
         </div>
         {% endif %}
+
     </div>
 </div>
 

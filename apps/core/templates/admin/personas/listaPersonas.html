@@ -13,7 +13,13 @@
                 <th>Apellido y Nombre</th>
                 <th>DNI</th>
                 <th>Domicilio</th>
-                <th>Email</th>
+                <th>
+                    Email 
+                    <button id="toggleEmailBtn" class="btn btn-sm btn-outline-light text-dark"
+                            onclick="toggleEmails()">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </th>
                 <th>Contacto</th>
                 <th>Estado</th>
                 <th>Habilitado como adoptante</th>
@@ -26,11 +32,11 @@
                 <td>{{ persona.id }}</td>
                 <td>
                     {% if persona.user.is_superuser %}
-                        Administrador
+                        Admin
                     {% elif persona.user.is_staff %}
                         Staff
                     {% else %}
-                        Usuario
+                        User
                     {% endif %}
                 </td>
                 <td>
@@ -43,7 +49,13 @@
                 <td>{{ persona.apellido }} {{ persona.nombre }}</td>
                 <td>{{ persona.dni }}</td>
                 <td>{{ persona.domicilio }}</td>
-                <td>{{ persona.email }}</td>
+                <td>
+                    <span class="email-item"
+                        data-full="{{ persona.email }}"
+                        data-short="{{ persona.email|slice:":7" }}...">
+                        {{ persona.email|slice:":7" }}...
+                    </span>
+                </td>
                 <td>{{ persona.telefono }}</td>
                 <td>
                     {% if persona.user.is_active %}
@@ -75,6 +87,26 @@
             {% endfor %}
         </tbody>
     </table>
+    <script>
+let showingFull = false;  // Estado global: ¿están completos?
+
+function toggleEmails() {
+    const emails = document.querySelectorAll(".email-item");
+    const button = event.target; // El botón que fue clickeado
+
+    emails.forEach(span => {
+        const full = span.getAttribute("data-full");
+        const short = span.getAttribute("data-short");
+        span.textContent = showingFull ? short : full;
+    });
+
+    // Cambiar texto del botón
+    button.textContent = showingFull ? "Ver todos" : "Ocultar todos";
+
+    showingFull = !showingFull; // invertir estado
+}
+</script>
+
 </div>
 
 {% endblock %}

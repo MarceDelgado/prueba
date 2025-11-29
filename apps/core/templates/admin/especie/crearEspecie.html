@@ -2,7 +2,7 @@
 {% block title %}Crear Especie{% endblock %}
 
 {% block content %}
-<div class="form-container py-4 " style="max-width: 600px; margin: auto; margin-top: 80px;">
+<div class="form-container py-4" style="max-width: 600px; margin: auto; margin-top: 80px;">
     <h2 class="mb-4 text-primary fw-bold text-center">Crear Nueva Especie</h2>
 
     <form method="POST" class="p-4 border rounded-4 shadow-sm bg-light">
@@ -14,10 +14,10 @@
             {{ form.nombre }}
         </div>
 
-        <div class="d-flex justify-content-between mt-4">
-            <a href="{% url 'listar_especies' %}" class="btn btn-secondary">Cancelar</a>
-            <button type="submit" class="btn btn-primary">Guardar</button>
-        </div>
+     <div class="d-flex justify-content-between mt-4">
+        <a href="{% url 'listar_especies' %}" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
     </form>
 </div>
 
