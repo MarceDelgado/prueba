@@ -148,8 +148,6 @@ y
   background: #d6d6d6;
 }
 
-
-/*SIDEBAR*/
 .layout {
   display: flex;
   position: relative;
@@ -165,7 +163,6 @@ y
 }
 
 /* SIDEBAR */
-
 .sidebar {
   width: 250px;
   height: auto;

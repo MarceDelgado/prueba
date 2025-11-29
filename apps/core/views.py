@@ -460,7 +460,7 @@ def edit_profile(request):
 @login_required(login_url='/login/')
 def view_profile(request):
     profile, created = UserProfile.objects.get_or_create(user=request.user)
-    return render(request, 'user/mostrar_perfil.html', {'profile': profile})
+    return render(request, 'user/view_profile.html', {'profile': profile})
 
 # =======================
 # CORREO ELECTRÓNICO

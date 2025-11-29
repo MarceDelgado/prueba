@@ -1,28 +1,32 @@
 {% extends "base.html" %}
 {% load static %}
 
-
 {% block content %}
 <div class="container py-5">
-    <h2 class="mb-4">Mi Perfil</h2>
+    <h2 class="mb-4">Mi Perfil uwu</h2>
 
-    <div class="card" style="max-width: 500px;">
-        <div class="card-body">
+    <div class="card mx-auto" style="max-width: 450px;">
+        <div class="card-body text-center">
 
+            <!-- Mostrar avatar -->
             {% if profile.avatar %}
-                <img src="{{ profile.avatar.url }}"
-                     alt="Foto de perfil"
-                     class="img-fluid rounded mb-3"
-                     style="max-height: 200px; object-fit: cover;">
+                <img src="{{ profile.avatar.url }}" 
+                     alt="Avatar"
+                     class="img-fluid rounded-circle mb-3"
+                     style="width: 180px; height: 180px; object-fit: cover;">
             {% else %}
-                <img src="{% static 'imagenes/sin_foto.jpg' %}"
+                <img src="{% static 'imagenes/sin_avatar.jpg' %}"
                      alt="Sin foto"
-                     class="img-fluid rounded mb-3"
-                     style="max-height: 200px; object-fit: cover;">
+                     class="img-fluid rounded-circle mb-3"
+                     style="width: 180px; height: 180px; object-fit: cover;">
             {% endif %}
 
             <p><strong>Usuario:</strong> {{ request.user.username }}</p>
             <p><strong>Email:</strong> {{ request.user.email }}</p>
+
+            {% if profile.bio %}
+                <p><strong>Bio:</strong> {{ profile.bio }}</p>
+            {% endif %}
 
             <a href="{% url 'edit_profile' %}" class="btn btn-primary mt-3">
                 Editar Perfil
