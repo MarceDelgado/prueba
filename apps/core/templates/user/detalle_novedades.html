@@ -13,5 +13,8 @@
     <!-- LISTADO -->
     {% include "user/listaNovedades.html" with novedades=novedades %}
 </div>
+<div class="mb-4">
+    <a href="{% url 'home' %}" class="btn btn-outline-dark">← Volver al menú</a>
+</div>
 
 {% endblock %}

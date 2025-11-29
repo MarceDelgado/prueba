@@ -179,6 +179,7 @@ y
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  padding-top: 80px !important;
 }
 
 /* ===== Título ===== */
