@@ -5,70 +5,93 @@
 
 {% block content %}
 <div class="container py-5">
-    <h2 class="text-center mb-4">Mis Adopciones</h2>
+    <!-- TÍTULO -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold text-dark mb-3 emoji-title">
+            MIS ADOPCIONES 🐾 
+        </h1>
+    </div>
 
     <div class="mb-4">
         <a href="{% url 'home' %}" class="btn btn-outline-dark">← Volver al menú</a>
     </div>
 
     <!-- SECCIÓN DE SOLICITUDES PENDIENTES -->
-    <h3>Solicitudes pendientes</h3>
-    {% if solicitudes %}
-        <div class="row row-cols-1 row-cols-md-2 g-4 mb-5">
-            {% for s in solicitudes %}
-                <div class="col">
-                    <div class="card h-100 border-warning">
-                        {% if s.mascota.fotos %}
-                            <img src="{{ s.mascota.fotos.url }}" class="card-img-top" alt="{{ s.mascota.raza.nombre }}">
-                        {% else %}
-                            <img src="{% static 'imagenes/default_foto.png' %}" class="card-img-top" alt="Foto predeterminada">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ s.mascota.raza.nombre }}</h5>
-                            <p class="card-text">
-                                <strong>Especie:</strong> {{ s.mascota.raza.especie.nombre }}<br>
-                                <strong>Raza:</strong> {{ s.mascota.raza.nombre }}<br>
-                                <strong>Estado:</strong> {{ s.estado|capfirst }}<br>
-                                <strong>Mensaje:</strong> {{ s.mensaje }}
-                            </p>
-                        </div>
-                    </div>
+<h3>Solicitudes pendientes</h3>
+
+{% if solicitudes %}
+    {% for s in solicitudes %}
+    <div class="card mb-4 shadow-sm border-0 rounded-4 horizontal-card">
+        <div class="row g-0">
+
+            <!-- FOTO -->
+            <div class="col-md-4">
+                {% if s.mascota.fotos %}
+                    <img src="{{ s.mascota.fotos.url }}" class="img-fluid rounded-start" alt="{{ s.mascota.raza.nombre }}">
+                {% else %}
+                    <img src="{% static 'imagenes/default_foto.png' %}" class="img-fluid rounded-start" alt="Foto predeterminada">
+                {% endif %}
+            </div>
+
+            <div class="col-md-8">
+                <div class="card-body">
+
+                    <h5 class="card-title fw-bold">{{ s.mascota.raza.nombre }}</h5>
+
+                    <p class="mb-1"><strong>Especie:</strong> {{ s.mascota.raza.especie.nombre }}</p>
+                    <p class="mb-1"><strong>Raza:</strong> {{ s.mascota.raza.nombre }}</p>
+                    <p class="mb-1"><strong>Estado:</strong> {{ s.estado|capfirst }}</p>
+                    <p class="mb-1"><strong>Mensaje:</strong> {{ s.mensaje }}</p>
+
                 </div>
-            {% endfor %}
+            </div>
+
         </div>
-    {% else %}
-        <p>No tenés solicitudes pendientes.</p>
-    {% endif %}
+    </div>
+    {% endfor %}
+{% else %}
+    <p>No tenés solicitudes pendientes.</p>
+{% endif %}
+
 
     <!-- SECCIÓN DE ADOPCIONES APROBADAS -->
-    <h3>Adopciones aprobadas</h3>
-    {% if adopciones %}
-        <div class="row row-cols-1 row-cols-md-2 g-4">
-            {% for adopcion in adopciones %}
-                <div class="col">
-                    <div class="card h-100">
-                        {% if adopcion.foto_url %}
-                            <img src="{{ adopcion.foto_url }}" class="card-img-top" alt="{{ adopcion.raza }}">
-                        {% else %}
-                            <img src="{% static 'imagenes/default_foto.png' %}" class="card-img-top" alt="Foto predeterminada">
-                        {% endif %}
-                        <div class="card-body">
-                            <h5 class="card-title">{{ adopcion.raza }}</h5>
-                            <p class="card-text">
-                                <strong>Especie:</strong> {{ adopcion.especie }}<br>
-                                <strong>Sexo:</strong> {{ adopcion.sexo }}<br>
-                                <strong>Tamaño:</strong> {{ adopcion.tamanio }}<br>
-                                <strong>Observaciones:</strong> {{ adopcion.observaciones }}<br>
-                                <strong>Fecha de adopción:</strong> {{ adopcion.fecha|date:"d/m/Y" }}
-                            </p>
-                        </div>
-                    </div>
+<h3>Adopciones aprobadas</h3>
+
+{% if adopciones %}
+    {% for a in adopciones %}
+    <div class="card mb-4 shadow-sm border-0 rounded-4 horizontal-card">
+        <div class="row g-0">
+
+            <!-- FOTO -->
+            <div class="col-md-4">
+                {% if a.foto_url %}
+                    <img src="{{ a.foto_url }}" class="img-fluid rounded-start" alt="{{ a.raza }}">
+                {% else %}
+                    <img src="{% static 'imagenes/default_foto.png' %}" class="img-fluid rounded-start" alt="Foto predeterminada">
+                {% endif %}
+            </div>
+
+            <div class="col-md-8">
+                <div class="card-body">
+
+                    <h5 class="card-title fw-bold">{{ a.raza }}</h5>
+
+                    <p class="mb-1"><strong>Especie:</strong> {{ a.especie }}</p>
+                    <p class="mb-1"><strong>Sexo:</strong> {{ a.sexo }}</p>
+                    <p class="mb-1"><strong>Tamaño:</strong> {{ a.tamanio }}</p>
+                    <p class="mb-1"><strong>Observaciones:</strong> {{ a.observaciones }}</p>
+                    <p class="mb-1"><strong>Fecha de adopción:</strong> {{ a.fecha|date:"d/m/Y" }}</p>
+
                 </div>
-            {% endfor %}
+            </div>
+
         </div>
-    {% else %}
-        <p>No tenés adopciones aprobadas.</p>
-    {% endif %}
+    </div>
+    {% endfor %}
+{% else %}
+    <p>No tenés adopciones aprobadas.</p>
+{% endif %}
+
 
 </div>
 {% endblock %}

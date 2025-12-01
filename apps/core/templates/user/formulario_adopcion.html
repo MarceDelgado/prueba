@@ -1,55 +1,81 @@
 {% extends 'base.html' %}
-
-{% block title %}Formulario de adopción - {{ mascota.raza.nombre }}{% endblock %}
+{% load widget_tweaks %}
 
 {% block content %}
-<div class="form-container">
-    <h2>Solicitud de adopción: {{ mascota.raza.nombre }}</h2>
+<br>
+<div class="d-flex justify-content-center mt-4 mb-5" style="margin-top: 80px;">
+    <div class="card shadow-lg p-4" style="width: 900px; border-radius: 12px;">
 
-    <div class="row">
-        <div class="col-md-6">
-            {% if mascota.fotos %}
-                <img src="{{ mascota.fotos.url }}" class="img-fluid rounded" alt="{{ mascota.raza.nombre }}">
-            {% endif %}
-            <p><strong>Raza:</strong> {{ mascota.raza.nombre }}</p>
-            <p><strong>Especie:</strong> {{ mascota.raza.especie.nombre }}</p>
-            <p><strong>Sexo:</strong> {{ mascota.sexo }}</p>
-            <p><strong>Tamaño:</strong> {{ mascota.tamanio }}</p>
-            <p><strong>Observaciones:</strong> {{ mascota.observaciones }}</p>
-            <p><strong>Fecha de nacimiento:</strong> {{ mascota.fecha_nac }}</p>
-        </div>
+        <h2 class="text-center mb-4">
+            Solicitud de adopción: {{ mascota.raza.nombre }}
+        </h2>
 
-        <div class="col-md-6">
-            <form method="post" novalidate>
-                {% csrf_token %}
-                {{ form.non_field_errors }}
-                
-                <div class="mb-3">
-                    {{ form.mensaje.label_tag }}
-                    {{ form.mensaje }}
-                    {{ form.mensaje.errors }}
-                </div>
-                
-                <div class="mb-3">
-                    {{ form.telefono.label_tag }}
-                    {{ form.telefono }}
-                    {{ form.telefono.errors }}
-                </div>
-                
-                <div class="mb-3">
-                    {{ form.direccion.label_tag }}
-                    {{ form.direccion }}
-                    {{ form.direccion.errors }}
-                </div>
+        <div class="row">
+            <!-- Columna izquierda: info de la mascota -->
+            <div class="col-md-6">
+                {% if mascota.fotos %}
+                    <img src="{{ mascota.fotos.url }}"
+                         class="img-fluid rounded mb-3"
+                         alt="{{ mascota.raza.nombre }}"
+                         style="max-height: 320px; object-fit: cover; width:100%;">
+                {% endif %}
 
-                <button class="btn btn-success" type="submit">Enviar solicitud</button>
-                <a href="{% url 'home' %}" class="btn btn-link">Cancelar</a>
-            </form>
+                <div class="p-3 bg-light rounded shadow-sm">
+                    <p class="mb-2"><strong>Raza:</strong> {{ mascota.raza.nombre }}</p>
+                    <p class="mb-2"><strong>Especie:</strong> {{ mascota.raza.especie.nombre }}</p>
+                    <p class="mb-2"><strong>Sexo:</strong> {{ mascota.sexo }}</p>
+                    <p class="mb-2"><strong>Tamaño:</strong> {{ mascota.tamanio }}</p>
+                    <p class="mb-2"><strong>Fecha de nacimiento:</strong> {{ mascota.fecha_nac }}</p>
+                    <p class="mb-0"><strong>Observaciones:</strong> {{ mascota.observaciones }}</p>
+                </div>
+            </div>
+
+            <!-- Columna derecha: formulario -->
+            <div class="col-md-6">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+
+                    <div class="mb-3">
+                        {{ form.mensaje.label_tag }}
+                        {{ form.mensaje|add_class:"form-control" }}
+                        {% if form.mensaje.errors %}
+                            <div class="text-danger small mt-1">{{ form.mensaje.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.telefono.label_tag }}
+                        {{ form.telefono|add_class:"form-control" }}
+                        {% if form.telefono.errors %}
+                            <div class="text-danger small mt-1">{{ form.telefono.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.direccion.label_tag }}
+                        {{ form.direccion|add_class:"form-control" }}
+                        {% if form.direccion.errors %}
+                            <div class="text-danger small mt-1">{{ form.direccion.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+                        <button class="btn btn-success" type="submit">
+                            Enviar solicitud
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-<div class="mb-4">
-    <a href="{% url 'home' %}" class="btn btn-outline-dark">← Volver al menú</a>
-</div>
-{% endblock %}
+    <!-- Botón volver al menú -->
 
+</div>
+
+
+
+{% endblock %}

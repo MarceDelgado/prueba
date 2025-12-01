@@ -3,7 +3,7 @@ from django.contrib.auth import views as auth_views
 from . import views   # ← NECESARIO
 from .views import (
     edit_profile, home, buscar_animales, contacto, login_view, logout_view, registro, dashboard, quienesSomos, lista_novedades,
-    ListarMascotas, ListarMascotasUsuario, ListarNovedadesUsuario, crear_mascota, ModificarMascota, eliminar_mascota_ajax,
+    ListarMascotas, ListarMascotasUsuario, ListarNovedadesUsuario, crear_mascota, modificar_mascota, eliminar_mascota_ajax,
     ModificarEspecieView, EliminarEspecie, ListarEspeciesView, CrearEspecieView,
     crear_raza, listar_razas, eliminar_raza, modificar_raza, recuperar_contraseña, cambiar_password,
     listar_personas, crear_persona, eliminar_persona, modificar_persona, habilitar_persona,
@@ -31,7 +31,7 @@ urlpatterns = [
     path('filtrar_mascotas/', ListarMascotas.as_view(), name='listar_mascotas'),
     path('listar_mascotas_usuario/', ListarMascotasUsuario.as_view(), name='listar_mascotas_usuario'),
     path('crear_mascota/', crear_mascota, name='crear_mascotas'),
-    path('modificar_mascota/<int:pk>/', ModificarMascota.as_view(), name='modificar_mascotas'),
+    path('modificar_mascota/<int:mascota_id>/', modificar_mascota, name='modificar_mascota'),
     path('eliminar_mascota_ajax/', eliminar_mascota_ajax, name='eliminar_mascotas'),
 
     # ABM Raza
@@ -85,10 +85,6 @@ urlpatterns = [
 
     #Formulario para enviar emails a los administradores
     path('contacto/enviar/', views.contacto_submit, name='contacto_submit'),
-
-    # apps/core/urls.py
-   # path('admin/solicitudes/', views.lista_solicitudes, name='lista_solicitudes'),
-   # path('admin/solicitud/<int:pk>/procesar/', views.procesar_solicitud, name='procesar_solicitud'),
 
 ]
 

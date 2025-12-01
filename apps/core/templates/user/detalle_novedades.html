@@ -4,17 +4,19 @@
 <div class="container ">
 
     <!-- TÍTULO -->
-    <div class="text-center mb-5">
+    <div class="text-center mb-5" style="margin-top: 80px;">
         <h2 class="fw-bold text-dark mb-3 emoji-title">
-            🐾 Explorar Novedades 
+            Explorar Novedades 🐾  
         </h2>
+    </div>
+
+    <div class="mb-4">
+        <a href="{% url 'home' %}" class="btn btn-outline-dark">← Volver al menú</a>
     </div>
 
     <!-- LISTADO -->
     {% include "user/listaNovedades.html" with novedades=novedades %}
-</div>
-<div class="mb-4">
-    <a href="{% url 'home' %}" class="btn btn-outline-dark">← Volver al menú</a>
+    
 </div>
 
 {% endblock %}

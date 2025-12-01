@@ -1,30 +1,52 @@
 {% load static %}
 {% if novedades %}
-<div class="row">
     {% for novedades in novedades %}
-    <div class="col-md-4">
-        <div class="card shadow-sm mb-4">
-            {% if novedades.imagen %}
-            <img src="{{ novedades.imagen.url }}" class="card-img-top img-noticia" alt="{{ novedades.titulo }}">
 
-            {% endif %}
+    <div class="card mb-4 shadow-sm border-0 rounded-4 horizontal-card">
+        <div class="row g-0">
 
-            <div class="card-body">
-                <a href="{% url 'detalle_novedad' novedades.id %}">
-                    <h2>{{ novedades.titulo }}</h2>
-                </a>
-                <p>{{ novedades.descripcion }}</p>
-                <small class="text-muted">{{ novedades.fecha|date:"d/m/Y" }}</small>
+            <!-- FOTO IZQUIERDA -->
+            <div class="col-md-4">
+                {% if novedades.imagen %}
+                    <img src="{{ novedades.imagen.url }}" 
+                         class="img-fluid rounded-start"
+                         alt="{{ novedades.titulo }}"
+                         style="height: 100%; object-fit: cover;">
+                {% else %}
+                    <img src="{% static 'imagenes/sin_foto.jpg' %}" 
+                         class="img-fluid rounded-start"
+                         alt="Sin imagen"
+                         style="height: 100%; object-fit: cover;">
+                {% endif %}
             </div>
+
+            <!-- TEXTO DERECHA -->
+            <div class="col-md-8">
+                <div class="card-body">
+
+                    <a href="{% url 'detalle_novedad' novedades.id %}">
+                        <h5 class="card-title fw-bold" style="font-size: 1.6rem;">
+                            {{ novedades.titulo }}
+                        </h5>
+                    </a>
+
+                    <p class="mb-1">{{ novedades.descripcion }}</p>
+
+                    <hr>
+
+                    <p class="text-muted mb-0">
+                        🗓 {{ novedades.fecha|date:"d/m/Y" }}
+                    </p>
+
+                </div>
+            </div>
+
         </div>
     </div>
+
     {% endfor %}
-    {% else %}
+{% else %}
     <div class="text-center mt-5">
         <p class="text-muted fs-4">No hay noticias disponibles por ahora 🐾</p>
     </div>
-    {% endif %}
-    <div class="mb-4">
-        <a href="{% url 'home' %}" class="btn btn-outline-dark">← Volver al menú</a>
-    </div>
-</div>
+{% endif %}

@@ -69,3 +69,6 @@ function getCookie(name){
    }
    return cookieValue;//devuelve el valor o null si no la encuentra
 }
+
+
+

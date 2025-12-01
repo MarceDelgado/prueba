@@ -1,12 +1,24 @@
 {% extends 'base.html' %}
+{% block title %}Crear Especie{% endblock %}
+
 {% block content %}
-  <div class="form-container" style="margin-top: 80px;">
-    <h1>Modificar Especie</h1>
-    <form method="post">
+<div class="form-container py-4" style="max-width: 600px; margin: auto; margin-top: 80px;">
+    <h2 class="mb-4 text-primary fw-bold text-center">Modificar Especie</h2>
+
+    <form method="POST" class="p-4 border rounded-4 shadow-sm bg-light">
         {% csrf_token %}
-        {{form.as_p}}
-        <button type="submit"class="btn btn-primary">Confirmar cambios</button>
+        {{ form.non_field_errors }}
+
+        <div class="mb-3">
+            <label for="{{ form.nombre.id_for_label }}" class="form-label">Nombre de la Especie:</label>
+            {{ form.nombre }}
+        </div>
+
+     <div class="d-flex justify-content-between mt-4">
         <a href="{% url 'listar_especies' %}" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
     </form>
-  </div>
+</div>
+
 {% endblock %}

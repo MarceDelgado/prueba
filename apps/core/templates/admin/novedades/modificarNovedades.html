@@ -1,16 +1,71 @@
 {% extends "base.html" %}
+{% block title %}Crear Novedad{% endblock %}
+
 {% block content %}
+<div class="container py-5" style="min-height:80vh;">
+    <div class="card shadow rounded-4 p-4" style="width: 100%; background-color:#ffffff;">
 
+        <h2 class="fw-bold mb-4 text-center text-primary">Crear Novedad</h2>
 
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
 
-<form method="POST" enctype="multipart/form-data" style="margin-top: 80px;">
-    <h2 class="mb-4">Modificar Novedad</h2>
+            <div class="row">
 
-    {% csrf_token %}
-    {{ form.as_p }}
+                <!-- 🟦 Columna izquierda: texto -->
+                <div class="col-md-6 col-12">
 
-    <button type="submit" class="btn btn-primary">Actualizar</button>
-    <a href="{% url 'listar_novedades' %}" class="btn btn-secondary">Cancelar</a>
-</form>
+                    <!-- TÍTULO -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Título</label>
+                        {{ form.titulo }}
+                        {% for error in form.titulo.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
 
+                    <!-- DESCRIPCIÓN CORTA -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Descripción corta</label>
+                        {{ form.descripcion_corta }}
+                        {% for error in form.descripcion_corta.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+
+                <!-- 🟧 Columna derecha: contenido + imagen -->
+                <div class="col-md-6 col-12">
+
+                    <!-- CONTENIDO -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Contenido</label>
+                        {{ form.contenido }}
+                        {% for error in form.contenido.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- IMAGEN -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Imagen</label>
+                        {{ form.imagen }}
+                        {% for error in form.imagen.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- BOTONES -->
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{% url 'listar_novedades' %}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+
+        </form>
+    </div>
+</div>
 {% endblock %}

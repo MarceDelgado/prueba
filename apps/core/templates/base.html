@@ -31,10 +31,15 @@
     <!-- Contenido principal -->
     <div class="layout">
         {% if user.is_authenticated and not user.userprofile.primer_ingreso %}
-        {% if user.is_superuser or user.is_staff %}
-        {% include 'admin/sidebar.html' %}
+
+            {% if user.is_superuser or user.is_staff %}
+
+                {% include 'admin/sidebar.html' %}
+
+            {% endif %}
+
         {% endif %}
-        {% endif %}
+
         <main class="main-content">
             <div class="container">
                 {% block content %}
@@ -75,8 +80,8 @@
 
 
     {% if not user.is_superuser and not user.is_staff %}
-    <!--Footer-->
-    {% include "footer.html" %}
+        <!--Footer-->
+        {% include "footer.html" %}
     {% endif %}
 
     <script>
@@ -91,11 +96,9 @@
         });
     </script>
 
-    {% block extra_js %}
-
-
-    {% endblock %}
-
+{% block extra_js %}
+   <script src="{% static 'js/ajax.js' %}"></script>
+{% endblock %}
 </body>
 
 </html>

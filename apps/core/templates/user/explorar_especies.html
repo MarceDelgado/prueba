@@ -5,21 +5,20 @@
 {% block content %}
 <div class="container py-5">
 
-
-
     <!-- TÍTULO -->
     <div class="text-center mb-5">
-        <h2 class="fw-bold text-dark mb-3 emoji-title">
-            🐾 Explorar Especies
-        </h2>
-        <p class="text-dark">Descubrí las especies disponibles y sus razas</p>
+        <h1 class="fw-bold text-dark mb-3 emoji-title">
+            MI PERFIL 🐾 
+        </h1>
     </div>
+
     <!-- BOTÓN VOLVER -->
     <div class="mb-4">
         <a href="{% url 'home' %}" class="btn btn-outline-dark">
             ← Volver al menú
         </a>
     </div>
+    
     {% for especie in especies %}
         <div class="mb-5 raza-section">
             <!-- Encabezado de especie -->

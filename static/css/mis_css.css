@@ -775,14 +775,13 @@ body {
     margin-bottom: 60px;
 }
 
-/* TÍTULOS */
+/* TÍTULOS
 .container h2 {
     color: #0b4d6e;
     font-size: 2rem;
     font-weight: 700;
     margin-bottom: 20px;
-    text-shadow: 1px 1px 0px #ffffff;
-}
+} */
 
 /* FORMULARIO */
 .container form {

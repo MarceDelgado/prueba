@@ -3,13 +3,13 @@
 
 <div class="main-content fix-top-spacing">
     
-{% if user.is_authenticated and not user.is_superuser %}
-    {% include 'user/menuUsuario.html' %}
-{% elif user.is_authenticated and user.is_superuser or user.is_staff %}
-    {% include 'admin/menuAdmin.html' %}
-{% else %}
-    {% include 'user/menuUsuario.html' %}
-{% endif %}
+    {% if user.is_authenticated and not user.is_superuser %}
+        {% include 'user/menuUsuario.html' %}
+    {% elif user.is_authenticated and user.is_superuser or user.is_staff %}
+        {% include 'admin/menuAdmin.html' %}
+    {% else %}
+        {% include 'user/menuUsuario.html' %}
+    {% endif %}
 
 </div>
 

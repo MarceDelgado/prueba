@@ -52,7 +52,6 @@ class Persona(models.Model):
     def __str__(self):
         return f"{self.apellido}, {self.nombre}"
 
-
 class Especie(models.Model):
     nombre = models.CharField(max_length=80)
     descripcion = models.TextField(default="")
@@ -121,6 +120,7 @@ class Adopcion(models.Model):
 
 class SolicitudAdopcion(models.Model):
     ESTADO_CHOICES = [
+        ('iniciada', 'Iniciada'),
         ('pendiente', 'Pendiente'),
         ('aprobada', 'Aprobada'),
         ('rechazada', 'Rechazada'),
@@ -128,7 +128,7 @@ class SolicitudAdopcion(models.Model):
 
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     mascota = models.ForeignKey('Mascotas', on_delete=models.CASCADE)
-    mensaje = models.TextField(blank=True)              # info adicional del solicitante
+    mensaje = models.TextField(blank=True)    # info adicional del solicitante
     telefono = models.CharField(max_length=30, blank=True)
     direccion = models.CharField(max_length=255, blank=True)
     fecha_solicitud = models.DateTimeField(auto_now_add=True)
@@ -141,17 +141,17 @@ class SolicitudAdopcion(models.Model):
 
     def __str__(self):
         return f"Solicitud #{self.id} - {self.mascota} - {self.usuario}"
-    
-    class ContactMessage(models.Model):
-        nombre = models.CharField(max_length=120)
-        email = models.EmailField()
-        telefono = models.CharField(max_length=30, blank=True)
-        mensaje = models.TextField()
-        creado = models.DateTimeField(auto_now_add=True)
-        leido = models.BooleanField(default=False)
 
-        def __str__(self):
-            return f"{self.nombre} - {self.email}"
+class ContactMessage(models.Model):
+    nombre = models.CharField(max_length=120)
+    email = models.EmailField()
+    telefono = models.CharField(max_length=30, blank=True)
+    mensaje = models.TextField()
+    creado = models.DateTimeField(auto_now_add=True)
+    leido = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.nombre} - {self.email}"
 
 #===MODELO PARA CREAR NOTICIAS/NOVEDADES DESDE EL ADMIN Y QUE SE VEAN PUBLICAMENTE===#
 class Novedad(models.Model):
@@ -166,3 +166,4 @@ class Novedad(models.Model):
 
     def __str__(self):
         return self.titulo
+    

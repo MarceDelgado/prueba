@@ -65,7 +65,7 @@ def contacto(request):
             fail_silently=False,
         )
         messages.success(request, "Gracias por contactarnos")
-    return render(request, 'home.html')
+    return redirect('home')
 
 
 # =======================
@@ -157,11 +157,19 @@ class ListarMascotasUsuario(ListView,Restringir_acceso):
 
         return mascotas
         
-class ModificarMascota(UpdateView, Restringir_acceso):
-    model = Mascotas
-    form_class = MascotasForm
-    template_name = 'admin/mascotas/modificarMascota.html'
-    success_url = reverse_lazy('listar_mascotas')
+# modificar
+@login_required(login_url='/login/')
+def modificar_mascota(request, mascota_id):
+    mascota = get_object_or_404(Mascotas, id=mascota_id)
+    if request.method == 'POST':
+        form = MascotasForm(request.POST, instance=mascota)
+        if form.is_valid():
+            form.save()
+            return redirect('listar_mascotas')
+    else:
+        form = MascotasForm(instance=mascota)
+    return render(request, 'admin/mascotas/modificarMascota.html', {'form': form})
+
 
 @login_required(login_url='/login/')
 def crear_mascota(request):
