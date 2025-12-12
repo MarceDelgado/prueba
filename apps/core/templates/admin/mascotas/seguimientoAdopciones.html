@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %}Seguimiento de adopción de mascotas{% endblock %}
+{% load static %}
+
+{% block content %}
+<div class="table-responsive py-4" style="margin-top: 80px;">
+    <h1 class="mb-4 text-primary fw-bold">Seguimiento de adopción de mascotas</h1>
+    
+
+   <table class="table table-striped table-hover align-middle shadow-sm rounded-4">
+       <thead class="table-primary">
+            <tr>
+                <th>Mascota</th>
+                <th>Foto</th>
+                <th>Fecha de adopción</th>
+                <th>Seguimiento</th>
+            </tr>
+       </thead>
+        <tbody>
+            {% for adopcion in adopciones %}
+                <tr>
+                    <td>{{adopcion.mascota.raza}}</td>
+                    <td>
+                        {% if adopcion.mascota.fotos %}
+                            <img src="{{ adopcion.mascota.fotos.url }}" class="img-thumbnail" style="max-width:120px; border-radius:8px;">
+                        {% else %}
+                            <span class="text-muted">Sin foto</span>
+                        {% endif %}
+                    </td>
+                    <td>{{adopcion.fecha_adopcion|date:"d/m/y"}}</td>
+                    <td>
+                        <button class="btn btn-primary btn-ver-seguimiento"
+                        data-id="{{adopcion.mascota.id}}"
+                        data-url="{% url 'seguimiento_adopciones' adopcion.mascota.id %}">
+                        Ver más
+                        </button>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="3"> No hay adopciones realizadas</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>    
+    <div class="mb-4">
+        <a href="{% url 'home' %}" class="btn btn-outline-dark">
+            ← Volver al inicio
+        </a>
+    </div>
+</div>
+
+<div id="modales-dinamicos"></div>
+
+<div class="modal fade" id="modalSeguimiento" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title">Seguimiento de la mascota</h1>
+            </div>
+            <div class="modal-body">
+                <div id="contenidoSeguimiento"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalEliminar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar eliminación</h5>
+            </div>
+            <div class="modal-body">
+                ¿Seguro que querés eliminar este elemento?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmarEliminar">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalFormulario" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tituloModal">Informe</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body" id="bodyModalFormulario">
+                    <!-- aca se carga el formulario AJAX -->
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button class="btn btn-primary" id="btnGuardarFormulario">Guardar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

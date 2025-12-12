@@ -1,8 +1,8 @@
-from django.urls import reverse_lazy
-from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse_lazy, reverse
+from django.shortcuts import render, redirect, get_object_or_404,HttpResponse
 from django.contrib import messages
-from apps.core.models import Especie, Mascotas, Raza, Persona, Adopcion, Novedad
-from .forms import EspecieForm, RazaForm, RegistroUsuarioForm, MascotasForm, PersonasForm, DomicilioForm, UserProfileForm, SolicitudAdopcionForm, NovedadForm
+from apps.core.models import Especie, Mascotas, Raza, Persona, Adopcion, Novedad,ObservacionesSeguimiento,VacunasSeguimiento
+from .forms import EspecieForm, RazaForm, RegistroUsuarioForm, MascotasForm, PersonasForm, DomicilioForm, UserProfileForm, SolicitudAdopcionForm, NovedadForm, ObservacionesForm,VacunasForm, EstadoInicialForm, ContactMessageForm
 from django.contrib.auth import authenticate, login, logout as auth_logout  # importamos la funcion "authenticate"
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, View  # importamos las clases bases para el abm
 from .models import Localidad, UserProfile, SolicitudAdopcion
@@ -672,7 +672,7 @@ def detalle_mascota(request, mascota_id):
     Muestra foto, nombre, raza/especie, sexo, localidad, descripción y botones.
     """
     mascota = get_object_or_404(Mascotas, id=mascota_id)
-
+    adopcion = Adopcion.objects.filter(mascota=mascota).select_related("usuario__persona").first()
     # Información segura (no asumimos que existan todos los campos)
     foto_url = mascota.foto.url if getattr(mascota, "foto", None) and getattr(mascota.foto, "url", None) else None
     nombre = getattr(mascota, "nombre", "Sin nombre")
@@ -680,7 +680,13 @@ def detalle_mascota(request, mascota_id):
     sexo = getattr(mascota, "sexo", None)  # si tenés SEXO_CHOICES
     raza = getattr(mascota, "raza", None)
     localidad = getattr(mascota, "localidad", None)
+    print("MASCOTA:", mascota.id)
+    print("ADOPCIONES PARA ESTA MASCOTA:", Adopcion.objects.filter(mascota=mascota).values())
+    print("ADOPCION USADA:", adopcion)
 
+    if adopcion:
+        print("USUARIO:", adopcion.usuario)
+        print("PERSONA:", adopcion.usuario.persona)
     contexto = {
         "mascota": mascota,
         "foto_url": foto_url,
@@ -689,6 +695,7 @@ def detalle_mascota(request, mascota_id):
         "sexo": sexo,
         "raza": raza,
         "localidad": localidad,
+        "adopcion":adopcion,
     }
 
     return render(request, "user/detalle_mascotas.html", contexto)
@@ -709,8 +716,14 @@ def formulario_adopcion(request, mascota_id):
             solicitud = form.save(commit=False)
             solicitud.usuario = request.user
             solicitud.mascota = mascota
+            solicitud.estado = 'aprobada'#esto solo es por ahora
             solicitud.save()
 
+            Adopcion.objects.create(
+                usuario=request.user,
+                mascota=mascota,
+                solicitud=solicitud
+            )
             # Notificar a administradores (usa settings.ADMINS)
             subject = f"Nueva solicitud de adopción: {mascota.raza.nombre} (id {solicitud.id})"
             message = (
@@ -811,18 +824,183 @@ def lista_novedades(request):
     return render(request, 'novedades.html', {'novedades': novedades})
 
 
-"""
-def cambiar_password(request, token):
+
+@login_required(login_url='/login/')
+def lista_mascotas_adoptadas(request):
+    """funcion que permite ver la lista de todas las mascotas adoptadas"""
+    adopciones=Adopcion.objects.all()
+    contexto={'adopciones':adopciones}
+    return render(request,'admin/mascotas/seguimientoAdopciones.html', contexto)
+
+@login_required(login_url='/login/')
+def seguimiento_adopciones(request,id):
+    """funcion que permite ver detalles de la mascota adoptada mostrando informacion de seguimiento"""
+    mascota = get_object_or_404(Mascotas, id=id)
+    observaciones=ObservacionesSeguimiento.objects.filter(mascota=mascota)
+    vacunas=VacunasSeguimiento.objects.filter(mascota=mascota)
+    adopcion = Adopcion.objects.filter(mascota=mascota).select_related("usuario__persona").first()
+    estado_inicial = mascota.estado_inicial
+    
+
+    contexto={
+        'mascota':mascota, 'observaciones':observaciones, 'vacunas':vacunas, 'adopcion':adopcion, 'estado_inicial':estado_inicial,
+    }
+    if request.headers.get('x-requested-with')=='XMLHttpRequest':
+        html=render_to_string('admin/mascotas/seguimiento_parcial.html',contexto)
+        return JsonResponse({'html':html})
+    return render(request, 'admin/mascotas/seguimientoAdopciones.html', contexto)
+
+#abm de observacion
+@login_required(login_url='/login/')
+def crear_observacion(request,id):
+    """funcion que permite agregar observaciones de la mascota en cada seguimiento,
+        devuelve una respuesta json"""
+    mascota=get_object_or_404(Mascotas,id=id)
+    if request.method == 'GET':
+        form = ObservacionesForm()
+        html = render_to_string(
+            'admin/mascotas/form_estado.html',
+            {'form': form, 'action_url': reverse('crear_observacion', args=[mascota.id]),
+            'hidden_id': mascota.id},
+            request=request
+        )
+        return HttpResponse(html)
+    else:
+        form=ObservacionesForm(request.POST)
+        if form.is_valid():
+            observacion=form.save(commit=False)
+            observacion.mascota=mascota
+            observacion.save()
+            return JsonResponse({"status":"ok", "mensaje":"la observacion fue creada con exito"})
+    return JsonResponse({"status":"error", "mensaje":"formulario no creado"})
+
+
+@login_required(login_url='/login/')
+def modificar_observacion(request,id):
+    """funcion que permite modificar las observaciones escritas de las mascotas,
+        devuelve una respuesta json"""
+    observacion=get_object_or_404(ObservacionesSeguimiento,id=id)
+    if request.method == 'GET':
+        form = ObservacionesForm(instance=observacion)
+        html = render_to_string(
+            'admin/mascotas/form_estado.html',
+            {'form': form, 'action_url': reverse('modificar_observacion', args=[observacion.id]),
+            'hidden_id': observacion.id},
+            request=request
+        )
+        return HttpResponse(html)
+    else:
+        form=ObservacionesForm(request.POST, instance=observacion)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({"status":"ok", "mensaje":"la observacion fue modificada con exito"})
+    return JsonResponse({"status":"error", "mensaje":"la observacion no se modifico"})
+    
+
+
+@login_required(login_url='/login/')
+def eliminar_observacion(request,id):
+    """funcion que permite eliminar la observacion escrita de la mascota, devuelve una respuesta json"""
+    observacion=get_object_or_404(ObservacionesSeguimiento,id=id)
     try:
-        profile = UserProfile.objects.get(recovery_token=token)
-        if request.method == 'POST':
-            nueva_password = request.POST.get('password')
-            profile.user.password = make_password(nueva_password)
-            profile.user.save()
-            profile.recovery_token = ''  # Limpiar token
-            profile.save()
-            return render(request, 'password_cambiada.html')
-        return render(request, 'cambiar_password.html')
-    except UserProfile.DoesNotExist:
-        return render(request, 'token_invalido.html')
-    """
+        mascota=observacion.mascota
+        observacion.delete()
+        return JsonResponse({"status":"ok", "mensaje":"la observacion fue eliminada con exito"})
+    except ObservacionesSeguimiento.DoesNotExist:
+        return JsonResponse({"status":"error", "mensaje":"la observacion no existe"})
+
+#abm de vacunas
+@login_required(login_url='/login/')
+def crear_vacuna(request,id):
+    """funcion que permite agregar vacunas colocadas a la mascota en cada seguimiento,
+        devuelve una respuesta json"""
+    mascota=get_object_or_404(Mascotas,id=id)
+    if request.method == 'GET':
+        form = VacunasForm()
+        html = render_to_string(
+            'admin/mascotas/form_estado.html',
+            {'form': form,'action_url': reverse('crear_vacuna', args=[mascota.id]),
+            'hidden_id': mascota.id},
+            request=request
+        )
+        return HttpResponse(html)
+    else:
+        form=VacunasForm(request.POST)
+        if form.is_valid():
+            vacuna=form.save(commit=False)
+            vacuna.mascota=mascota
+            vacuna.save()
+            return JsonResponse({"status":"ok", "mensaje":"la vacuna fue creada con exito"})
+    return JsonResponse({"status":"error", "mensaje":"la vacuna no se creo"})
+
+@login_required(login_url='/login/')
+def modificar_vacuna(request,id):
+    """funcion que permite modificar las vacunas colocadas de las mascotas, devuelve una respuesta json"""
+    vacuna=get_object_or_404(VacunasSeguimiento,id=id)
+    if request.method == 'GET':
+        form = VacunasForm(instance=vacuna)
+        html = render_to_string(
+            'admin/mascotas/form_estado.html',
+            {'form': form, 'action_url': reverse('modificar_vacuna', args=[vacuna.id]),
+            'hidden_id': vacuna.id},
+            request=request
+        )
+        return HttpResponse(html)
+    else:
+        form=VacunasForm(request.POST, instance=vacuna)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({"status":"ok", "mensaje":"la vacuna se modifico con exito"})
+    return JsonResponse({"status":"error", "mensaje":"la vacuna no se modifico"})
+
+@login_required(login_url='/login/')
+def eliminar_vacuna(request,id):
+    """funcion que permite eliminar la vacuna colocada a la mascota, devuelve una respuesta json"""
+    vacuna=get_object_or_404(VacunasSeguimiento,id=id)
+    try:
+        mascota=vacuna.mascota
+        vacuna.delete()
+        return JsonResponse({"status":"ok", "mensaje":"la vacuna fue eliminada con exito"})
+    except VacunasSeguimiento.DoesNotExist:
+        return JsonResponse({"status":"error", "mensaje":"la vacuna no se elimino"})
+    
+#crear y eliminar estado inicial
+@login_required(login_url='/login/')
+def crear_estado_mascota(request,id): 
+    """funcion que permite agregar el estado de la mascota al momento de ser adoptada, devuelve una respuesta json"""
+    mascota=get_object_or_404(Mascotas,id=id)
+    if request.method == 'GET':
+        form = EstadoInicialForm(instance=mascota)
+        html = render_to_string(
+            'admin/mascotas/form_estado.html',
+            {'form': form, 'action_url': reverse('crear_estado_mascota', args=[mascota.id]),
+            'hidden_id': mascota.id},
+            request=request
+        )
+        return HttpResponse(html)
+    else:
+        form=EstadoInicialForm(request.POST, instance=mascota)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({"status":"ok", "mensaje":"el estado inicial de la mascota fue creada con exito"})
+    return JsonResponse({"status":"error", "mensaje":"el estado inicial de la mascota no se creo"})
+
+@login_required(login_url='/login/')
+def modificar_estado_mascota(request,id):
+    """funcion que permite modificar el estado de la mascota al momento de ser adoptada, devuelve una respuesta json"""
+    mascota=get_object_or_404(Mascotas,id=id)
+    if request.method == 'GET':
+        form = EstadoInicialForm(instance=mascota)
+        html = render_to_string(
+            'admin/mascotas/form_estado.html',
+            {'form': form, 'action_url': reverse('modificar_estado_mascota', args=[mascota.id]),
+            'hidden_id': mascota.id},
+            request=request
+        )
+        return HttpResponse(html)
+    else:
+        form=EstadoInicialForm(request.POST, instance=mascota)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({"status":"ok", "mensaje":"el estado inical de la mascota se modifico con exito"})
+    return JsonResponse({"status":"error", "mensaje":"el estado inicial de la mascota no se modifico"})

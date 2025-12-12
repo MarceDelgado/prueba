@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import UserProfile, SolicitudAdopcion
-from apps.core.models import Mascotas, Persona, Raza, Especie, Domicilio, Novedad
+from apps.core.models import Mascotas, Persona, Raza, Especie, Domicilio, Novedad, ObservacionesSeguimiento,VacunasSeguimiento,ContactMessage
 
 # Formulario de registro de usuario
 class RegistroUsuarioForm(UserCreationForm):
@@ -93,6 +93,17 @@ class UserProfileForm(forms.ModelForm):
             'bio': forms.Textarea(attrs={'class':'form-control','rows':4}),
             'avatar': forms.ClearableFileInput(attrs={'class':'form-control'}),
         }
+#formulario de contacto
+class ContactMessageForm(forms.ModelForm):
+    class Meta:
+        model=ContactMessage
+        fields=['nombre','telefono','email','mensaje']
+        widgets={
+            'nombre': forms.TextInput(attrs={'class':'form-control'}),
+            'telefono': forms.TextInput(attrs={'class':'form-control'}),
+            'email': forms.EmailInput(attrs={'class':'form-control'}),
+            'mensaje':forms.Textarea(attrs={'class':'form-control','rows':6}),
+        }
 
 # Formulario Domicilio
 class DomicilioForm(forms.ModelForm):
@@ -130,4 +141,30 @@ class NovedadForm(forms.ModelForm):
             'descripcion_corta': forms.Textarea(attrs={'class':'form-control','rows':4}),
             'contenido': forms.Textarea(attrs={'class':'form-control','rows':6}),
             'imagen': forms.ClearableFileInput(attrs={'class':'form-control'}),
+        }
+
+class EstadoInicialForm(forms.ModelForm):
+    class Meta:
+        model= Mascotas
+        fields=["estado_inicial"]
+        widgets ={
+            'estado_inicial': forms.Textarea(attrs={'class':'form-control', 'rows':6}),
+        }
+
+class ObservacionesForm(forms.ModelForm):
+    class Meta:
+        model=ObservacionesSeguimiento
+        fields=["titulo","detalle"]
+        widgets={
+            'titulo':forms.TextInput(attrs={'class':'form-control'}),
+            'detalle': forms.Textarea(attrs={'class':'form-control','rows':6}),
+        }
+
+class VacunasForm(forms.ModelForm):
+    class Meta:
+        model=VacunasSeguimiento
+        fields=["nombre_vacuna","proxima_dosis"]
+        widgets={
+            'nombre_vacuna': forms.TextInput(attrs={'class':'form-control'}),
+            'proxima_dosis': forms.DateInput(attrs={'class':'form-control', 'type':'date'}),
         }

@@ -27,7 +27,7 @@
        </thead>
        <tbody>
            {% for mascota in mascotas_list %}
-           <tr id="fila-{{mascota.id}}">
+           <tr id="mascota-{{mascota.id}}">
                <td>{{ mascota.raza.especie }}</td>
                <td>{{ mascota.raza }}</td>
                <td>{{ mascota.sexo }}</td>
@@ -44,7 +44,8 @@
                <td class="d-flex gap-2">
                             
                    <a href="{% url 'modificar_mascota' mascota.pk %}" class="btn btn-sm btn-primary">Modificar</a>
-                   <button data-id="{{ mascota.id }}" data-raza="{{ mascota.raza }}"  class="btn-eliminar btn btn-danger btn-sm">Eliminar</button>
+                   <button data-id="{{ mascota.id }}"  data-url="{% url 'eliminar_mascotas' %}" data-tipo="mascota"
+                    class="btn-eliminar btn btn-danger btn-sm">Eliminar</button>
                </td>
            </tr>
            {% empty %}
@@ -65,7 +66,7 @@
          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
        </div>
         <div class="modal-body">
-           ¿Seguro que deseas eliminar a <strong><span id="nombreMascotaEliminar"></span></strong>?
+           ¿Seguro que deseas eliminar a la mascota?
        </div>
         <div class="modal-footer">
          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>

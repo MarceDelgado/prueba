@@ -9,7 +9,8 @@ from .views import (
     listar_personas, crear_persona, eliminar_persona, modificar_persona, habilitar_persona,
     cambiar_contraseña_voluntariamente, filtrar_mascotas, explorar_especies,
     explorar_razas, mis_adopciones, detalle_mascota, crear_novedades, eliminar_novedades, listar_novedades, modificar_novedades,
-    detalle_novedad, view_profile
+    detalle_novedad, view_profile, seguimiento_adopciones,lista_mascotas_adoptadas,
+    crear_observacion,modificar_observacion,eliminar_observacion,crear_vacuna,modificar_vacuna,eliminar_vacuna,crear_estado_mascota,modificar_estado_mascota
 )
 
 urlpatterns = [
@@ -86,6 +87,18 @@ urlpatterns = [
     #Formulario para enviar emails a los administradores
     path('contacto/enviar/', views.contacto_submit, name='contacto_submit'),
 
+    #urls para el seguimiento de las mascotas adoptadas
+    path('lista_mascotas_adoptadas/',lista_mascotas_adoptadas,name='lista_mascotas_adoptadas'),
+    path('seguimiento_adopciones/<int:id>', seguimiento_adopciones, name='seguimiento_adopciones'),
+    path('crear_observacion/<int:id>/', crear_observacion, name='crear_observacion'),
+    path('modificar_observacion/<int:id>/', modificar_observacion, name='modificar_observacion'),
+    path('eliminar_observacion/<int:id>/', eliminar_observacion, name='eliminar_observacion'),
+    path('crear_vacuna/<int:id>/', crear_vacuna, name='crear_vacuna'),
+    path('modificar_vacuna/<int:id>/', modificar_vacuna, name='modificar_vacuna'),
+    path('eliminar_vacuna/<int:id>/', eliminar_vacuna, name='eliminar_vacuna'),
+    path('crear_estado_mascota/<int:id>/', crear_estado_mascota, name='crear_estado_mascota'),
+    path('modificar_estado_mascota/<int:id>/', modificar_estado_mascota, name='modificar_estado_mascota'),
+    
 ]
 
  

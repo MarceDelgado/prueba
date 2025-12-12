@@ -1,0 +1,8 @@
+<!-- form_modal.html -->
+<form action="{{ action_url }}" method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    {% if hidden_id %}
+        <input type="hidden" name="id" value="{{ hidden_id }}">
+    {% endif %}
+</form>

@@ -1,0 +1,133 @@
+<div class="accordion" id="accordionSeguimiento">
+    <!--ESTADO AL SER ADOPTADO-->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingEstado"> 
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEstado" aria-expanded="false" aria-controls="collapseEstado"> 
+                Estado de la mascota al momento de la adopción
+            </button>
+        </h2>
+        <div id="collapseEstado" class="accordion-collapse collapse" aria-labelledby="headingEstado" data-bs-parent="#accordionSeguimiento">
+        <div class="accordion-body">
+            
+            {% if estado_inicial %}
+                <p style="white-space: pre-line;">{{ estado_inicial }}</p>
+                <button class="btn btn-sm btn-primary btn-modificar"
+                        data-id="{{mascota.id}}"
+                        data-url="{% url 'modificar_estado_mascota' id=mascota.id %}"> Modificar </button>
+            {% else %}
+                <button class="btn btn-sm btn-success btn-modificar"
+                        data-id="{{mascota.id}}"
+                        data-url="{% url 'crear_estado_mascota' id=mascota.id %}"> Crear </button>
+            {% endif %}
+        </div>
+    </div>
+    <!--ADOPTANTE-->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingAdoptante"> 
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAdoptante" aria-expanded="false" aria-controls="collapseAdoptante">
+                Datos del adoptante
+            </button>
+        </h2>
+        <div id="collapseAdoptante" class="accordion-collapse collapse" aria-labelledby="headingAdoptante" data-bs-parent="#accordionSeguimiento">
+        <div class="accordion-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>Nombre</td>
+                        <td>Apellido</td>
+                        <td>Direccion</td>
+                        <td>Email</td>
+                        <td>Telefono</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if adopcion and adopcion.usuario.persona%}
+                        <tr id="adoptante-{{ adopcion.id }}">
+                            <td>{{adopcion.usuario.persona.nombre}}</td>
+                            <td>{{adopcion.usuario.persona.apellido}}</td>
+                            <td>
+                                {% if adopcion.usuario.persona.domicilio %}
+                                    {{adopcion.usuario.persona.domicilio.calle}},
+                                    {{adopcion.usuario.persona.domicilio.numero}},
+                                {% else %}
+                                    <p>Sin domicilio</p>
+                                {% endif %}
+                            </td>
+                            <td>{{ adopcion.usuario.persona.email}}</td>
+                            <td>{{adopcion.usuario.persona.telefono}}</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!--VACUNAS-->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingVacunas">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVacunas" aria-expanded="false" aria-controls="collapseVacunas">
+                Vacunas 
+            </button>
+        </h2>
+        <div id="collapseVacunas" class="accordion-collapse collapse" aria-labelledby="headingVacunas" data-bs-parent="#accordionSeguimiento">
+        <div class="accordion-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nombre de la vacuna</th>
+                        <th>Fecha colocada</th>
+                        <th>Proxima dosis</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vacuna in vacunas %}
+                        <tr id="vacuna-{{ vacuna.id }}">
+                            <td>{{vacuna.nombre_vacuna}}</td>
+                            <td>{{vacuna.fecha_puesta}}</td>
+                            <td>{{vacuna.proxima_dosis}}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary btn-modificar" data-id="{{vacuna.id}}" data-url="{% url 'modificar_vacuna' id=vacuna.id %}">Modificar</button>
+                                <button class="btn btn-sm btn-danger btn-eliminar" data-id="{{vacuna.id}}" data-url="{% url 'eliminar_vacuna' id=vacuna.id %}" data-tipo="vacuna">Eliminar</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button class="btn btn-sm btn-success btn-modificar" data-url="{% url 'crear_vacuna' id=mascota.id %}"> Agregar vacuna </button>
+        </div>
+    </div>
+    <!--OBSERVACIONES-->
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="headingObservaciones">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseObservaciones" aria-expanded="false" aria-controls="collapseObservaciones">
+                Observaciones
+            </button>
+        </h2>
+        <div id="collapseObservaciones" class="accordion-collapse collapse" aria-labelledby="headingObservaciones" data-bs-parent="#accordionSeguimiento">
+        <div class="accordion-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Titulo</th>
+                        <th>Fecha</th>
+                        <th>Detalle</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for observacion in observaciones %}
+                        <tr id="observacion-{{ observacion.id }}">
+                            <td>{{observacion.titulo}}</td>
+                            <td>{{observacion.fecha}}</td>
+                            <td>{{observacion.detalle}}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary btn-modificar" data-id="{{observacion.id}}" data-url="{% url 'modificar_observacion' id=observacion.id %}">Modificar</button>
+                                <button class="btn btn-sm btn-danger btn-eliminar" data-id="{{observacion.id}}" data-url="{% url 'eliminar_observacion' id=observacion.id %}" data-tipo="observacion">Eliminar</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button class="btn btn-sm btn-success btn-modificar" data-url="{% url 'crear_observacion' id=mascota.id %}"> Agregar observacion </button>
+        </div>
+    </div>
+</div>

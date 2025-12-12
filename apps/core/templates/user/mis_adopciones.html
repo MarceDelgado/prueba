@@ -64,8 +64,8 @@
 
             <!-- FOTO -->
             <div class="col-md-4">
-                {% if a.foto_url %}
-                    <img src="{{ a.foto_url }}" class="img-fluid rounded-start" alt="{{ a.raza }}">
+                {% if a.mascota.fotos %}
+                    <img src="{{ a.mascota.fotos.url }}" class="img-fluid rounded-start" alt="{{ a.mascota.raza.nombre|default:'Mascota' }}">
                 {% else %}
                     <img src="{% static 'imagenes/default_foto.png' %}" class="img-fluid rounded-start" alt="Foto predeterminada">
                 {% endif %}
@@ -74,13 +74,11 @@
             <div class="col-md-8">
                 <div class="card-body">
 
-                    <h5 class="card-title fw-bold">{{ a.raza }}</h5>
-
-                    <p class="mb-1"><strong>Especie:</strong> {{ a.especie }}</p>
-                    <p class="mb-1"><strong>Sexo:</strong> {{ a.sexo }}</p>
-                    <p class="mb-1"><strong>Tamaño:</strong> {{ a.tamanio }}</p>
-                    <p class="mb-1"><strong>Observaciones:</strong> {{ a.observaciones }}</p>
-                    <p class="mb-1"><strong>Fecha de adopción:</strong> {{ a.fecha|date:"d/m/Y" }}</p>
+                    <h5 class="card-title fw-bold">{{ a.mascota.raza.nombre|default:"Sin raza" }}</h5>
+                    <p class="mb-1"><strong>Especie:</strong> {{ a.mascota.raza.especie.nombre|default:"Sin especie" }}</p>
+                    <p class="mb-1"><strong>Raza:</strong> {{ a.mascota.raza.nombre|default:"Sin raza" }}</p>
+                    <p class="mb-1"><strong>Estado:</strong> {{ a.estado|capfirst }}</p>
+                    <p class="mb-1"><strong>Mensaje:</strong> {{ a.mensaje }}</p>
 
                 </div>
             </div>

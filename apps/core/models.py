@@ -80,7 +80,7 @@ class Mascotas(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)  
     updated_at = models.DateTimeField(auto_now=True)
     fotos = models.ImageField(upload_to='mascotas/', blank=True, null=True) #nuevo campo para agregar imagenes
-    
+    estado_inicial=models.CharField(max_length=200, blank=True, null=True)#estado inicial para el seguimiento de adopcion
 
     def __str__(self):
        
@@ -108,16 +108,6 @@ def crear_perfil_usuario(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def guardar_perfil_usuario(sender, instance, **kwargs):
     instance.userprofile.save()
-
-class Adopcion(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    mascota = models.ForeignKey(Mascotas, on_delete=models.CASCADE)
-    fecha_adopcion = models.DateField(auto_now_add=True)
-    observaciones = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.usuario.username} adoptó a {self.mascota}"
-
 class SolicitudAdopcion(models.Model):
     ESTADO_CHOICES = [
         ('iniciada', 'Iniciada'),
@@ -141,6 +131,15 @@ class SolicitudAdopcion(models.Model):
 
     def __str__(self):
         return f"Solicitud #{self.id} - {self.mascota} - {self.usuario}"
+class Adopcion(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    mascota = models.ForeignKey(Mascotas, on_delete=models.CASCADE)
+    fecha_adopcion = models.DateField(auto_now_add=True)
+    observaciones = models.TextField(blank=True, null=True)
+    solicitud=models.OneToOneField(SolicitudAdopcion, null=True,blank=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return f"{self.usuario.username} adoptó a {self.mascota}"
 
 class ContactMessage(models.Model):
     nombre = models.CharField(max_length=120)
@@ -167,3 +166,15 @@ class Novedad(models.Model):
     def __str__(self):
         return self.titulo
     
+#para el seguimiento de adopcion
+class ObservacionesSeguimiento(models.Model):
+    mascota=models.ForeignKey(Mascotas, on_delete=models.CASCADE)
+    titulo=models.CharField(max_length=200)
+    fecha=models.DateField(auto_now_add=True)
+    detalle=models.TextField()
+
+class VacunasSeguimiento(models.Model):
+    mascota=models.ForeignKey(Mascotas,on_delete=models.CASCADE)
+    nombre_vacuna=models.CharField(max_length=100)
+    fecha_puesta=models.DateField(auto_now_add=True)
+    proxima_dosis=models.DateField(null=True, blank=True)
